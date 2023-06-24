@@ -3,6 +3,8 @@ import { sentenceCase } from 'change-case';
 import { useEffect, useState } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { styled } from '@mui/material/styles';
+
 // material
 import {
   Card,
@@ -18,6 +20,8 @@ import {
   Typography,
   TableContainer,
   TablePagination,
+  OutlinedInput,
+  InputAdornment
 } from '@mui/material';
 // components
 import Page from '../../../components/Page';
@@ -30,7 +34,7 @@ import JSON_CONST from '../../../components/CONSTVALUE.json';
 
 // mock
 import USERLISTDATA from '../../../_mock/user';
-
+import Loader from '../../Loader/Loader';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
@@ -156,132 +160,199 @@ export default function PrepareReports() {
     axios.get(`${JSON_CONST.DB_URL}option/list`)
      .then((response) => {
        setUSERLIST(response.data)
+       setFilteredData(response.data)
      })
      .catch((error) => {
        console.log(error);
      });
  
- }, [])
+  }, [])
+
+
+  const SearchStyle = styled(OutlinedInput)(({ theme }) => ({
+    width: 240,
+    transition: theme.transitions.create(['box-shadow', 'width'], {
+      easing: theme.transitions.easing.easeInOut,
+      duration: theme.transitions.duration.shorter,
+    }),
+    '&.Mui-focused': { width: 320, boxShadow: theme.customShadows.z8 },
+    '& fieldset': {
+      borderWidth: `1px !important`,
+      borderColor: `${theme.palette.grey[500_32]} !important`,
+    },
+  }));
+
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredData, setFilteredData] = useState([]);
+
+  const handleSearch = query => {
+    const filtered = filteredUsers.filter(item => {
+      const searchString = `${item.reciptDate} ${item.fileNo} ${item.bankName.name} ${item.branchName.name} ${item.email} ${item.phoneNo}`.toLowerCase();
+      return searchString.includes(query.toLowerCase());
+    });
+
+    setFilteredData(filtered);
+  };
+
+  const handleInputChange = e => {
+    const query = e.target.value;
+    setSearchQuery(query);
+
+    if (query === '') {
+      setFilteredData(filteredUsers);
+    } else {
+      handleSearch(query);
+    }
+  };
+
+  const [isLoading, setIsLoading] = useState(true);
+
+
+  useEffect(() => {
+    // Simulating data fetching or processing delay
+    const delay = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(delay);
+  }, [filteredData])
 
   return (
     <Page title="Prepare Reports">
-      <Container maxWidth="">
-        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-          <Typography variant="h4" gutterBottom>
-          Prepare Reports
-          </Typography>
-          <Button variant="contained" onClick={() => redirectPage('prepareReports/newEntry/0')} startIcon={<Iconify icon="eva:plus-fill" />}>
-            New Entry
-          </Button>
-        </Stack>
-        {/* <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-          <Button variant="outlined" color="info" onClick={() => redirectPage('homepage')} startIcon={<Iconify icon="akar-icons:arrow-back" />}>
-            Dashboard
-          </Button>
-        </Stack> */}
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <Container maxWidth="">
+          <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+            <Typography variant="h4" gutterBottom>
+            Prepare Reports
+            </Typography>
+            <Button variant="contained" onClick={() => redirectPage('prepareReports/newEntry/0')} startIcon={<Iconify icon="eva:plus-fill" />}>
+              New Entry
+            </Button>
+          </Stack>
+          {/* <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+            <Button variant="outlined" color="info" onClick={() => redirectPage('homepage')} startIcon={<Iconify icon="akar-icons:arrow-back" />}>
+              Dashboard
+            </Button>
+          </Stack> */}
 
-        <Card sx={{ width: '100%' }}>
-          <UserListToolbar selected={selected} data={USERLIST} searchName={"Prepare Reports"} numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
+          <Card sx={{ width: '100%' }}>
+            {/* <UserListToolbar selected={selected} data={USERLIST} searchName={"Prepare Reports"} numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} /> */}
 
-          <Scrollbar>
-            <TableContainer sx={{ minWidth: 100}}>
-              <Table>
-                <UserListHead
-                  order={order}
-                  orderBy={orderBy}
-                  headLabel={TABLE_HEAD}
-                  rowCount={USERLIST.length}
-                  numSelected={selected.length}
-                  onRequestSort={handleRequestSort}
-                  onSelectAllClick={handleSelectAllClick}
-                />
-                <TableBody>
-                  {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { id, bank, branch, contactPerson, address, email, phoneOne, status, avatarUrl } = row;
-                    const isItemSelected = selected.indexOf(bank) !== -1;
+            <SearchStyle
+              style={{marginTop: '20px', marginLeft: '20px'}}
+              value={searchQuery}
+              onChange={handleInputChange}
+              autoFocus
+              // eslint-disable-next-line no-template-curly-in-string
+              placeholder={`Search ...`}
+              startAdornment={
+                <InputAdornment position="start">
+                  <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled', width: 20, height: 20 }} />
+                </InputAdornment>
+              }
+            />
+            <Scrollbar>
+              <TableContainer sx={{ minWidth: 100}}>
+                <Table>
+                  <UserListHead
+                    order={order}
+                    orderBy={orderBy}
+                    headLabel={TABLE_HEAD}
+                    rowCount={USERLIST.length}
+                    numSelected={selected.length}
+                    onRequestSort={handleRequestSort}
+                    onSelectAllClick={handleSelectAllClick}
+                  />
+                  <TableBody>
+                    {filteredData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+                      const { id, bank, branch, contactPerson, address, email, phoneOne, status, avatarUrl } = row;
+                      const isItemSelected = selected.indexOf(bank) !== -1;
 
-                    return (
-                      <TableRow
-                        hover
-                        key={id}
-                        tabIndex={-1}
-                        role="checkbox"
-                        selected={isItemSelected}
-                        aria-checked={isItemSelected}
-                      >
-                        {/* <TableCell padding="checkbox" /> */}
+                      return (
+                        <TableRow
+                          hover
+                          key={id}
+                          tabIndex={-1}
+                          role="checkbox"
+                          selected={isItemSelected}
+                          aria-checked={isItemSelected}
+                        >
+                          {/* <TableCell padding="checkbox" /> */}
 
-                        <TableCell align="left">{id}</TableCell>
+                          <TableCell align="left">{id}</TableCell>
 
-                        <TableCell component="th" scope="row" padding="none">
-                          <Stack direction="row" alignItems="center" spacing={2}>
-                            {typeof avatarUrl !== "undefined"? <Avatar alt={bank} src={avatarUrl} /> : null}
-                            <Typography variant="subtitle2" noWrap>
-                              {row.bankName.name}
-                            </Typography>
-                          </Stack>
-                        </TableCell>
-                        
-                        <TableCell component="th" scope="row" padding="none">
-                          <Stack direction="row" alignItems="center" spacing={2}>
-                            <Typography variant="subtitle2" noWrap>
-                              {row.branchName.name}
-                            </Typography>
-                          </Stack>
-                        </TableCell>
-                        
-                        <TableCell component="th" scope="row" padding="none">
-                          <Stack direction="row" alignItems="center" spacing={2}>
-                            <Typography variant="subtitle2" noWrap>
-                              {email}
-                            </Typography>
-                          </Stack>
-                        </TableCell>
+                          <TableCell component="th" scope="row" padding="none">
+                            <Stack direction="row" alignItems="center" spacing={2}>
+                              {typeof avatarUrl !== "undefined"? <Avatar alt={bank} src={avatarUrl} /> : null}
+                              <Typography variant="subtitle2" noWrap>
+                                {row.bankName.name}
+                              </Typography>
+                            </Stack>
+                          </TableCell>
+                          
+                          <TableCell component="th" scope="row" padding="none">
+                            <Stack direction="row" alignItems="center" spacing={2}>
+                              <Typography variant="subtitle2" noWrap>
+                                {row.branchName.name}
+                              </Typography>
+                            </Stack>
+                          </TableCell>
+                          
+                          <TableCell component="th" scope="row" padding="none">
+                            <Stack direction="row" alignItems="center" spacing={2}>
+                              <Typography variant="subtitle2" noWrap>
+                                {email}
+                              </Typography>
+                            </Stack>
+                          </TableCell>
 
-                        <TableCell align="left">
-                          <Label variant="ghost" color={status === 'false' ? 'error' : 'success'}>
-                            {sentenceCase( status === 'true' ? 'active' : 'in active')}
-                          </Label>
-                        </TableCell>
+                          <TableCell align="left">
+                            <Label variant="ghost" color={status === 'false' ? 'error' : 'success'}>
+                              {sentenceCase( status === 'true' ? 'active' : 'in active')}
+                            </Label>
+                          </TableCell>
 
-                        <TableCell align="right">
-                          <UserMoreMenu urlTo={'/app/option/prepareReports/newEntry/'} data={row} dataID={id} deleteURL={'option/delete/'} />
+                          <TableCell align="right">
+                            <UserMoreMenu urlTo={'/app/option/prepareReports/newEntry/'} data={row} dataID={id} deleteURL={'option/delete/'} />
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                    {emptyRows > 0 && (
+                      <TableRow style={{ height: 53 * emptyRows }}>
+                        <TableCell colSpan={6} />
+                      </TableRow>
+                    )}
+                  </TableBody>
+
+                  {/* Check For No Search Found  */}
+                  {isUserNotFound && (
+                    <TableBody>
+                      <TableRow>
+                        <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
+                          <SearchNotFound searchQuery={filterName} />
                         </TableCell>
                       </TableRow>
-                    );
-                  })}
-                  {emptyRows > 0 && (
-                    <TableRow style={{ height: 53 * emptyRows }}>
-                      <TableCell colSpan={6} />
-                    </TableRow>
+                    </TableBody>
                   )}
-                </TableBody>
+                </Table>
+              </TableContainer>
+            </Scrollbar>
 
-                {/* Check For No Search Found  */}
-                {isUserNotFound && (
-                  <TableBody>
-                    <TableRow>
-                      <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
-                        <SearchNotFound searchQuery={filterName} />
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                )}
-              </Table>
-            </TableContainer>
-          </Scrollbar>
-
-          <TablePagination
-            rowsPerPageOptions={[10, 25, 50, 100, 500, 1000]}
-            component="div"
-            count={USERLIST.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
-        </Card>
-      </Container>
+            <TablePagination
+              rowsPerPageOptions={[10, 25, 50, 100, 500, 1000]}
+              component="div"
+              count={USERLIST.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+            />
+          </Card>
+        </Container>
+      )}
     </Page>
   );
 }

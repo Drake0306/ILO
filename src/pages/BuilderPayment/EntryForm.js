@@ -23,6 +23,7 @@ import Page from '../../components/Page';
 import Iconify from '../../components/Iconify';
 import JSON_CONST from '../../components/CONSTVALUE.json';
 import '../../styles.css';
+import Loader from '../Loader/Loader';
 // ----------------------------------------------------------------------
 
 export default function EntryFormBF(props) {
@@ -247,8 +248,23 @@ export default function EntryFormBF(props) {
     navigate(`/app/${url}`, { replace: true });
   };
 
+  // Loader
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulating data fetching or processing delay
+    const delay = setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+
+    return () => clearTimeout(delay);
+  }, [])
+
   return (
     <Page title="Builer Payment">
+      {isLoading ? (
+        <Loader />
+      ) : (
       <Container maxWidth="xl" className="container-custom">
         {/* <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
@@ -546,7 +562,7 @@ export default function EntryFormBF(props) {
                     onChange={onChangeFields}
                   />
                 }
-                label="Status"
+                label="Pending"
               />
             </Grid>
 
@@ -563,6 +579,7 @@ export default function EntryFormBF(props) {
         </Card>
         </form>
       </Container>
+      )}
     </Page>
   );
 }

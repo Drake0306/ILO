@@ -22,6 +22,7 @@ import { FormProvider, RHFTextField, RHFCheckbox } from '../../../components/hoo
 import Page from '../../../components/Page';
 import Iconify from '../../../components/Iconify';
 import JSON_CONST from '../../../components/CONSTVALUE.json';
+import Loader from '../../Loader/Loader';
 
 // ----------------------------------------------------------------------
 
@@ -297,525 +298,540 @@ export default function EntryFormPR(props) {
     navigate(`/app/option/${url}`, { replace: true });
   };
 
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulating data fetching or processing delay
+    const delay = setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+
+    return () => clearTimeout(delay);
+  }, [])
+
   return (
     <Page title="Prepare Reports">
-      <Container maxWidth="xl">
-        {/* <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-          <Typography variant="h4" gutterBottom>
-          Prepare Reports
-          </Typography>
-          <Button variant="contained" color="secondary" onClick={() => redirectPage('')} startIcon={<Iconify icon="carbon:list-boxes" />}>
-            Home
-          </Button>
-        </Stack> */}
-        {/* <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-          <Button variant="outlined" color="info" onClick={() => redirectPage('prepareReports')} startIcon={<Iconify icon="akar-icons:arrow-back" />}>
-            View List
-          </Button>
-        </Stack> */}
-        <form methods="post" onSubmit={onSubmit}>
-        <Card>
-          <Grid container alignItems="center" paddingLeft={10} paddingBottom={10} paddingRight={10} paddingTop={5} spacing={3}>
-            <Grid mt={2} mb={2} item xs={12} sm={12} md={12} lg={12}>
-              <Typography variant="h4" gutterBottom>
-                Prepare Reports |
-                <Typography ml={1} variant="overline" gutterBottom>
-                  Details <Iconify icon="bi:arrow-down" />
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <Container maxWidth="xl">
+          {/* <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+            <Typography variant="h4" gutterBottom>
+            Prepare Reports
+            </Typography>
+            <Button variant="contained" color="secondary" onClick={() => redirectPage('')} startIcon={<Iconify icon="carbon:list-boxes" />}>
+              Home
+            </Button>
+          </Stack> */}
+          {/* <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+            <Button variant="outlined" color="info" onClick={() => redirectPage('prepareReports')} startIcon={<Iconify icon="akar-icons:arrow-back" />}>
+              View List
+            </Button>
+          </Stack> */}
+          <form methods="post" onSubmit={onSubmit}>
+          <Card>
+            <Grid container alignItems="center" paddingLeft={10} paddingBottom={10} paddingRight={10} paddingTop={5} spacing={3}>
+              <Grid mt={2} mb={2} item xs={12} sm={12} md={12} lg={12}>
+                <Typography variant="h4" gutterBottom>
+                  Prepare Reports |
+                  <Typography ml={1} variant="overline" gutterBottom>
+                    Details <Iconify icon="bi:arrow-down" />
+                  </Typography>
                 </Typography>
-              </Typography>
-              
-            </Grid>
-            <Grid item xs={12} sm={12} md={3} lg={3}>
-              <TextField
-                onChange={onChangeFields}
-                fullWidth
-                value={fromData.reciptDate}
-                required
-                name="reciptDate"
-                label="Receipt Date"
-                type="date"
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                autoFocus
-              />
-            </Grid>
-            <Grid item xs={12} sm={12} md={2} lg={2}>
-              <TextField
-                onChange={onChangeFields}
-                fullWidth
-                value={fromData.bankRefNo}
-                name="bankRefNo" 
-                label="Bank Ref No"
-              />
-            </Grid>
-            <Grid item xs={12} sm={12} md={3} lg={3}>
-              <FormControl fullWidth>
-                <InputLabel id="Bank-select-label">Bank</InputLabel>
-                <Select
-                  labelId="Bank-select-label"
-                  id="Bank-select"
-                  value={fromData.bank}
-                  label="bank"
-                  name="bank"  
+                
+              </Grid>
+              <Grid item xs={12} sm={12} md={3} lg={3}>
+                <TextField
+                  onChange={onChangeFields}
+                  fullWidth
+                  value={fromData.reciptDate}
                   required
-                  fullWidth
+                  name="reciptDate"
+                  label="Receipt Date"
+                  type="date"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  autoFocus
+                />
+              </Grid>
+              <Grid item xs={12} sm={12} md={2} lg={2}>
+                <TextField
                   onChange={onChangeFields}
-                >
-                  {fromDataAutoFill.bankList.map((option) => (<MenuItem key={option.id} value={option.id}>{option.name}</MenuItem>))}
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={12} md={4} lg={4}>
-              <FormControl fullWidth>
-                <InputLabel id="Branch-select-label">Branch</InputLabel>
-                <Select
-                  labelId="Branch-select-label"
-                  id="Branch-select"
-                  value={fromData.branch}
-                  label="branch"
-                  name="branch"  
                   fullWidth
-                  required
-                  onChange={onChangeFields}
-                >
-                  {fromDataAutoFill.branchList.map((option) => (<MenuItem key={option.id} value={option.id}>{option.name}</MenuItem>))}
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={12} md={3} lg={3}>
-              <TextField
-                onChange={onChangeFields}
-                fullWidth
-                value={fromData.apsNo}
-                name="apsNo"  
-                label="APS No"
-              />
-            </Grid>
-            <Grid item xs={12} sm={12} md={3} lg={3}>
-              <FormControl fullWidth>
-                <InputLabel id="report-select-label">Report</InputLabel>
-                <Select
-                  labelId="report-select-label"
-                  id="report-select"
-                  value={fromData.report}
-                  label="report"
-                  name="report"  
-                  fullWidth
-                  onChange={onChangeFields}
-                >
-                  <MenuItem value='Leagal Report'>Leagal Report</MenuItem>
-                  <MenuItem value='Vetting Report'>Vetting Report</MenuItem>
-                  <MenuItem value='TSR'>TSR</MenuItem>
-                  <MenuItem value='Opinion'>Opinion</MenuItem>
-                  <MenuItem value='ODV'>ODV</MenuItem>
-                  <MenuItem value='Project'>Project</MenuItem>
-                  <MenuItem value='Certified Copy'>Certified Copy</MenuItem>
-                  <MenuItem value='ROC Search'>ROC Search</MenuItem>
-                  <MenuItem value='Others'>Others</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={12} md={3} lg={3}>
-              <TextField
-                onChange={onChangeFields}
-                fullWidth
-                value={fromData.customerBorrower}
-                name="customerBorrower" 
-                label="Customer Borrower"
-              />
-            </Grid>
-            <Grid item xs={12} sm={12} md={3} lg={3}>
-              <TextField
-                onChange={onChangeFields}
-                fullWidth
-                value={fromData.uid}
-                name="uid"  
-                label="UID No"
-                required
-              />
-            </Grid>
-            
-            <Grid item xs={12} sm={12} md={3} lg={3}>
-              <TextField
-                onChange={onChangeFields}
-                fullWidth
-                value={fromData.repNo}
-                name="repNo" 
-                label="Rep No"
-              />
-            </Grid>
-            <Grid item xs={12} sm={12} md={3} lg={3}>
-              <TextField
-                onChange={onChangeFields}
-                fullWidth
-                value={fromData.profCharges}
-                name="profCharges" 
-                label="Prof Charges"
-              />
-            </Grid>
-            <Grid item xs={12} sm={12} md={3} lg={3}>
-              <TextField
-                onChange={onChangeFields}
-                fullWidth
-                value={fromData.inspectionReceipt}
-                name="inspectionReceipt" 
-                label="Inspection Receipt"
-              />
-            </Grid>
-            <Grid item xs={12} sm={12} md={3} lg={3}>
-              <TextField
-                onChange={onChangeFields}
-                fullWidth
-                value={fromData.outOfPocketExp}
-                name="outOfPocketExp" 
-                label="Out Of Pocket Exp"
-              />
-            </Grid>
-            <Grid item xs={12} sm={12} md={4} lg={4}>
-              <TextField
-                onChange={onChangeFields}
-                fullWidth
-                value={fromData.searchExp}
-                name="searchExp" 
-                label="Search Exp"
-              />
-            </Grid>
-
-            <Grid mt={0} mb={0} item xs={12} sm={12} md={12} lg={12}>
-              <Typography variant="overline" gutterBottom>
-              Property Address <Iconify icon="bi:arrow-down" />
-              </Typography>
-            </Grid>
-
-            <Grid item xs={12} sm={12} md={3} lg={3}>
-              <TextField
-                onChange={onChangeFields}
-                fullWidth
-                value={fromData.flatHousePlotNo}
-                name="flatHousePlotNo" 
-                label="Flat/House/Plot No"
-              />
-            </Grid>
-            <Grid item xs={12} sm={12} md={3} lg={3}>
-              <FormControl fullWidth>
-                <InputLabel id="roofRight-select-label">Roof Right</InputLabel>
-                <Select
-                  labelId="roofRight-select-label"
-                  id="roofRight-select"
-                  value={fromData.roofRight}
-                  label="roofRight"
-                  name="roofRight"  
-                  fullWidth
-                  onChange={onChangeFields}
-                >
-                  <MenuItem value='With Roof Right'>With Roof Right</MenuItem>
-                  <MenuItem value='Without Roof Right'>Without Roof Right</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-
-            <Grid item xs={12} sm={12} md={3} lg={3}>
-              <TextField
-                onChange={onChangeFields}
-                fullWidth
-                value={fromData.floor}
-                name="floor" 
-                label="Floor"
-              />
-            </Grid>
-            <Grid item xs={12} sm={12} md={3} lg={3}>
-              <TextField
-                onChange={onChangeFields}
-                fullWidth
-                value={fromData.RepRefNo}
-                name="RepRefNo" 
-                label="Rep Ref No"
-              />
-            </Grid>
-            <Grid item xs={12} sm={12} md={3} lg={3}>
-              <TextField
-                onChange={onChangeFields}
-                fullWidth
-                value={fromData.streetSectorLocal}
-                name="streetSectorLocal" 
-                label="Street/Sector/Locality"
-              />
-            </Grid>
-            <Grid item xs={12} sm={12} md={3} lg={3}>
-              <TextField
-                onChange={onChangeFields}
-                fullWidth
-                value={fromData.referBy}
-                name="referBy" 
-                label="ReferBy"
-              />
-            </Grid>
-            <Grid item xs={12} sm={12} md={3} lg={3}>
-              <TextField
-                onChange={onChangeFields}
-                fullWidth
-                value={fromData.city}
-                name="city" 
-                label="City"
-              />
-            </Grid>
-            <Grid item xs={12} sm={12} md={3} lg={3}>
-              <TextField
-                onChange={onChangeFields}
-                fullWidth
-                value={fromData.reportDate}
-                name="reportDate" 
-                label="Report Date"
-                type="date"
-                InputLabelProps={{
-                  shrink: true,
-                }}
-              />
-            </Grid>
-            <Grid item xs={12} sm={12} md={3} lg={3}>
-              <TextField
-                onChange={onChangeFields}
-                fullWidth
-                value={fromData.phoneNo}
-                name="phoneNo" 
-                label="Phone No"
-              />
-            </Grid>
-
-            <Grid item xs={12} sm={12} md={3} lg={3}>
-              <FormControl fullWidth>
-                <InputLabel id="reportSentThru-select-label">Report Sent Through</InputLabel>
-                <Select
-                  labelId="reportSentThru-select-label"
-                  id="reportSentThru-select"
-                  value={fromData.reportSentThru}
-                  label="reportSentThru"
-                  name="reportSentThru"  
-                  fullWidth
-                  required
-                  onChange={onChangeFields}
-                >
-                  {fromDataAutoFill.handledByList.map((option) => (<MenuItem key={option.id} value={option.id}>{option.name}</MenuItem>))}
-                </Select>
-              </FormControl>
-            </Grid>
-
-            <Grid item xs={12} sm={12} md={3} lg={3}>
-              <TextField
-                onChange={onChangeFields}
-                fullWidth
-                value={fromData.email}
-                name="email" 
-                label="Email"
-              />
-            </Grid>
-
-            <Grid item xs={12} sm={12} md={3} lg={3}>
-              <TextField
-                onChange={onChangeFields}
-                fullWidth
-                value={fromData.reportSentOn}
-                name="reportSentOn" 
-                label="Report Sent On"
-                type="date"
-                InputLabelProps={{
-                  shrink: true,
-                }}
-              />
-            </Grid>
-            
-            <Grid item xs={12} sm={12} md={3} lg={3}>
-              <TextField
-                onChange={onChangeFields}
-                fullWidth
-                value={fromData.receivedBy}
-                name="receivedBy" 
-                label="Received By"
-              />
-            </Grid>
-
-            <Grid item xs={12} sm={12} md={3} lg={3}>
-              <FormControl fullWidth>
-                <InputLabel id="location-select-label">Location</InputLabel>
-                <Select
-                  labelId="location-select-label"
-                  id="location-select"
-                  value={fromData.location}
-                  label="location"
-                  name="location"  
-                  fullWidth
-                  onChange={onChangeFields}
-                >
-                  <MenuItem value='Delhi'>Delhi</MenuItem>
-                  <MenuItem value='Delhi-NC'>Delhi-NC</MenuItem>
-                  <MenuItem value='NCR'>NCR</MenuItem>
-                  <MenuItem value='Bahadurgarh'>Bahadurgarh</MenuItem>
-                  <MenuItem value='Sohna'>Sohna</MenuItem>
-                  <MenuItem value='Faridabad'>Faridabad</MenuItem>
-                  <MenuItem value='Gurgaon'>Gurgaon</MenuItem>
-                  <MenuItem value='Dadri'>Dadri</MenuItem>
-                  <MenuItem value='Noida'>Noida</MenuItem>
-                  <MenuItem value='Greater Noida'>Greater Noida</MenuItem>
-                  <MenuItem value='Others'>Others</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={12} md={3} lg={3}>
-              <FormControl fullWidth>
-                <InputLabel id="collectedBy-select-label">Collected By</InputLabel>
-                <Select
-                  labelId="collectedBy-select-label"
-                  id="collectedBy-select"
-                  value={fromData.collectedBy}
-                  label="collectedBy"
-                  name="collectedBy"  
-                  fullWidth
-                  required
-                  onChange={onChangeFields}
-                >
-                  {fromDataAutoFill.handledByList.map((option) => (<MenuItem key={option.id} value={option.id}>{option.name}</MenuItem>))}
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={12} md={3} lg={3}>
-              <FormControl fullWidth>
-                <InputLabel id="preparedBy-select-label">Prepared By</InputLabel>
-                <Select
-                  labelId="preparedBy-select-label"
-                  id="preparedBy-select"
-                  value={fromData.preparedBy}
-                  label="preparedBy"
-                  name="preparedBy"  
-                  fullWidth
-                  required
-                  onChange={onChangeFields}
-                >
-                  {fromDataAutoFill.handledByList.map((option) => (<MenuItem key={option.id} value={option.id}>{option.name}</MenuItem>))}
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={12} md={3} lg={3}>
-              <FormControl fullWidth>
-                <InputLabel id="nature-select-label">Nature</InputLabel>
-                <Select
-                  labelId="nature-select-label"
-                  id="nature-select"
-                  value={fromData.nature}
-                  label="nature"
-                  name="nature"  
-                  fullWidth
-                  onChange={onChangeFields}
-                >
-                  <MenuItem value='Purchase'>Purchase</MenuItem>
-                  <MenuItem value='BT'>BT</MenuItem>
-                  <MenuItem value='Non BT'>Non BT</MenuItem>
-                  <MenuItem value='LAP'>LAP</MenuItem>
-                  <MenuItem value='Re-Finance'>Re-Finance</MenuItem>
-                  <MenuItem value='Collateral'>Collateral</MenuItem>
-                  <MenuItem value='Lease'>Lease</MenuItem>
-                  <MenuItem value='Online'>Online</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={12} md={3} lg={3}>
-              <FormControl fullWidth>
-                <InputLabel id="statusValue-select-label">Status</InputLabel>
-                <Select
-                  labelId="statusValue-select-label"
-                  id="statusValue-select"
-                  value={fromData.statusValue}
-                  label="statusValue"
-                  name="statusValue"  
-                  fullWidth
-                  onChange={onChangeFields}
-                >
-                  <MenuItem value='Pending'>Pending</MenuItem>
-                  <MenuItem value='Positive'>Positive</MenuItem>
-                  <MenuItem value='Negative'>Negative</MenuItem>
-                  <MenuItem value='Returned'>Returned</MenuItem>
-                  <MenuItem value='Hold'>Hold</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-
-            <Grid item xs={12} sm={12} md={6} lg={6}>
-              <TextField
-                onChange={onChangeFields}
-                fullWidth
-                value={fromData.remarks}
-                name="remarks" 
-                label="Remarks"
-                multiline
-                rows={2}  
-                required
-              />
-            </Grid>
-            <Grid item xs={12} sm={12} md={6} lg={6}>
-              <TextField
-                onChange={onChangeFields}
-                fullWidth
-                value={fromData.fallowUp}
-                name="fallowUp" 
-                label="Fallow UP"
-                multiline
-                rows={2}  
-                required
-              />
-            </Grid>
-
-            <Grid item xs={12} sm={12} md={6} lg={6}>
-              <TextField
-                onChange={onChangeFields}
-                fullWidth
-                value={fromData.fileUpload}
-                name="fileUpload" 
-                label="file Upload"
-                type="file"
-                InputLabelProps={{
-                  shrink: true,
-                }}
-              />
-            </Grid>
-
-            
-
-            
-
-
-            <Grid item xs={12} sm={1} md={1} lg={1}>
-              <LoadingButton fullWidth size="large" type="submit" variant="outlined" color="info" loading={isSubmitting}>
-                Save
-              </LoadingButton>
-            </Grid>
-            
-            <Grid item xs={12} sm={12} md={12} lg={12}>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    name="status"
-                    checked={fromData.status}
-                    value={fromData.status}
+                  value={fromData.bankRefNo}
+                  name="bankRefNo" 
+                  label="Bank Ref No"
+                />
+              </Grid>
+              <Grid item xs={12} sm={12} md={3} lg={3}>
+                <FormControl fullWidth>
+                  <InputLabel id="Bank-select-label">Bank</InputLabel>
+                  <Select
+                    labelId="Bank-select-label"
+                    id="Bank-select"
+                    value={fromData.bank}
+                    label="bank"
+                    name="bank"  
+                    required
+                    fullWidth
                     onChange={onChangeFields}
-                  />
-                }
-                label="Status"
-              />
-            </Grid>
+                  >
+                    {fromDataAutoFill.bankList.map((option) => (<MenuItem key={option.id} value={option.id}>{option.name}</MenuItem>))}
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={12} md={4} lg={4}>
+                <FormControl fullWidth>
+                  <InputLabel id="Branch-select-label">Branch</InputLabel>
+                  <Select
+                    labelId="Branch-select-label"
+                    id="Branch-select"
+                    value={fromData.branch}
+                    label="branch"
+                    name="branch"  
+                    fullWidth
+                    required
+                    onChange={onChangeFields}
+                  >
+                    {fromDataAutoFill.branchList.map((option) => (<MenuItem key={option.id} value={option.id}>{option.name}</MenuItem>))}
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={12} md={3} lg={3}>
+                <TextField
+                  onChange={onChangeFields}
+                  fullWidth
+                  value={fromData.apsNo}
+                  name="apsNo"  
+                  label="APS No"
+                />
+              </Grid>
+              <Grid item xs={12} sm={12} md={3} lg={3}>
+                <FormControl fullWidth>
+                  <InputLabel id="report-select-label">Report</InputLabel>
+                  <Select
+                    labelId="report-select-label"
+                    id="report-select"
+                    value={fromData.report}
+                    label="report"
+                    name="report"  
+                    fullWidth
+                    onChange={onChangeFields}
+                  >
+                    <MenuItem value='Leagal Report'>Leagal Report</MenuItem>
+                    <MenuItem value='Vetting Report'>Vetting Report</MenuItem>
+                    <MenuItem value='TSR'>TSR</MenuItem>
+                    <MenuItem value='Opinion'>Opinion</MenuItem>
+                    <MenuItem value='ODV'>ODV</MenuItem>
+                    <MenuItem value='Project'>Project</MenuItem>
+                    <MenuItem value='Certified Copy'>Certified Copy</MenuItem>
+                    <MenuItem value='ROC Search'>ROC Search</MenuItem>
+                    <MenuItem value='Others'>Others</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={12} md={3} lg={3}>
+                <TextField
+                  onChange={onChangeFields}
+                  fullWidth
+                  value={fromData.customerBorrower}
+                  name="customerBorrower" 
+                  label="Customer Borrower"
+                />
+              </Grid>
+              <Grid item xs={12} sm={12} md={3} lg={3}>
+                <TextField
+                  onChange={onChangeFields}
+                  fullWidth
+                  value={fromData.uid}
+                  name="uid"  
+                  label="UID No"
+                  required
+                />
+              </Grid>
+              
+              <Grid item xs={12} sm={12} md={3} lg={3}>
+                <TextField
+                  onChange={onChangeFields}
+                  fullWidth
+                  value={fromData.repNo}
+                  name="repNo" 
+                  label="Rep No"
+                />
+              </Grid>
+              <Grid item xs={12} sm={12} md={3} lg={3}>
+                <TextField
+                  onChange={onChangeFields}
+                  fullWidth
+                  value={fromData.profCharges}
+                  name="profCharges" 
+                  label="Prof Charges"
+                />
+              </Grid>
+              <Grid item xs={12} sm={12} md={3} lg={3}>
+                <TextField
+                  onChange={onChangeFields}
+                  fullWidth
+                  value={fromData.inspectionReceipt}
+                  name="inspectionReceipt" 
+                  label="Inspection Receipt"
+                />
+              </Grid>
+              <Grid item xs={12} sm={12} md={3} lg={3}>
+                <TextField
+                  onChange={onChangeFields}
+                  fullWidth
+                  value={fromData.outOfPocketExp}
+                  name="outOfPocketExp" 
+                  label="Out Of Pocket Exp"
+                />
+              </Grid>
+              <Grid item xs={12} sm={12} md={4} lg={4}>
+                <TextField
+                  onChange={onChangeFields}
+                  fullWidth
+                  value={fromData.searchExp}
+                  name="searchExp" 
+                  label="Search Exp"
+                />
+              </Grid>
 
-            <Grid mt={2} item xs={12} sm={12} md={12} lg={12}>
-              <Typography variant="caption" gutterBottom>
-                * Bank Name is required <br />
-                * Address is required <br />
-                * Only Text - numbers are not allowed in required fields<br />
-                * To go back to page click on view list<br />
-              </Typography>
-            </Grid>
+              <Grid mt={0} mb={0} item xs={12} sm={12} md={12} lg={12}>
+                <Typography variant="overline" gutterBottom>
+                Property Address <Iconify icon="bi:arrow-down" />
+                </Typography>
+              </Grid>
 
-          </Grid>
-        </Card>
-        </form>
-      </Container>
+              <Grid item xs={12} sm={12} md={3} lg={3}>
+                <TextField
+                  onChange={onChangeFields}
+                  fullWidth
+                  value={fromData.flatHousePlotNo}
+                  name="flatHousePlotNo" 
+                  label="Flat/House/Plot No"
+                />
+              </Grid>
+              <Grid item xs={12} sm={12} md={3} lg={3}>
+                <FormControl fullWidth>
+                  <InputLabel id="roofRight-select-label">Roof Right</InputLabel>
+                  <Select
+                    labelId="roofRight-select-label"
+                    id="roofRight-select"
+                    value={fromData.roofRight}
+                    label="roofRight"
+                    name="roofRight"  
+                    fullWidth
+                    onChange={onChangeFields}
+                  >
+                    <MenuItem value='With Roof Right'>With Roof Right</MenuItem>
+                    <MenuItem value='Without Roof Right'>Without Roof Right</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+
+              <Grid item xs={12} sm={12} md={3} lg={3}>
+                <TextField
+                  onChange={onChangeFields}
+                  fullWidth
+                  value={fromData.floor}
+                  name="floor" 
+                  label="Floor"
+                />
+              </Grid>
+              <Grid item xs={12} sm={12} md={3} lg={3}>
+                <TextField
+                  onChange={onChangeFields}
+                  fullWidth
+                  value={fromData.RepRefNo}
+                  name="RepRefNo" 
+                  label="Rep Ref No"
+                />
+              </Grid>
+              <Grid item xs={12} sm={12} md={3} lg={3}>
+                <TextField
+                  onChange={onChangeFields}
+                  fullWidth
+                  value={fromData.streetSectorLocal}
+                  name="streetSectorLocal" 
+                  label="Street/Sector/Locality"
+                />
+              </Grid>
+              <Grid item xs={12} sm={12} md={3} lg={3}>
+                <TextField
+                  onChange={onChangeFields}
+                  fullWidth
+                  value={fromData.referBy}
+                  name="referBy" 
+                  label="ReferBy"
+                />
+              </Grid>
+              <Grid item xs={12} sm={12} md={3} lg={3}>
+                <TextField
+                  onChange={onChangeFields}
+                  fullWidth
+                  value={fromData.city}
+                  name="city" 
+                  label="City"
+                />
+              </Grid>
+              <Grid item xs={12} sm={12} md={3} lg={3}>
+                <TextField
+                  onChange={onChangeFields}
+                  fullWidth
+                  value={fromData.reportDate}
+                  name="reportDate" 
+                  label="Report Date"
+                  type="date"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={12} md={3} lg={3}>
+                <TextField
+                  onChange={onChangeFields}
+                  fullWidth
+                  value={fromData.phoneNo}
+                  name="phoneNo" 
+                  label="Phone No"
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={12} md={3} lg={3}>
+                <FormControl fullWidth>
+                  <InputLabel id="reportSentThru-select-label">Report Sent Through</InputLabel>
+                  <Select
+                    labelId="reportSentThru-select-label"
+                    id="reportSentThru-select"
+                    value={fromData.reportSentThru}
+                    label="reportSentThru"
+                    name="reportSentThru"  
+                    fullWidth
+                    required
+                    onChange={onChangeFields}
+                  >
+                    {fromDataAutoFill.handledByList.map((option) => (<MenuItem key={option.id} value={option.id}>{option.name}</MenuItem>))}
+                  </Select>
+                </FormControl>
+              </Grid>
+
+              <Grid item xs={12} sm={12} md={3} lg={3}>
+                <TextField
+                  onChange={onChangeFields}
+                  fullWidth
+                  value={fromData.email}
+                  name="email" 
+                  label="Email"
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={12} md={3} lg={3}>
+                <TextField
+                  onChange={onChangeFields}
+                  fullWidth
+                  value={fromData.reportSentOn}
+                  name="reportSentOn" 
+                  label="Report Sent On"
+                  type="date"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+              </Grid>
+              
+              <Grid item xs={12} sm={12} md={3} lg={3}>
+                <TextField
+                  onChange={onChangeFields}
+                  fullWidth
+                  value={fromData.receivedBy}
+                  name="receivedBy" 
+                  label="Received By"
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={12} md={3} lg={3}>
+                <FormControl fullWidth>
+                  <InputLabel id="location-select-label">Location</InputLabel>
+                  <Select
+                    labelId="location-select-label"
+                    id="location-select"
+                    value={fromData.location}
+                    label="location"
+                    name="location"  
+                    fullWidth
+                    onChange={onChangeFields}
+                  >
+                    <MenuItem value='Delhi'>Delhi</MenuItem>
+                    <MenuItem value='Delhi-NC'>Delhi-NC</MenuItem>
+                    <MenuItem value='NCR'>NCR</MenuItem>
+                    <MenuItem value='Bahadurgarh'>Bahadurgarh</MenuItem>
+                    <MenuItem value='Sohna'>Sohna</MenuItem>
+                    <MenuItem value='Faridabad'>Faridabad</MenuItem>
+                    <MenuItem value='Gurgaon'>Gurgaon</MenuItem>
+                    <MenuItem value='Dadri'>Dadri</MenuItem>
+                    <MenuItem value='Noida'>Noida</MenuItem>
+                    <MenuItem value='Greater Noida'>Greater Noida</MenuItem>
+                    <MenuItem value='Others'>Others</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={12} md={3} lg={3}>
+                <FormControl fullWidth>
+                  <InputLabel id="collectedBy-select-label">Collected By</InputLabel>
+                  <Select
+                    labelId="collectedBy-select-label"
+                    id="collectedBy-select"
+                    value={fromData.collectedBy}
+                    label="collectedBy"
+                    name="collectedBy"  
+                    fullWidth
+                    required
+                    onChange={onChangeFields}
+                  >
+                    {fromDataAutoFill.handledByList.map((option) => (<MenuItem key={option.id} value={option.id}>{option.name}</MenuItem>))}
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={12} md={3} lg={3}>
+                <FormControl fullWidth>
+                  <InputLabel id="preparedBy-select-label">Prepared By</InputLabel>
+                  <Select
+                    labelId="preparedBy-select-label"
+                    id="preparedBy-select"
+                    value={fromData.preparedBy}
+                    label="preparedBy"
+                    name="preparedBy"  
+                    fullWidth
+                    required
+                    onChange={onChangeFields}
+                  >
+                    {fromDataAutoFill.handledByList.map((option) => (<MenuItem key={option.id} value={option.id}>{option.name}</MenuItem>))}
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={12} md={3} lg={3}>
+                <FormControl fullWidth>
+                  <InputLabel id="nature-select-label">Nature</InputLabel>
+                  <Select
+                    labelId="nature-select-label"
+                    id="nature-select"
+                    value={fromData.nature}
+                    label="nature"
+                    name="nature"  
+                    fullWidth
+                    onChange={onChangeFields}
+                  >
+                    <MenuItem value='Purchase'>Purchase</MenuItem>
+                    <MenuItem value='BT'>BT</MenuItem>
+                    <MenuItem value='Non BT'>Non BT</MenuItem>
+                    <MenuItem value='LAP'>LAP</MenuItem>
+                    <MenuItem value='Re-Finance'>Re-Finance</MenuItem>
+                    <MenuItem value='Collateral'>Collateral</MenuItem>
+                    <MenuItem value='Lease'>Lease</MenuItem>
+                    <MenuItem value='Online'>Online</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={12} md={3} lg={3}>
+                <FormControl fullWidth>
+                  <InputLabel id="statusValue-select-label">Status</InputLabel>
+                  <Select
+                    labelId="statusValue-select-label"
+                    id="statusValue-select"
+                    value={fromData.statusValue}
+                    label="statusValue"
+                    name="statusValue"  
+                    fullWidth
+                    onChange={onChangeFields}
+                  >
+                    <MenuItem value='Pending'>Pending</MenuItem>
+                    <MenuItem value='Positive'>Positive</MenuItem>
+                    <MenuItem value='Negative'>Negative</MenuItem>
+                    <MenuItem value='Returned'>Returned</MenuItem>
+                    <MenuItem value='Hold'>Hold</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+
+              <Grid item xs={12} sm={12} md={6} lg={6}>
+                <TextField
+                  onChange={onChangeFields}
+                  fullWidth
+                  value={fromData.remarks}
+                  name="remarks" 
+                  label="Remarks"
+                  multiline
+                  rows={2}  
+                  required
+                />
+              </Grid>
+              <Grid item xs={12} sm={12} md={6} lg={6}>
+                <TextField
+                  onChange={onChangeFields}
+                  fullWidth
+                  value={fromData.fallowUp}
+                  name="fallowUp" 
+                  label="Fallow UP"
+                  multiline
+                  rows={2}  
+                  required
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={12} md={6} lg={6}>
+                <TextField
+                  onChange={onChangeFields}
+                  fullWidth
+                  value={fromData.fileUpload}
+                  name="fileUpload" 
+                  label="file Upload"
+                  type="file"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+              </Grid>
+
+              
+
+              
+
+
+              <Grid item xs={12} sm={1} md={1} lg={1}>
+                <LoadingButton fullWidth size="large" type="submit" variant="outlined" color="info" loading={isSubmitting}>
+                  Save
+                </LoadingButton>
+              </Grid>
+              
+              <Grid item xs={12} sm={12} md={12} lg={12}>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      name="status"
+                      checked={fromData.status}
+                      value={fromData.status}
+                      onChange={onChangeFields}
+                    />
+                  }
+                  label="Status"
+                />
+              </Grid>
+
+              <Grid mt={2} item xs={12} sm={12} md={12} lg={12}>
+                <Typography variant="caption" gutterBottom>
+                  * Bank Name is required <br />
+                  * Address is required <br />
+                  * Only Text - numbers are not allowed in required fields<br />
+                  * To go back to page click on view list<br />
+                </Typography>
+              </Grid>
+
+            </Grid>
+          </Card>
+          </form>
+        </Container>
+      )}
     </Page>
   );
 }

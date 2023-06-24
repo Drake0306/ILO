@@ -20,6 +20,7 @@ class disbursalRegistration(models.Model):
     sentAt                = models.CharField(max_length=250,blank=True,null=True)
     caseClosed            = models.CharField(max_length=250,blank=True,null=True)
     courierDate           = models.CharField(max_length=250,blank=True,null=True)
+    ackRecived           = models.CharField(max_length=250,blank=True,null=True)
     propertyDetails       = models.CharField(max_length=250,blank=True,null=True)
     deedWriterAdv         = models.CharField(max_length=250,blank=True,null=True)
     handledBy             = models.CharField(max_length=250,blank=True,null=True)
@@ -28,9 +29,13 @@ class disbursalRegistration(models.Model):
     remarks               = models.CharField(max_length=250,blank=True,null=True)
     otherRemarkIfAny      = models.CharField(max_length=250,blank=True,null=True)
     checqueDate           = models.CharField(max_length=250,blank=True,null=True)
+    nextDate              = models.CharField(max_length=250,blank=True,null=True)
     amount                = models.CharField(max_length=250,blank=True,null=True)
     chequeRecivedDate     = models.CharField(max_length=250,blank=True,null=True)
     chequeReturnDate      = models.CharField(max_length=250,blank=True,null=True)
+    ack                   = models.CharField(max_length=250,blank=True,null=True)
+    volNo                 = models.CharField(max_length=250,blank=True,null=True)
+    slNo                  = models.CharField(max_length=250,blank=True,null=True)
     status                = models.CharField(max_length=250, default='true')
 
 class disbursalBT(models.Model):
@@ -46,6 +51,7 @@ class disbursalBT(models.Model):
     docSentToBankDate     = models.CharField(max_length=250,blank=True,null=True)
     sentAt                = models.CharField(max_length=250,blank=True,null=True)
     caseClose             = models.CharField(max_length=250,blank=True,null=True)
+    ackRecived             = models.CharField(max_length=250,blank=True,null=True)
     loanTakenFrom         = models.CharField(max_length=250,blank=True,null=True)
     propertyDetails       = models.CharField(max_length=250,blank=True,null=True)
     handledBy             = models.CharField(max_length=250,blank=True,null=True)
@@ -53,9 +59,13 @@ class disbursalBT(models.Model):
     remarks               = models.CharField(max_length=250,blank=True,null=True)
     otherRemarkIfAny      = models.CharField(max_length=250,blank=True,null=True)
     chequeDate            = models.CharField(max_length=250,blank=True,null=True)
+    nextDate              = models.CharField(max_length=250,blank=True,null=True)
     amount                = models.CharField(max_length=250,blank=True,null=True)
     chequeReceivedDate    = models.CharField(max_length=250,blank=True,null=True)
     chequeReturnDate      = models.CharField(max_length=250,blank=True,null=True)
+    ack                   = models.CharField(max_length=250,blank=True,null=True)
+    volNo                 = models.CharField(max_length=250,blank=True,null=True)
+    slNo                  = models.CharField(max_length=250,blank=True,null=True)
     status                = models.CharField(max_length=250, default='true')
 
 

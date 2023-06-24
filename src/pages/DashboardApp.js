@@ -109,7 +109,7 @@ export default function DashboardApp() {
             <AppWidgetSummary title="BT" total={BT} color="error" icon={'mdi:account-payment-outline'} />
           </Grid>
 
-          <Grid item xs={12} md={6} lg={8}>
+          {/* <Grid item xs={12} md={6} lg={8}>
             <AppWebsiteVisits
               title="Monthly Data"
               subheader=""
@@ -160,7 +160,7 @@ export default function DashboardApp() {
                 theme.palette.chart.yellow[0],
               ]}
             />
-          </Grid>
+          </Grid> */}
 
           {/* <Grid item xs={12} md={6} lg={8}>
             <AppConversionRates

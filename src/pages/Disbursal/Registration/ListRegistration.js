@@ -3,6 +3,8 @@ import { sentenceCase } from 'change-case';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { styled } from '@mui/material/styles';
+
 // material
 import {
   Card,
@@ -18,6 +20,8 @@ import {
   Typography,
   TableContainer,
   TablePagination,
+  OutlinedInput,
+  InputAdornment
 } from '@mui/material';
 // components
 import Page from '../../../components/Page';
@@ -30,6 +34,7 @@ import JSON_CONST from '../../../components/CONSTVALUE.json';
 
 // mock
 import USERLISTDATA from '../../../_mock/user';
+import Loader from '../../Loader/Loader';
 
 // ----------------------------------------------------------------------
 
@@ -155,16 +160,71 @@ export default function ListRegistration() {
      axios.get(`${JSON_CONST.DB_URL}disbursal/registration/list`)
       .then((response) => {
         setUSERLIST(response.data)
+        setFilteredData(response.data)
+
       })
       .catch((error) => {
         console.log(error);
       });
   
   }, [])
+
+
+  const SearchStyle = styled(OutlinedInput)(({ theme }) => ({
+    width: 240,
+    transition: theme.transitions.create(['box-shadow', 'width'], {
+      easing: theme.transitions.easing.easeInOut,
+      duration: theme.transitions.duration.shorter,
+    }),
+    '&.Mui-focused': { width: 320, boxShadow: theme.customShadows.z8 },
+    '& fieldset': {
+      borderWidth: `1px !important`,
+      borderColor: `${theme.palette.grey[500_32]} !important`,
+    },
+  }));
+
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredData, setFilteredData] = useState([]);
+
+  const handleSearch = query => {
+    const filtered = filteredUsers.filter(item => {
+      const searchString = `${item.reciptDate} ${item.fileNo} ${item.bankName.name} ${item.branchName.name} ${item.phone}`.toLowerCase();
+      return searchString.includes(query.toLowerCase());
+    });
+
+    setFilteredData(filtered);
+  };
+
+  const handleInputChange = e => {
+    const query = e.target.value;
+    setSearchQuery(query);
+
+    if (query === '') {
+      setFilteredData(filteredUsers);
+    } else {
+      handleSearch(query);
+    }
+  };
+
+    // Loader
+    const [isLoading, setIsLoading] = useState(true);
+
+
+    useEffect(() => {
+      // Simulating data fetching or processing delay
+      const delay = setTimeout(() => {
+        setIsLoading(false);
+      }, 2000);
+  
+      return () => clearTimeout(delay);
+    }, [filteredData])
   
 
   return (
     <Page title="Registration">
+      {isLoading ? (
+        <Loader />
+      ) : (
       <Container maxWidth="">
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
@@ -181,8 +241,20 @@ export default function ListRegistration() {
         </Stack> */}
 
         <Card sx={{ width: '100%' }}>
-          <UserListToolbar selected={selected} data={USERLIST} searchName={"bank Name"} numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
-
+          {/* <UserListToolbar selected={selected} data={USERLIST} searchName={"bank Name"} numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} /> */}
+          <SearchStyle
+            style={{marginTop: '20px', marginLeft: '20px'}}
+            value={searchQuery}
+            onChange={handleInputChange}
+            autoFocus
+            // eslint-disable-next-line no-template-curly-in-string
+            placeholder={`Search ...`}
+            startAdornment={
+              <InputAdornment position="start">
+                <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled', width: 20, height: 20 }} />
+              </InputAdornment>
+            }
+          />
           <Scrollbar>
             <TableContainer sx={{ minWidth: 100}}>
               <Table>
@@ -196,7 +268,7 @@ export default function ListRegistration() {
                   onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
-                  {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+                  {filteredData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
                     const { id, bank, branch, contactPerson,bankName, branchName, address, email, phoneOne, status, avatarUrl } = row;
                     const isItemSelected = selected.indexOf(bank) !== -1;
 
@@ -300,6 +372,7 @@ export default function ListRegistration() {
           />
         </Card>
       </Container>
+      )}
     </Page>
   );
 }
