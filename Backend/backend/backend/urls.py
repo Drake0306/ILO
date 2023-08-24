@@ -53,6 +53,7 @@ from django.urls import path
 
 from globalMaster import views as masterView
 from builderPayment import views as builderPaymentView
+from format import views as formatAuthorityLettersViewAndDepositOfPayment
 from option import views as optionView
 from disbursal import views as disbursalView
 from authUser import views as auth
@@ -63,6 +64,9 @@ urlpatterns = [
     # auth
     path('api/auth/login', auth.authCheckLogin, name="Login"),
     path('api/auth/userList', auth.authUserList, name="user list"),
+    path('api/auth/userAdd', auth.authUserCreate, name="user Add"),
+    path('api/auth/userUpdate/<int:id>', auth.authUserUpdate, name="user Add"),
+    path('api/auth/userDelete/<int:id>', auth.authUserDelete, name="user Add"),
 
     # BuilderPayment
     path('api/builderPayment/list', builderPaymentView.List, name="builder payment List"),
@@ -90,6 +94,16 @@ urlpatterns = [
     path('api/disbursal/registration/create', disbursalView.disbursalRegistrationCreate, name="disbursal Create"),
     path('api/disbursal/registration/update/<int:id>', disbursalView.disbursalRegistrationUpdate, name="disbursal Update"),
     path('api/disbursal/registration/delete/<int:id>', disbursalView.disbursalRegistrationDelete, name="disbursal Delete"),
+
+    path('api/authorityLetters/registration/list', formatAuthorityLettersViewAndDepositOfPayment.authorityLettersRegistrationList, name="authorityLetters List"),
+    path('api/authorityLetters/registration/create', formatAuthorityLettersViewAndDepositOfPayment.authorityLettersRegistrationCreate, name="authorityLetters Create"),
+    path('api/authorityLetters/registration/update/<int:id>', formatAuthorityLettersViewAndDepositOfPayment.authorityLettersRegistrationUpdate, name="authorityLetters Update"),
+    path('api/authorityLetters/registration/delete/<int:id>', formatAuthorityLettersViewAndDepositOfPayment.authorityLettersRegistrationDelete, name="authorityLetters Delete"),
+    
+    path('api/depositOfPayment/registration/list', formatAuthorityLettersViewAndDepositOfPayment.depositOfPaymentList, name="depositOfPayment List"),
+    path('api/depositOfPayment/registration/create', formatAuthorityLettersViewAndDepositOfPayment.depositOfPaymentCreate, name="depositOfPayment Create"),
+    path('api/depositOfPayment/registration/update/<int:id>', formatAuthorityLettersViewAndDepositOfPayment.depositOfPaymentUpdate, name="depositOfPayment Update"),
+    path('api/depositOfPayment/registration/delete/<int:id>', formatAuthorityLettersViewAndDepositOfPayment.depositOfPaymentDelete, name="depositOfPayment Delete"),
 
     path('api/disbursal/BT/list', disbursalView.disbursalBTList, name="disbursal List"),
     path('api/disbursal/BT/create', disbursalView.disbursalBTCreate, name="disbursal Create"),

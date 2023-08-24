@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'globalMaster',
     'option',
     'disbursal',
+    'format',
     'authUser',
 ]
 

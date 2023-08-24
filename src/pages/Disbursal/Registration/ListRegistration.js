@@ -45,7 +45,7 @@ const TABLE_HEAD = [
   { id: 'registrationDate', label: 'Reg Date', alignRight: false },
   { id: 'address', label: 'Address', alignRight: false },
   { id: 'phone', label: 'Phone', alignRight: false },
-  { id: 'status', label: 'Active Status', alignRight: false },
+  { id: 'status', label: 'Status', alignRight: false },
   { id: 'action', label: 'Action', alignRight: false },
 
   // { id: '' },
@@ -161,7 +161,7 @@ export default function ListRegistration() {
       .then((response) => {
         setUSERLIST(response.data)
         setFilteredData(response.data)
-
+        setIsLoading(false);
       })
       .catch((error) => {
         console.log(error);
@@ -210,14 +210,14 @@ export default function ListRegistration() {
     const [isLoading, setIsLoading] = useState(true);
 
 
-    useEffect(() => {
-      // Simulating data fetching or processing delay
-      const delay = setTimeout(() => {
-        setIsLoading(false);
-      }, 2000);
+    // useEffect(() => {
+    //   // Simulating data fetching or processing delay
+    //   const delay = setTimeout(() => {
+    //     setIsLoading(false);
+    //   }, 2000);
   
-      return () => clearTimeout(delay);
-    }, [filteredData])
+    //   return () => clearTimeout(delay);
+    // }, [filteredData])
   
 
   return (

@@ -29,9 +29,16 @@ import Branch from './pages/master/Branch/Branch';
 import EntryFormBR from './pages/master/Branch/EntryForm';
 import Fee from './pages/master/Fee/Fee';
 import EntryFormFEE from './pages/master/Fee/EntryForm';
+import Users from './pages/master/Users/Users';
+import EntryFormUEF from './pages/master/Users/EntryFormUEF';
 
 import BuilderPayment from './pages/BuilderPayment/BuilderPayment';
 import EntryFormBF from './pages/BuilderPayment/EntryForm';
+
+import EntryFormAL from './pages/Format/AuthorityLetters/EntryFormAL';
+import ListAL from './pages/Format/AuthorityLetters/ListAL';
+import EntryFormDOP from './pages/Format/DepositOfPayment/EntryFormDOP';
+import ListDOP from './pages/Format/DepositOfPayment/ListDOP';
 
 import OptionList from './pages/Option/OptionList';
 import PrepareReports from './pages/Option/PrepareReports/PrepareReports';
@@ -143,6 +150,9 @@ export default function Router() {
         
         { path: 'master/fee', element: <Fee /> },  // Master fee
         { path: 'master/fee/newEntry/:data', element: <EntryFormFEE /> },  // Master fee
+
+        { path: 'master/user', element: <Users /> },  // Master User
+        { path: 'master/user/newEntry/:data', element: <EntryFormUEF /> },  // Master User
         // Master End
 
         { path: 'builerPayment', element: <BuilderPayment /> }, // BuilderPayment
@@ -155,7 +165,16 @@ export default function Router() {
         { path: 'option/prepareReports/newEntry/:data', element: <EntryFormPR /> },  // Option Prepare Reports
         { path: 'option/duDupe', element: <DuDupe /> },  // Option DuDupe
 
+
+        
         // Option End
+        
+        // Format Start
+        { path: 'format/AuthorityLetters/:data', element: <EntryFormAL /> },  // Format 
+        { path: 'format/AuthorityLetters/list', element: <ListAL /> },  // Format 
+        { path: 'format/DepositOfPayment/:data', element: <EntryFormDOP /> },  // Format
+        { path: 'format/DepositOfPayment/list', element: <ListDOP /> },  // Format
+        // Format End
         
         // Disbursal Start
         { path: 'disbursal', element: <DisbursalList /> },  // Disbursal List

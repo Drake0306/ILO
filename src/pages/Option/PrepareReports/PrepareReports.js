@@ -41,11 +41,15 @@ const TABLE_HEAD = [
   { id: 'id', label: 'ID', alignRight: false },
   { id: 'bank', label: 'Bank Name', alignRight: false },
   { id: 'branch', label: 'Branch Name', alignRight: false },
+  { id: 'customerBorrower', label: 'Name', alignRight: false },
+  { id: 'repNo', label: 'Report No', alignRight: false },
+  { id: 'phoneNo', label: 'Phone No', alignRight: false },
+  { id: 'statusValue', label: 'Status', alignRight: false },
   // { id: 'contactPerson', label: 'Contact Person', alignRight: false },
   // { id: 'address', label: 'Address', alignRight: false },
-  { id: 'email', label: 'Email', alignRight: false },
+  // { id: 'email', label: 'Email', alignRight: false },
   // { id: 'phoneOne', label: 'Phone One', alignRight: false },
-  { id: 'status', label: 'Active Status', alignRight: false },
+  // { id: 'status', label: 'Active Status', alignRight: false },
   { id: 'action', label: 'Action', alignRight: false },
   // { id: '' },
 ];
@@ -161,6 +165,7 @@ export default function PrepareReports() {
      .then((response) => {
        setUSERLIST(response.data)
        setFilteredData(response.data)
+       setIsLoading(false);
      })
      .catch((error) => {
        console.log(error);
@@ -208,14 +213,14 @@ export default function PrepareReports() {
   const [isLoading, setIsLoading] = useState(true);
 
 
-  useEffect(() => {
-    // Simulating data fetching or processing delay
-    const delay = setTimeout(() => {
-      setIsLoading(false);
-    }, 2000);
+  // useEffect(() => {
+  //   // Simulating data fetching or processing delay
+  //   const delay = setTimeout(() => {
+  //     setIsLoading(false);
+  //   }, 2000);
 
-    return () => clearTimeout(delay);
-  }, [filteredData])
+  //   return () => clearTimeout(delay);
+  // }, [filteredData])
 
   return (
     <Page title="Prepare Reports">
@@ -303,16 +308,40 @@ export default function PrepareReports() {
                           <TableCell component="th" scope="row" padding="none">
                             <Stack direction="row" alignItems="center" spacing={2}>
                               <Typography variant="subtitle2" noWrap>
-                                {email}
+                                {row.customerBorrower}
+                              </Typography>
+                            </Stack>
+                          </TableCell>
+                          
+                          <TableCell component="th" scope="row" padding="none">
+                            <Stack direction="row" alignItems="center" spacing={2}>
+                              <Typography variant="subtitle2" noWrap>
+                                {row.repNo}
+                              </Typography>
+                            </Stack>
+                          </TableCell>
+                          
+                          <TableCell component="th" scope="row" padding="none">
+                            <Stack direction="row" alignItems="center" spacing={2}>
+                              <Typography variant="subtitle2" noWrap>
+                                {row.phoneNo}
+                              </Typography>
+                            </Stack>
+                          </TableCell>
+                          
+                          <TableCell component="th" scope="row" padding="none">
+                            <Stack direction="row" alignItems="center" spacing={2}>
+                              <Typography variant="subtitle2" noWrap>
+                                {row.statusValue}
                               </Typography>
                             </Stack>
                           </TableCell>
 
-                          <TableCell align="left">
+                          {/* <TableCell align="left">
                             <Label variant="ghost" color={status === 'false' ? 'error' : 'success'}>
                               {sentenceCase( status === 'true' ? 'active' : 'in active')}
                             </Label>
-                          </TableCell>
+                          </TableCell> */}
 
                           <TableCell align="right">
                             <UserMoreMenu urlTo={'/app/option/prepareReports/newEntry/'} data={row} dataID={id} deleteURL={'option/delete/'} />

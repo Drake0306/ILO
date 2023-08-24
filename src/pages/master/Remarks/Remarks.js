@@ -29,6 +29,9 @@ import SearchNotFound from '../../../components/SearchNotFound';
 import { UserListHead, UserListToolbar, UserMoreMenu } from '../../../sections/@dashboard/user';
 import JSON_CONST from '../../../components/CONSTVALUE.json';
 
+import Loader from '../../Loader/Loader';
+
+
 // mock
 import USERLISTDATA from '../../../_mock/user';
 
@@ -90,6 +93,9 @@ export default function Remarks() {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   
   const [USERLIST, setUSERLIST] = useState([]);
+
+  // Loader
+  const [isLoading, setIsLoading] = useState(true);
 
 
   const handleRequestSort = (event, property) => {
@@ -153,6 +159,8 @@ export default function Remarks() {
     axios.get(`${JSON_CONST.DB_URL}master/differentRemarks/list`)
      .then((response) => {
        setUSERLIST(response.data)
+       setIsLoading(false);
+
      })
      .catch((error) => {
        console.log(error);
@@ -162,6 +170,9 @@ export default function Remarks() {
 
   return (
     <Page title="Different Remarks">
+      {isLoading ? (
+        <Loader />
+      ) : (
       <Container maxWidth="">
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
@@ -260,6 +271,7 @@ export default function Remarks() {
           />
         </Card>
       </Container>
+      )}
     </Page>
   );
 }

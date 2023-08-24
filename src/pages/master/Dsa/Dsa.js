@@ -28,6 +28,8 @@ import Iconify from '../../../components/Iconify';
 import SearchNotFound from '../../../components/SearchNotFound';
 import { UserListHead, UserListToolbar, UserMoreMenu } from '../../../sections/@dashboard/user';
 import JSON_CONST from '../../../components/CONSTVALUE.json';
+import Loader from '../../Loader/Loader';
+
 
 // mock
 import USERLISTDATA from '../../../_mock/user';
@@ -93,6 +95,9 @@ export default function Dsa() {
 
   const [USERLIST, setUSERLIST] = useState([]);
 
+  // Loader
+  const [isLoading, setIsLoading] = useState(true);
+
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -155,6 +160,8 @@ export default function Dsa() {
     axios.get(`${JSON_CONST.DB_URL}master/DSA/list`)
      .then((response) => {
        setUSERLIST(response.data)
+       setIsLoading(false);
+
      })
      .catch((error) => {
        console.log(error);
@@ -164,6 +171,9 @@ export default function Dsa() {
 
   return (
     <Page title="DSA">
+      {isLoading ? (
+        <Loader />
+      ) : (
       <Container maxWidth="">
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
@@ -281,6 +291,7 @@ export default function Dsa() {
           />
         </Card>
       </Container>
+      )}
     </Page>
   );
 }

@@ -6,28 +6,143 @@ import moment from 'moment/moment';
 import axios from 'axios';
 import { LoadingButton } from '@mui/lab';
 import { Grid, Container, Typography, Link, Stack, Button, Card, TextField, Checkbox, FormControlLabel, Autocomplete, InputLabel, MenuItem, FormControl } from '@mui/material';
+import * as FileSaver from 'file-saver';
+import XLSX from 'sheetjs-style';
+
+import pdfMake from 'pdfmake/build/pdfmake';
+import pdfFonts from 'pdfmake/build/vfs_fonts';
+
 import JSON_CONST from '../../../components/CONSTVALUE.json';
 
 const ref = React.createRef();
+
+
+// Register fonts
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 export default function PDFRenderExecutiveWiseMISReportTwo (props) {
     const ref = React.createRef();
     const params = useParams()
     const [paramsData, setParamsData] = useState(params.data && JSON.parse(decodeURI(params.data)));
     const [resData, setResData] = useState([]);
+    const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+    const fileExtension = '.xlsx';
 
-    const options = {
-        orientation: 'landscape',
-        unit: 'in',
-        format: [4,2]
-    };
+    const [dd, setDD] = useState({
+        pageOrientation: 'landscape',
+        pageSize: 'A4',
+        pageMargins: [ 40, 10, 40, 10 ],
+        content: [
+            {text: 'INTELLECTIVE LAW OFFICES', style: 'header'},
+            {text: 'Advicates, Legal Advisers & Consultants', style: 'headerSub'},
+            {text: `Executive Wise Report:-                                                       From: ${moment(paramsData.from).format('DD-MM-YYYY')}     To: ${moment(paramsData.to).format('DD-MM-YYYY')}                                                 As on Date: ${moment().format('DD-MM-YYYY')}`, style: 'subheader'},
+            {
+                style: 'tableExample',
+                table: {
+                    body: [
+                        [{text: 'Sr', style: 'tableHeaderMain'}, {text:'App no', style: 'tableHeaderMain'}, {text:'Rep No', style: 'tableHeaderMain'}, {text:'Branch', style: 'tableHeaderMain'}, {text:'Type', style: 'tableHeaderMain'}, {text:'Customer / Borrower', style: 'tableHeaderMain'}, {text:'Address', style: 'tableHeaderMain'}, {text:'DSA', style: 'tableHeaderMain'}, {text:'App Date', style: 'tableHeaderMain'}, {text:'Rep Date', style: 'tableHeaderMain'}, {text:'Sent On', style: 'tableHeaderMain'}, {text:'Prepared By', style: 'tableHeaderMain'}, {text:'Remarks', style: 'tableHeaderMain'}, {text:'User ID'} ],
+    
+                        [{text: 'OK', style: 'tableHeader'},{text: 'OK', style: 'tableHeader'},{text: 'OK', style: 'tableHeader'},{text: 'OK', style: 'tableHeader'},{text: 'OK', style: 'tableHeader'},{text: 'OK', style: 'tableHeader'},{text: 'OK', style: 'tableHeader'},{text: 'OK', style: 'tableHeader'},{text: 'OK', style: 'tableHeader'},{text: 'OK', style: 'tableHeader'},{text: 'OK', style: 'tableHeader'},{text: 'OK', style: 'tableHeader'},{text: 'OK', style: 'tableHeader'},{text: 'OK', style: 'tableHeader'},]
+                    ]
+                }
+            },
+        ],
+        styles: {
+            header: {
+                fontSize: 18,
+                bold: true,
+                margin: [0, 0, 0, 10],
+                alignment: 'center'
+            },
+            subheader: {
+                fontSize: 12,
+                bold: true,
+                margin: [0, 10, 0, 5]
+            },
+            subheadingTable: {
+                fontSize: 10,
+                bold: false,
+                margin: [0, 10, 0, 5]
+            },
+            tableExample: {
+                margin: [0, 0, 0, 0],
+            },
+            tableHeader: {
+                fontSize: 9,
+                color: 'black'
+            },
+            tableHeaderMain: {
+                bold: true,
+                color: 'black'
+            },
+            headerSub: {
+                fontSize: 16,
+                alignment: 'center'
+            }
+        },
+        defaultStyle: {
+            // alignment: 'justify'
+        }
+        
+    });
+
+    const exportToPdf = (value) => {
+        pdfMake.createPdf(value).open();
+    }
+
+    const exportToExcel = async () => {
+        const ws = XLSX.utils.json_to_sheet(resData);
+        const wb = { Sheets: { 'data': ws }, SheetNames: ['data'] };
+        const excelBuffer = XLSX.write(wb, { bookType : 'xlsx', type: 'array'});
+        const data = new Blob([excelBuffer], {type: fileType});
+        FileSaver.saveAs(data, `Export${fileExtension}`);
+    }
+
 
     useEffect(() => {
+
+        // ADD TO ROW FOR THE PDF
+        const tableHeadder = [];
+        tableHeadder.push(dd.content[3].table.body[0]);
+
+        const fullDD = dd;
+        let fullData = [];
+        const pushToMain = tableHeadder;
         try {
             axios.post(`${JSON_CONST.DB_URL}option/executiveWiseReport`, paramsData)
                 .then((response) => {
                     console.log(response);
+                    response.data.forEach((row) => {
+                        fullData = [];
+                        // Push to Temp
+                        fullData.push({text: row.id, style: 'tableHeader'})
+                        fullData.push({text: row.apsNo, style: 'tableHeader'})
+                        fullData.push({text: row.repNo, style: 'tableHeader'})
+                        fullData.push({text: row.branchName.name, style: 'tableHeader'})
+                        fullData.push({text: 'N.A', style: 'tableHeader'})
+                        fullData.push({text: row.customerBorrower, style: 'tableHeader'})
+                        fullData.push({text: row.streetSectorLocal, style: 'tableHeader'})
+                        fullData.push({text: 'N.A', style: 'tableHeader'})
+                        fullData.push({text: row.reciptDate, style: 'tableHeader'})
+                        fullData.push({text: row.reportDate, style: 'tableHeader'})
+                        fullData.push({text: row.reportSentOn, style: 'tableHeader'})
+                        fullData.push({text: row.preparedByName.name, style: 'tableHeader'})
+                        fullData.push({text: row.remarks, style: 'tableHeader'})
+                        fullData.push({text: 'N.A', style: 'tableHeader'})
+
+                        // Push To Main
+                        pushToMain.push(fullData)
+                    });
+
+                    // assign main Value
+                    fullDD.content[3].table.body = pushToMain;
+                    setDD(fullDD);
+                    console.log('pushToMain', pushToMain);
+                    console.log('fullData', fullData);
+                    console.log('dd', dd);
+
                     setResData(response.data)
+                    
                 }).catch((error) => {
                     console.log(error);
                 });
@@ -35,93 +150,17 @@ export default function PDFRenderExecutiveWiseMISReportTwo (props) {
         catch (err) {
             console.log(err)
         }
-      }, [paramsData]);
+    }, [dd, dd.content, paramsData]);
 
 
     return (
         <>
             <center>
-                <Pdf targetRef={ref} filename="Professional-Fee.pdf">
-                    {({ toPdf }) => (
-                    <LoadingButton size="large" type="button" onClick={toPdf} variant="contained" color="error" > Generate PDF </LoadingButton>
-                    )}
-                </Pdf>
+                <LoadingButton size="large" type="button" onClick={(e) => exportToPdf(dd)} variant="contained" color="error" > EXPORT PDF </LoadingButton>
+                    &nbsp; &nbsp;&nbsp;
+                <LoadingButton size="large" type="button" onClick={(e) => exportToExcel(e)} variant="contained" color="success" > EXPORT XLSX </LoadingButton>
+                <br/>
             </center>
-            <div>
-                <div className="book">
-                    <div className="pageTwo" ref={ref}>
-                        <div className="subpageTwo">
-                            <Container >
-                                <Grid container alignItems="center" paddingLeft={0} paddingBottom={0} paddingRight={0} paddingTop={0} spacing={0}>
-                                    <Grid item xs={12} sm={12} md={12} lg={12} className="headTitle">
-                                    <h3>INTELLECTIVE LAW OFFICES</h3>
-                                    <h3 style={{fontSize: '15px'}}>Advicates, Legal Advisers & Consultants</h3>
-                                    </Grid>
-                                    <Grid item xs={4} sm={4} md={4} lg={4} mt={9} className="subHead">
-                                        <h3>Executive Wise Report</h3>
-                                    </Grid>
-                                    <Grid item xs={2} sm={2} md={2} lg={2} mt={9} className="subHead">
-                                        <h3>From:&nbsp;{moment(paramsData.from).format('DD-MM-YYYY')}</h3>
-                                    </Grid>
-                                    <Grid item xs={2} sm={2} md={2} lg={2} mt={9} className="subHead">
-                                        <h3>To:&nbsp;{moment(paramsData.to).format('DD-MM-YYYY')}</h3>
-                                    </Grid>
-                                    <Grid item xs={4} sm={4} md={4} lg={4} mt={9} className="subHeadEnd">
-                                        <h3>As on Date: {moment().format('DD-MM-YYYY')} </h3>
-                                    </Grid>
-                                    
-                                    
-                                    <Grid item xs={12} sm={12} md={12} lg={12} mt={2} className="">
-                                        <table border={0} className="tableTwo">
-                                            <thead>
-                                                <tr>
-                                                    <th rowSpan={2} className='borderLine' style={{width: '30px'}}><h5>Sl</h5></th>
-                                                    <th rowSpan={2} className='borderLine' style={{width: '70px'}}><h5>App no</h5></th>
-                                                    <th rowSpan={2} className='borderLine' style={{width: '70px'}}><h5>Rep No</h5></th>
-                                                    <th rowSpan={2} className='borderLine' style={{width: '70px'}}><h5>Branch</h5></th>
-                                                    <th rowSpan={2} className='borderLine' style={{width: '70px'}}><h5>Type</h5></th>
-                                                    <th rowSpan={2} className='borderLine' style={{width: '150px'}}><h5>Customer / Borrower</h5></th>
-                                                    <th rowSpan={2} className='borderLine' style={{width: '200px'}}><h5>Address</h5></th>
-                                                    <th rowSpan={2} className='borderLine' style={{width: '200px'}}><h5>DSA</h5></th>
-                                                    <th rowSpan={2} className='borderLine' style={{width: '70px'}}><h5>App Date</h5></th>
-                                                    <th rowSpan={2} className='borderLine' style={{width: '70px'}}><h5>Rep Date</h5></th>
-                                                    <th rowSpan={2} className='borderLine' style={{width: '70px'}}><h5>Sent On</h5></th>
-                                                    <th rowSpan={2} className='borderLine' style={{width: '70px'}}><h5>Prepared By</h5></th>
-                                                    <th rowSpan={2} className='borderLine' style={{width: '70px'}}><h5>Remarks</h5></th>
-                                                    <th rowSpan={2} className='borderLine' style={{width: '70px'}}><h5>User ID</h5></th>
-                                                </tr>
-                                                
-                                            </thead>
-                                            <tbody>
-                                            {resData.map((row) => (
-                                                <tr key={row.id}>
-                                                    <td className='borderLine' style={{fontSize: '9px', textAlign: 'left'}}> {row.id} </td>                                                        
-                                                    <td className='borderLine' style={{fontSize: '9px', textAlign: 'left'}}> {row.apsNo} </td>                                                        
-                                                    <td className='borderLine' style={{fontSize: '9px', textAlign: 'left'}}> {row.repNo} </td>                                                        
-                                                    <td className='borderLine' style={{fontSize: '9px', textAlign: 'left'}}> {row.branchName.name} </td>                                                        
-                                                    <td className='borderLine' style={{fontSize: '9px', textAlign: 'left'}}> N.A </td>                                                        
-                                                    <td className='borderLine' style={{fontSize: '9px', textAlign: 'left'}}> {row.customerBorrower} </td>                                                        
-                                                    <td className='borderLine' style={{fontSize: '9px', textAlign: 'left'}}> {row.streetSectorLocal} </td>                                                        
-                                                    <td className='borderLine' style={{fontSize: '9px', textAlign: 'left'}}> N.A </td>                                                        
-                                                    <td className='borderLine' style={{fontSize: '9px', textAlign: 'left'}}> {row.reciptDate} </td>                                                        
-                                                    <td className='borderLine' style={{fontSize: '9px', textAlign: 'left'}}> {row.reportDate} </td>                                                        
-                                                    <td className='borderLine' style={{fontSize: '9px', textAlign: 'left'}}> {row.reportSentOn} </td>                                                        
-                                                    <td className='borderLine' style={{fontSize: '9px', textAlign: 'left'}}> {row.preparedByName.name} </td>                                                        
-                                                    <td className='borderLine' style={{fontSize: '9px', textAlign: 'left'}}> {row.remarks} </td>                                                        
-                                                    <td className='borderLine' style={{fontSize: '9px', textAlign: 'left'}}> N.A </td>                                                        
-                                                </tr>
-                                            ))}
-                                                
-                                            </tbody>
-                                        </table>
-                                    </Grid>
-
-                                </Grid>
-                            </Container>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </>
     )
 }

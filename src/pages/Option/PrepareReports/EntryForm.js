@@ -40,7 +40,7 @@ export default function EntryFormPR(props) {
     branch: '',
     uid: '',
     apsNo: '',
-    report: '',
+    report: 'Leagal Report',
     customerBorrower: '',
     repNo: '',
     profCharges: '',
@@ -63,10 +63,11 @@ export default function EntryFormPR(props) {
     location: '',
     collectedBy: '',
     preparedBy: '',
-    nature: '',
-    statusValue: '',
+    nature: 'Purchase',
+    statusValue: 'Pending',
     remarks: '',
     fallowUp: '',
+    netFallowUpDate: '',
     fileUpload: '',
     id: '',
     status: true
@@ -92,7 +93,7 @@ export default function EntryFormPR(props) {
         apsNo: typeof paramsData.apsNo !== 'undefined' ? paramsData.apsNo : '',
         report: typeof paramsData.report !== 'undefined' ? paramsData.report : '',
         customerBorrower: typeof paramsData.customerBorrower !== 'undefined' ? paramsData.customerBorrower : '',
-        repNo: typeof paramsData.repNo !== 'undefined' ? paramsData.repNo : '',
+        repNo: typeof paramsData.repNo !== 'undefined' ? paramsData.id : '',
         profCharges: typeof paramsData.profCharges !== 'undefined' ? paramsData.profCharges : '',
         inspectionReceipt: typeof paramsData.inspectionReceipt !== 'undefined' ? paramsData.inspectionReceipt : '',
         outOfPocketExp: typeof paramsData.outOfPocketExp !== 'undefined' ? paramsData.outOfPocketExp : '',
@@ -117,6 +118,7 @@ export default function EntryFormPR(props) {
         statusValue: typeof paramsData.statusValue !== 'undefined' ? paramsData.statusValue : '',
         remarks: typeof paramsData.remarks !== 'undefined' ? paramsData.remarks : '',
         fallowUp: typeof paramsData.fallowUp !== 'undefined' ? paramsData.fallowUp : '',
+        netFallowUpDate: typeof paramsData.netFallowUpDate !== 'undefined' ? paramsData.netFallowUpDate : '',
         fileUpload: typeof paramsData.fileUpload !== 'undefined' ? paramsData.fileUpload : '',
         status: paramsData.status === 'true'? true : false,
         id: typeof paramsData.id !== 'undefined' ? paramsData.id : '',
@@ -192,7 +194,7 @@ export default function EntryFormPR(props) {
         report: fromElementsData.report.value,
         customerBorrower: fromElementsData.customerBorrower.value,
         uid: fromElementsData.uid.value,
-        repNo: fromElementsData.repNo.value,
+        repNo: '',
         profCharges: fromElementsData.profCharges.value,
         inspectionReceipt: fromElementsData.inspectionReceipt.value,
         outOfPocketExp: fromElementsData.outOfPocketExp.value,
@@ -217,6 +219,7 @@ export default function EntryFormPR(props) {
         statusValue: fromElementsData.statusValue.value,
         remarks: fromElementsData.remarks.value,
         fallowUp: fromElementsData.fallowUp.value,
+        netFallowUpDate: fromElementsData.netFallowUpDate.value,
         fileUpload: fromElementsData.fileUpload.value,
         status: fromElementsData.status.value,
         id: fromData.id,
@@ -352,18 +355,11 @@ export default function EntryFormPR(props) {
                   InputLabelProps={{
                     shrink: true,
                   }}
+                  error
                   autoFocus
                 />
               </Grid>
-              <Grid item xs={12} sm={12} md={2} lg={2}>
-                <TextField
-                  onChange={onChangeFields}
-                  fullWidth
-                  value={fromData.bankRefNo}
-                  name="bankRefNo" 
-                  label="Bank Ref No"
-                />
-              </Grid>
+
               <Grid item xs={12} sm={12} md={3} lg={3}>
                 <FormControl fullWidth>
                   <InputLabel id="Bank-select-label">Bank</InputLabel>
@@ -375,12 +371,14 @@ export default function EntryFormPR(props) {
                     name="bank"  
                     required
                     fullWidth
+                    error 
                     onChange={onChangeFields}
                   >
                     {fromDataAutoFill.bankList.map((option) => (<MenuItem key={option.id} value={option.id}>{option.name}</MenuItem>))}
                   </Select>
                 </FormControl>
               </Grid>
+
               <Grid item xs={12} sm={12} md={4} lg={4}>
                 <FormControl fullWidth>
                   <InputLabel id="Branch-select-label">Branch</InputLabel>
@@ -391,13 +389,31 @@ export default function EntryFormPR(props) {
                     label="branch"
                     name="branch"  
                     fullWidth
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
                     required
+                    error 
                     onChange={onChangeFields}
                   >
                     {fromDataAutoFill.branchList.map((option) => (<MenuItem key={option.id} value={option.id}>{option.name}</MenuItem>))}
                   </Select>
                 </FormControl>
               </Grid>
+
+              
+
+              <Grid item xs={12} sm={12} md={2} lg={2}>
+                <TextField
+                  onChange={onChangeFields}
+                  fullWidth
+                  value={fromData.bankRefNo}
+                  name="bankRefNo" 
+                  label="Bank Ref No"
+                />
+              </Grid>
+              
+              
               <Grid item xs={12} sm={12} md={3} lg={3}>
                 <TextField
                   onChange={onChangeFields}
@@ -417,6 +433,8 @@ export default function EntryFormPR(props) {
                     label="report"
                     name="report"  
                     fullWidth
+                    required
+                    error 
                     onChange={onChangeFields}
                   >
                     <MenuItem value='Leagal Report'>Leagal Report</MenuItem>
@@ -431,6 +449,17 @@ export default function EntryFormPR(props) {
                   </Select>
                 </FormControl>
               </Grid>
+
+              <Grid item xs={12} sm={12} md={3} lg={3}>
+                <TextField
+                  onChange={onChangeFields}
+                  fullWidth
+                  value={fromData.repNo}
+                  name="repNo" 
+                  label="Rep No (Autofilled)"
+                  disabled
+                />
+              </Grid>
               <Grid item xs={12} sm={12} md={3} lg={3}>
                 <TextField
                   onChange={onChangeFields}
@@ -438,6 +467,8 @@ export default function EntryFormPR(props) {
                   value={fromData.customerBorrower}
                   name="customerBorrower" 
                   label="Customer Borrower"
+                  required
+                  error 
                 />
               </Grid>
               <Grid item xs={12} sm={12} md={3} lg={3}>
@@ -447,19 +478,31 @@ export default function EntryFormPR(props) {
                   value={fromData.uid}
                   name="uid"  
                   label="UID No"
-                  required
+                  
                 />
               </Grid>
-              
+
               <Grid item xs={12} sm={12} md={3} lg={3}>
                 <TextField
                   onChange={onChangeFields}
                   fullWidth
-                  value={fromData.repNo}
-                  name="repNo" 
-                  label="Rep No"
+                  value={fromData.phoneNo}
+                  name="phoneNo" 
+                  label="Phone No"
                 />
               </Grid>
+
+              <Grid item xs={12} sm={12} md={3} lg={3}>
+                <TextField
+                  onChange={onChangeFields}
+                  fullWidth
+                  value={fromData.email}
+                  name="email" 
+                  label="Email"
+                />
+              </Grid>
+              
+              
               <Grid item xs={12} sm={12} md={3} lg={3}>
                 <TextField
                   onChange={onChangeFields}
@@ -512,6 +555,38 @@ export default function EntryFormPR(props) {
                   label="Flat/House/Plot No"
                 />
               </Grid>
+
+              <Grid item xs={12} sm={12} md={3} lg={3}>
+                <TextField
+                  onChange={onChangeFields}
+                  fullWidth
+                  value={fromData.floor}
+                  name="floor" 
+                  label="Floor"
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={12} md={3} lg={3}>
+                <TextField
+                  onChange={onChangeFields}
+                  fullWidth
+                  value={fromData.streetSectorLocal}
+                  name="streetSectorLocal" 
+                  label="Street/Sector/Locality"
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={12} md={3} lg={3}>
+                <TextField
+                  onChange={onChangeFields}
+                  fullWidth
+                  value={fromData.city}
+                  name="city" 
+                  label="City"
+                />
+              </Grid>
+
+
               <Grid item xs={12} sm={12} md={3} lg={3}>
                 <FormControl fullWidth>
                   <InputLabel id="roofRight-select-label">Roof Right</InputLabel>
@@ -531,32 +606,23 @@ export default function EntryFormPR(props) {
               </Grid>
 
               <Grid item xs={12} sm={12} md={3} lg={3}>
-                <TextField
-                  onChange={onChangeFields}
-                  fullWidth
-                  value={fromData.floor}
-                  name="floor" 
-                  label="Floor"
-                />
+                <FormControl fullWidth>
+                  <InputLabel id="preparedBy-select-label">Prepared By</InputLabel>
+                  <Select
+                    labelId="preparedBy-select-label"
+                    id="preparedBy-select"
+                    value={fromData.preparedBy}
+                    label="preparedBy"
+                    name="preparedBy"  
+                    fullWidth
+                    
+                    onChange={onChangeFields}
+                  >
+                    {fromDataAutoFill.handledByList.map((option) => (<MenuItem key={option.id} value={option.id}>{option.name}</MenuItem>))}
+                  </Select>
+                </FormControl>
               </Grid>
-              <Grid item xs={12} sm={12} md={3} lg={3}>
-                <TextField
-                  onChange={onChangeFields}
-                  fullWidth
-                  value={fromData.RepRefNo}
-                  name="RepRefNo" 
-                  label="Rep Ref No"
-                />
-              </Grid>
-              <Grid item xs={12} sm={12} md={3} lg={3}>
-                <TextField
-                  onChange={onChangeFields}
-                  fullWidth
-                  value={fromData.streetSectorLocal}
-                  name="streetSectorLocal" 
-                  label="Street/Sector/Locality"
-                />
-              </Grid>
+
               <Grid item xs={12} sm={12} md={3} lg={3}>
                 <TextField
                   onChange={onChangeFields}
@@ -566,15 +632,7 @@ export default function EntryFormPR(props) {
                   label="ReferBy"
                 />
               </Grid>
-              <Grid item xs={12} sm={12} md={3} lg={3}>
-                <TextField
-                  onChange={onChangeFields}
-                  fullWidth
-                  value={fromData.city}
-                  name="city" 
-                  label="City"
-                />
-              </Grid>
+
               <Grid item xs={12} sm={12} md={3} lg={3}>
                 <TextField
                   onChange={onChangeFields}
@@ -588,41 +646,15 @@ export default function EntryFormPR(props) {
                   }}
                 />
               </Grid>
-              <Grid item xs={12} sm={12} md={3} lg={3}>
+
+              
+              <Grid item xs={12} sm={12} md={3} lg={3} style={{display: 'none'}}>
                 <TextField
                   onChange={onChangeFields}
                   fullWidth
-                  value={fromData.phoneNo}
-                  name="phoneNo" 
-                  label="Phone No"
-                />
-              </Grid>
-
-              <Grid item xs={12} sm={12} md={3} lg={3}>
-                <FormControl fullWidth>
-                  <InputLabel id="reportSentThru-select-label">Report Sent Through</InputLabel>
-                  <Select
-                    labelId="reportSentThru-select-label"
-                    id="reportSentThru-select"
-                    value={fromData.reportSentThru}
-                    label="reportSentThru"
-                    name="reportSentThru"  
-                    fullWidth
-                    required
-                    onChange={onChangeFields}
-                  >
-                    {fromDataAutoFill.handledByList.map((option) => (<MenuItem key={option.id} value={option.id}>{option.name}</MenuItem>))}
-                  </Select>
-                </FormControl>
-              </Grid>
-
-              <Grid item xs={12} sm={12} md={3} lg={3}>
-                <TextField
-                  onChange={onChangeFields}
-                  fullWidth
-                  value={fromData.email}
-                  name="email" 
-                  label="Email"
+                  value={fromData.RepRefNo}
+                  name="RepRefNo" 
+                  label="Rep Ref No"
                 />
               </Grid>
 
@@ -639,7 +671,7 @@ export default function EntryFormPR(props) {
                   }}
                 />
               </Grid>
-              
+
               <Grid item xs={12} sm={12} md={3} lg={3}>
                 <TextField
                   onChange={onChangeFields}
@@ -652,32 +684,6 @@ export default function EntryFormPR(props) {
 
               <Grid item xs={12} sm={12} md={3} lg={3}>
                 <FormControl fullWidth>
-                  <InputLabel id="location-select-label">Location</InputLabel>
-                  <Select
-                    labelId="location-select-label"
-                    id="location-select"
-                    value={fromData.location}
-                    label="location"
-                    name="location"  
-                    fullWidth
-                    onChange={onChangeFields}
-                  >
-                    <MenuItem value='Delhi'>Delhi</MenuItem>
-                    <MenuItem value='Delhi-NC'>Delhi-NC</MenuItem>
-                    <MenuItem value='NCR'>NCR</MenuItem>
-                    <MenuItem value='Bahadurgarh'>Bahadurgarh</MenuItem>
-                    <MenuItem value='Sohna'>Sohna</MenuItem>
-                    <MenuItem value='Faridabad'>Faridabad</MenuItem>
-                    <MenuItem value='Gurgaon'>Gurgaon</MenuItem>
-                    <MenuItem value='Dadri'>Dadri</MenuItem>
-                    <MenuItem value='Noida'>Noida</MenuItem>
-                    <MenuItem value='Greater Noida'>Greater Noida</MenuItem>
-                    <MenuItem value='Others'>Others</MenuItem>
-                  </Select>
-                </FormControl>
-              </Grid>
-              <Grid item xs={12} sm={12} md={3} lg={3}>
-                <FormControl fullWidth>
                   <InputLabel id="collectedBy-select-label">Collected By</InputLabel>
                   <Select
                     labelId="collectedBy-select-label"
@@ -686,30 +692,37 @@ export default function EntryFormPR(props) {
                     label="collectedBy"
                     name="collectedBy"  
                     fullWidth
-                    required
+                    
                     onChange={onChangeFields}
                   >
                     {fromDataAutoFill.handledByList.map((option) => (<MenuItem key={option.id} value={option.id}>{option.name}</MenuItem>))}
                   </Select>
                 </FormControl>
               </Grid>
+              
+              
+              
+              
+
               <Grid item xs={12} sm={12} md={3} lg={3}>
                 <FormControl fullWidth>
-                  <InputLabel id="preparedBy-select-label">Prepared By</InputLabel>
+                  <InputLabel id="reportSentThru-select-label">Report Sent Through</InputLabel>
                   <Select
-                    labelId="preparedBy-select-label"
-                    id="preparedBy-select"
-                    value={fromData.preparedBy}
-                    label="preparedBy"
-                    name="preparedBy"  
+                    labelId="reportSentThru-select-label"
+                    id="reportSentThru-select"
+                    value={fromData.reportSentThru}
+                    label="reportSentThru"
+                    name="reportSentThru"  
                     fullWidth
-                    required
+                    
                     onChange={onChangeFields}
                   >
                     {fromDataAutoFill.handledByList.map((option) => (<MenuItem key={option.id} value={option.id}>{option.name}</MenuItem>))}
                   </Select>
                 </FormControl>
               </Grid>
+
+
               <Grid item xs={12} sm={12} md={3} lg={3}>
                 <FormControl fullWidth>
                   <InputLabel id="nature-select-label">Nature</InputLabel>
@@ -720,6 +733,8 @@ export default function EntryFormPR(props) {
                     label="nature"
                     name="nature"  
                     fullWidth
+                    required
+                    error 
                     onChange={onChangeFields}
                   >
                     <MenuItem value='Purchase'>Purchase</MenuItem>
@@ -754,7 +769,43 @@ export default function EntryFormPR(props) {
                 </FormControl>
               </Grid>
 
-              <Grid item xs={12} sm={12} md={6} lg={6}>
+              
+
+              
+              
+              
+
+              <Grid item xs={12} sm={12} md={3} lg={3} style={{display: 'none'}}>
+                <FormControl fullWidth>
+                  <InputLabel id="location-select-label">Location</InputLabel>
+                  <Select
+                    labelId="location-select-label"
+                    id="location-select"
+                    value={fromData.location}
+                    label="location"
+                    name="location"  
+                    fullWidth
+                    onChange={onChangeFields}
+                  >
+                    <MenuItem value='Delhi'>Delhi</MenuItem>
+                    <MenuItem value='Delhi-NC'>Delhi-NC</MenuItem>
+                    <MenuItem value='NCR'>NCR</MenuItem>
+                    <MenuItem value='Bahadurgarh'>Bahadurgarh</MenuItem>
+                    <MenuItem value='Sohna'>Sohna</MenuItem>
+                    <MenuItem value='Faridabad'>Faridabad</MenuItem>
+                    <MenuItem value='Gurgaon'>Gurgaon</MenuItem>
+                    <MenuItem value='Dadri'>Dadri</MenuItem>
+                    <MenuItem value='Noida'>Noida</MenuItem>
+                    <MenuItem value='Greater Noida'>Greater Noida</MenuItem>
+                    <MenuItem value='Others'>Others</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+              
+              
+              
+
+              <Grid item xs={12} sm={12} md={12} lg={12}>
                 <TextField
                   onChange={onChangeFields}
                   fullWidth
@@ -763,10 +814,10 @@ export default function EntryFormPR(props) {
                   label="Remarks"
                   multiline
                   rows={2}  
-                  required
+                  
                 />
               </Grid>
-              <Grid item xs={12} sm={12} md={6} lg={6}>
+              <Grid item xs={12} sm={12} md={12} lg={12}>
                 <TextField
                   onChange={onChangeFields}
                   fullWidth
@@ -775,7 +826,21 @@ export default function EntryFormPR(props) {
                   label="Fallow UP"
                   multiline
                   rows={2}  
-                  required
+                  
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={12} md={3} lg={3}>
+                <TextField
+                  onChange={onChangeFields}
+                  fullWidth
+                  value={fromData.netFallowUpDate}
+                  name="netFallowUpDate" 
+                  label="Next Fallow Up Date"
+                  type="date"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
                 />
               </Grid>
 
@@ -804,7 +869,7 @@ export default function EntryFormPR(props) {
                 </LoadingButton>
               </Grid>
               
-              <Grid item xs={12} sm={12} md={12} lg={12}>
+              <Grid item xs={12} sm={12} md={12} lg={12} style={{display: 'none'}}>
                 <FormControlLabel
                   control={
                     <Checkbox
@@ -820,9 +885,7 @@ export default function EntryFormPR(props) {
 
               <Grid mt={2} item xs={12} sm={12} md={12} lg={12}>
                 <Typography variant="caption" gutterBottom>
-                  * Bank Name is required <br />
-                  * Address is required <br />
-                  * Only Text - numbers are not allowed in required fields<br />
+                  * Red Marked Fields are required <br />
                   * To go back to page click on view list<br />
                 </Typography>
               </Grid>

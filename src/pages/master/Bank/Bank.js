@@ -28,6 +28,8 @@ import Iconify from '../../../components/Iconify';
 import SearchNotFound from '../../../components/SearchNotFound';
 import { UserListHead, UserListToolbar, UserMoreMenu } from '../../../sections/@dashboard/user';
 import JSON_CONST from '../../../components/CONSTVALUE.json';
+import Loader from '../../Loader/Loader';
+
 
 // mock
 import USERLISTDATA from '../../../_mock/user';
@@ -94,6 +96,9 @@ export default function Bank() {
 
   const [USERLIST, setUSERLIST] = useState([]);
 
+  // Loader
+  const [isLoading, setIsLoading] = useState(true);
+
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -158,6 +163,7 @@ export default function Bank() {
     axios.get(`${JSON_CONST.DB_URL}master/bank/list`)
      .then((response) => {
        setUSERLIST(response.data)
+       setIsLoading(false);
      })
      .catch((error) => {
        console.log(error);
@@ -167,6 +173,9 @@ export default function Bank() {
 
   return (
     <Page title="Bank">
+      {isLoading ? (
+        <Loader />
+      ) : (
       <Container maxWidth="">
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
@@ -308,6 +317,7 @@ export default function Bank() {
           />
         </Card>
       </Container>
+      )}
     </Page>
   );
 }

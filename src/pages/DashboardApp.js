@@ -9,6 +9,7 @@ import moment from 'moment';
 import Page from '../components/Page';
 import Iconify from '../components/Iconify';
 import JSON_CONST from '../components/CONSTVALUE.json';
+import Loader from './Loader/Loader';
 
 // sections
 import {
@@ -34,6 +35,9 @@ export default function DashboardApp() {
   const [ BT, setBT] = useState(0);
   const [ DATEArray, setDATEArray] = useState([]);
 
+
+  // Loader
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     // BP
@@ -65,6 +69,7 @@ export default function DashboardApp() {
      axios.get(`${JSON_CONST.DB_URL}disbursal/BT/list`)
       .then((response) => {
         setBT(response.data.length)
+        setIsLoading(false);
       })
       .catch((error) => {
         console.log(error);
@@ -87,25 +92,28 @@ export default function DashboardApp() {
 
   return (
     <Page title="Dashboard">
+      {isLoading ? (
+        <Loader />
+      ) : (
       <Container maxWidth="xl">
         <Typography variant="h4" sx={{ mb: 5 }}>
           Hi, Welcome - Loan Information System (ILO)
         </Typography>
 
         <Grid container spacing={3}>
-          <Grid item xs={12} sm={6} md={3}>
+          {/* <Grid item xs={12} sm={6} md={3}>
             <AppWidgetSummary title="Builder Payment" total={BP} icon={'fluent:payment-28-filled'} />
-          </Grid>
+          </Grid> */}
 
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid item xs={12} sm={6} md={4}>
             <AppWidgetSummary title="Option" total={OP} color="info" icon={'fluent:payment-28-regular'} />
           </Grid>
 
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid item xs={12} sm={6} md={4}>
             <AppWidgetSummary title="Registration" total={R} color="warning" icon={'mdi:payment-on-delivery'} />
           </Grid>
 
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid item xs={12} sm={6} md={4}>
             <AppWidgetSummary title="BT" total={BT} color="error" icon={'mdi:account-payment-outline'} />
           </Grid>
 
@@ -268,6 +276,7 @@ export default function DashboardApp() {
 
         </Grid>
       </Container>
+      )}
     </Page>
   );
 }

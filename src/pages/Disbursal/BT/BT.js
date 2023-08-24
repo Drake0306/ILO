@@ -47,6 +47,7 @@ export default function BT(props) {
     sentAt: '',
     caseClose: '',
     loanTakenFrom: '',
+    caseCloseVal: '',
     propertyDetails: '',
     applicationNo: '',
     handledBy: '',
@@ -61,6 +62,7 @@ export default function BT(props) {
     ack: '',
     volNo: '',
     slNo: '',
+    statusValue: 'Pending',
     id: '',
     status: true
   });
@@ -82,6 +84,7 @@ export default function BT(props) {
     if (params.data !== '0') {
       paramsData.bankName = paramsData?.bankName?.id
       paramsData.branchName = paramsData?.branchName?.id
+      paramsData.transNo = paramsData?.id
       setFromData(paramsData)
     }
     // ------------------------------ Load data from database------------------------------ //
@@ -174,7 +177,7 @@ export default function BT(props) {
         bankName: fromElementsData.bankName.value,
         branchName: fromElementsData.branchName.value,
         date: fromElementsData.date.value,
-        transNo: fromElementsData.transNo.value,
+        transNo: fromData.id,
         customerName: fromElementsData.customerName.value,
         uid: fromElementsData.uid.value,
         phoneNo: fromElementsData.phoneNo.value,
@@ -188,6 +191,7 @@ export default function BT(props) {
         propertyDetails: fromElementsData.propertyDetails.value,
         handledBy: fromElementsData.handledBy.value,
         remarks: fromElementsData.remarks.value,
+        caseCloseVal: fromElementsData.caseCloseVal.value,
         otherRemarkIfAny: fromElementsData.otherRemarkIfAny.value,
         chequeDate: fromElementsData.chequeDate.value,
         amount: fromElementsData.amount.value,
@@ -198,6 +202,7 @@ export default function BT(props) {
         ack: fromElementsData.ack.value,
         volNo: fromElementsData.volNo.value,
         slNo: fromElementsData.slNo.value,
+        statusValue: fromElementsData.statusValue.value,
         status: fromElementsData.status.value,
         id: fromData.id,
       }
@@ -272,6 +277,7 @@ export default function BT(props) {
                 caseClose: '',
                 loanTakenFrom: '',
                 propertyDetails: '',
+                caseCloseVal: '',
                 handledBy: '',
                 remarks: '',
                 otherRemarkIfAny: '',
@@ -283,10 +289,13 @@ export default function BT(props) {
                 nextDate: '',
                 ack: '',
                 volNo: '',
+                statusValue: 'Pending',
                 slNo: '',
                 status: true,
                 id: '',
               })
+
+              navigate(`/app/disbursal/bt/list/`, { replace: true });
             })
             .catch((error) => {
               setIsSubmitting(false);
@@ -379,6 +388,21 @@ export default function BT(props) {
                 
               </Grid>
               <Grid item xs={12} sm={12} md={3} lg={3}>
+                <TextField
+                  onChange={onChangeFields}
+                  fullWidth
+                  value={fromData.date}
+                  name="date" 
+                  label="Date"
+                  required
+                  error 
+                  type="date"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={12} md={3} lg={3}>
                 <FormControl fullWidth>
                   <InputLabel id="bankName-select-label">Bank</InputLabel>
                   <Select
@@ -391,6 +415,7 @@ export default function BT(props) {
                     onChange={onChangeFields}
                     autoFocus
                     required
+                    error 
                   >
                     {fromDataAutoFill.bankList.map((option) => (<MenuItem key={option.id} value={option.id}>{option.name}</MenuItem>))}
                   </Select>
@@ -407,6 +432,7 @@ export default function BT(props) {
                     name="branchName"  
                     fullWidth
                     required
+                    error 
                     onChange={onChangeFields}
                   >
                     {fromDataAutoFill.branchList.map((option) => (<MenuItem key={option.id} value={option.id}>{option.name}</MenuItem>))}
@@ -414,36 +440,16 @@ export default function BT(props) {
                 </FormControl>
               </Grid>
 
-              <Grid item xs={12} sm={12} md={3} lg={3}>
-                <TextField
-                  onChange={onChangeFields}
-                  fullWidth
-                  value={fromData.date}
-                  name="date" 
-                  label="Date"
-                  required
-                  type="date"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                />
-              </Grid>
-
               <Grid item xs={12} sm={12} md={2} lg={2}>
                 <TextField
                   onChange={onChangeFields}
                   fullWidth
-                  value={fromData.transNo}
-                  name="transNo" 
-                  label="Trans No"
+                  value={fromData.applicationNo}
+                  
+                  name="applicationNo" 
+                  label="Application No"
                 />
               </Grid>
-
-              {/* <Grid mt={0} mb={0} item xs={12} sm={12} md={12} lg={12}>
-                <Typography variant="overline" gutterBottom>
-                Customer Details <Iconify icon="bi:arrow-down" />
-                </Typography>
-              </Grid> */}
 
               <Grid item xs={12} sm={12} md={3} lg={3}>
                 <TextField
@@ -452,136 +458,18 @@ export default function BT(props) {
                   value={fromData.customerName}
                   name="customerName" 
                   label="Customer Name"
-                />
-              </Grid>
-
-              <Grid item xs={12} sm={12} md={2} lg={2}>
-                <TextField
-                  onChange={onChangeFields}
-                  fullWidth
-                  value={fromData.uid}
-                  name="uid"  
-                  label="UID No"
                   required
+                  error 
                 />
               </Grid>
 
-              <Grid item xs={12} sm={12} md={2} lg={2}>
+              <Grid item xs={12} sm={12} md={3} lg={3}>
                 <TextField
                   onChange={onChangeFields}
                   fullWidth
                   value={fromData.phoneNo}
                   name="phoneNo" 
                   label="Phone No"
-                />
-              </Grid>
-
-
-              <Grid item xs={12} sm={12} md={5} lg={5}>
-                <TextField
-                  onChange={onChangeFields}
-                  fullWidth
-                  value={fromData.address}
-                  name="address" 
-                  label="Address"
-                  multiline
-                  rows={2}
-                  required
-                />
-              </Grid>
-
-              {/* <Grid mt={0} mb={0} item xs={12} sm={12} md={12} lg={12}>
-                <Typography variant="overline" gutterBottom>
-                Document Details <Iconify icon="bi:arrow-down" />
-                </Typography>
-              </Grid> */}
-
-              <Grid item xs={12} sm={12} md={3} lg={3}>
-                <TextField
-                  onChange={onChangeFields}
-                  fullWidth
-                  value={fromData.collectionDate}
-                  name="collectionDate" 
-                  label="Collection Date"
-                  required
-                  type="date"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                />
-              </Grid>
-
-              <Grid item xs={12} sm={12} md={3} lg={3}>
-                <TextField
-                  onChange={onChangeFields}
-                  fullWidth
-                  value={fromData.docSentToBankDate}
-                  name="docSentToBankDate" 
-                  label="Doc Sent To Bank Date"
-                  required
-                  type="date"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                />
-              </Grid>
-
-              <Grid item xs={12} sm={12} md={3} lg={3}>
-                <TextField
-                  onChange={onChangeFields}
-                  fullWidth
-                  value={fromData.sentAt}
-                  name="sentAt" 
-                  label="Sent At"
-                />
-              </Grid>
-
-              <Grid item xs={12} sm={12} md={3} lg={3}>
-                <TextField
-                  onChange={onChangeFields}
-                  fullWidth
-                  value={fromData.caseClose}
-                  name="caseClose" 
-                  label="Case Close"
-                  required
-                  type="date"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                />
-              </Grid>
-
-              {/* <Grid mt={0} mb={0} item xs={12} sm={12} md={12} lg={12}>
-                <Typography variant="overline" gutterBottom>
-                <Iconify icon="bi:arrow-down" />
-                </Typography>
-              </Grid> */}
-
-              <Grid item xs={12} sm={12} md={3} lg={3}>
-                <FormControl fullWidth>
-                  <InputLabel id="handledBy-select-label">Ack Received </InputLabel>
-                  <Select
-                    labelId="handledBy-select-label"
-                    id="handledBy-select"
-                    value={fromData.ackRecived}
-                    label="ackRecived"
-                    name="ackRecived"  
-                    fullWidth
-                    onChange={onChangeFields}
-                  >
-                    <MenuItem value="YES">YES</MenuItem>
-                    <MenuItem value="NO">NO</MenuItem>
-                  </Select>
-                </FormControl>
-              </Grid>
-
-              <Grid item xs={12} sm={12} md={3} lg={3}>
-                <TextField
-                  onChange={onChangeFields}
-                  fullWidth
-                  value={fromData.loanTakenFrom}
-                  name="loanTakenFrom" 
-                  label="Loan Taken From"
                 />
               </Grid>
 
@@ -594,7 +482,17 @@ export default function BT(props) {
                   label="Property Details"
                   multiline
                   rows={2}
-                  required
+                  
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={12} md={3} lg={3}>
+                <TextField
+                  onChange={onChangeFields}
+                  fullWidth
+                  value={fromData.loanTakenFrom}
+                  name="loanTakenFrom" 
+                  label="Loan Taken From"
                 />
               </Grid>
 
@@ -615,18 +513,195 @@ export default function BT(props) {
                 </FormControl>
               </Grid>
 
-              <Grid item xs={12} sm={12} md={3} lg={3}>
+              
+
+              <Grid item xs={12} sm={12} md={2} lg={2}>
                 <TextField
                   onChange={onChangeFields}
                   fullWidth
-                  value={fromData.applicationNo}
-                  required
-                  name="applicationNo" 
-                  label="Application No"
+                  value={fromData.transNo}
+                  name="transNo" 
+                  label="Trans No"
+                  disabled
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={12} md={2} lg={2}>
+                <TextField
+                  onChange={onChangeFields}
+                  fullWidth
+                  value={fromData.collectionDate}
+                  name="collectionDate" 
+                  label="Doc Rec On"
+                  
+                  type="date"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={12} md={2} lg={2}>
+                <TextField
+                  onChange={onChangeFields}
+                  fullWidth
+                  value={fromData.docSentToBankDate}
+                  name="docSentToBankDate" 
+                  label="Doc Sent On"
+                  
+                  type="date"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
                 />
               </Grid>
 
               <Grid item xs={12} sm={12} md={3} lg={3}>
+                <TextField
+                  onChange={onChangeFields}
+                  fullWidth
+                  value={fromData.sentAt}
+                  name="sentAt" 
+                  label="Doc Sent At"
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={12} md={3} lg={3}>
+                  <FormControl fullWidth>
+                    <InputLabel id="caseCloseVal-select-label">Case Close</InputLabel>
+                    <Select
+                      labelId="caseCloseVal-select-label"
+                      id="caseCloseVal-select"
+                      value={fromData.caseCloseVal}
+                      label="caseCloseVal"
+                      name="caseCloseVal"
+                      fullWidth
+                      onChange={onChangeFields}
+                    >
+                        <MenuItem value="YES">YES</MenuItem>
+                        <MenuItem value="NO">NO</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+
+
+              <Grid item xs={12} sm={12} md={3} lg={3}>
+                <TextField
+                  onChange={onChangeFields}
+                  fullWidth
+                  value={fromData.caseClose}
+                  name="caseClose" 
+                  label="Case Close Date"
+                  
+                  type="date"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={12} md={3} lg={3}>
+                <FormControl fullWidth>
+                  <InputLabel id="handledBy-select-label">Ack Received </InputLabel>
+                  <Select
+                    labelId="handledBy-select-label"
+                    id="handledBy-select"
+                    value={fromData.ackRecived}
+                    label="ackRecived"
+                    name="ackRecived"  
+                    fullWidth
+                    onChange={onChangeFields}
+                  >
+                    <MenuItem value="YES">YES</MenuItem>
+                    <MenuItem value="NO">NO</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={12} md={3} lg={3}>
+                <TextField
+                  onChange={onChangeFields}
+                  fullWidth
+                  value={fromData.volNo}
+                  name="volNo" 
+                  label="Volume No"
+                />
+              </Grid>
+              <Grid item xs={12} sm={12} md={3} lg={3}>
+                <TextField
+                  onChange={onChangeFields}
+                  fullWidth
+                  value={fromData.slNo}
+                  name="slNo" 
+                  label="Sl No"
+                />
+              </Grid>
+
+              {/* <Grid mt={0} mb={0} item xs={12} sm={12} md={12} lg={12}>
+                <Typography variant="overline" gutterBottom>
+                Customer Details <Iconify icon="bi:arrow-down" />
+                </Typography>
+              </Grid> */}
+
+              
+
+              <Grid item xs={12} sm={12} md={2} lg={2} style={{display: 'none'}}>
+                <TextField
+                  onChange={onChangeFields}
+                  fullWidth
+                  value={fromData.uid}
+                  name="uid"  
+                  label="UID No"
+                  
+                />
+              </Grid>
+
+              
+
+
+              <Grid item xs={12} sm={12} md={5} lg={5} style={{display: 'none'}}>
+                <TextField
+                  onChange={onChangeFields}
+                  fullWidth
+                  value={fromData.address}
+                  name="address" 
+                  label="Address"
+                  multiline
+                  rows={2}
+                  
+                />
+              </Grid>
+
+              {/* <Grid mt={0} mb={0} item xs={12} sm={12} md={12} lg={12}>
+                <Typography variant="overline" gutterBottom>
+                Document Details <Iconify icon="bi:arrow-down" />
+                </Typography>
+              </Grid> */}
+
+              
+
+              
+
+              
+
+              
+
+              {/* <Grid mt={0} mb={0} item xs={12} sm={12} md={12} lg={12}>
+                <Typography variant="overline" gutterBottom>
+                <Iconify icon="bi:arrow-down" />
+                </Typography>
+              </Grid> */}
+
+              
+
+              
+
+              
+
+              
+
+              
+
+              <Grid item xs={12} sm={12} md={6} lg={6}>
                 <FormControl fullWidth>
                   <InputLabel id="remarks-select-label">Remarks</InputLabel>
                   <Select
@@ -643,7 +718,7 @@ export default function BT(props) {
                 </FormControl>
               </Grid>
 
-              <Grid item xs={12} sm={12} md={3} lg={3}>
+              <Grid item xs={12} sm={12} md={12} lg={12}>
                 <TextField
                   onChange={onChangeFields}
                   fullWidth
@@ -714,7 +789,7 @@ export default function BT(props) {
                 />
               </Grid>
 
-              <Grid item xs={12} sm={12} md={6} lg={6}>
+              <Grid item xs={12} sm={12} md={6} lg={6} style={{display: 'none'}}>
                 <TextField
                   onChange={onChangeFields}
                   fullWidth
@@ -723,24 +798,7 @@ export default function BT(props) {
                   label="Acknowledgement "
                 />
               </Grid>
-              <Grid item xs={12} sm={12} md={3} lg={3}>
-                <TextField
-                  onChange={onChangeFields}
-                  fullWidth
-                  value={fromData.volNo}
-                  name="volNo" 
-                  label="Volume No"
-                />
-              </Grid>
-              <Grid item xs={12} sm={12} md={3} lg={3}>
-                <TextField
-                  onChange={onChangeFields}
-                  fullWidth
-                  value={fromData.slNo}
-                  name="slNo" 
-                  label="Sl No"
-                />
-              </Grid>
+              
 
               <Grid item xs={12} sm={12} md={3} lg={3}>
                 <TextField
@@ -748,7 +806,7 @@ export default function BT(props) {
                   fullWidth
                   value={fromData.nextDate}
                   name="nextDate" 
-                  label="Next Date"
+                  label="Next Follow Up Date"
                   type="date"
                   InputLabelProps={{
                     shrink: true,
@@ -756,6 +814,26 @@ export default function BT(props) {
                 />
               </Grid>
               
+              <Grid item xs={12} sm={12} md={3} lg={3}>
+                <FormControl fullWidth>
+                  <InputLabel id="statusValue-select-label">Status</InputLabel>
+                  <Select
+                    labelId="statusValue-select-label"
+                    id="statusValue-select"
+                    value={fromData.statusValue}
+                    label="statusValue"
+                    name="statusValue"  
+                    fullWidth
+                    onChange={onChangeFields}
+                  >
+                    <MenuItem value='Pending'>Pending</MenuItem>
+                    <MenuItem value='Positive'>Positive</MenuItem>
+                    <MenuItem value='Negative'>Negative</MenuItem>
+                    <MenuItem value='Returned'>Returned</MenuItem>
+                    <MenuItem value='Hold'>Hold</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
               
 
               
@@ -769,7 +847,7 @@ export default function BT(props) {
                 </LoadingButton>
               </Grid>
               
-              <Grid item xs={12} sm={12} md={12} lg={12}>
+              <Grid item xs={12} sm={12} md={12} lg={12} style={{display: 'none'}}>
                 <FormControlLabel
                   control={
                     <Checkbox
@@ -785,10 +863,7 @@ export default function BT(props) {
 
               <Grid mt={2} item xs={12} sm={12} md={12} lg={12}>
                 <Typography variant="caption" gutterBottom>
-                  * Bank Name is required <br />
-                  * Select Branch is required <br />
-                  * Date is required <br />
-                  * Only Text - numbers are not allowed in required fields<br />
+                  * Red Marked Fields are required <br />
                   * To go back to page click on view list<br />
                 </Typography>
               </Grid>

@@ -131,7 +131,8 @@ export default function ExecutiveWiseReport(props) {
       to: fromElementsData.to.value,
       executive: fromElementsData.executive.value,
       collectedBy: fromElementsData.collectedBy.checked,
-      handledBy: fromElementsData.handledBy.checked,
+      // collectedBy: fromElementsData.collectedBy.checked,
+      // handledBy: fromElementsData.handledBy.checked,
     }
 
     sendPost = JSON.stringify(sendPost);
@@ -222,14 +223,14 @@ export default function ExecutiveWiseReport(props) {
             </Grid>
             <Grid item xs={12} sm={12} md={12} lg={12}>
             <FormControl>
-                <FormLabel id="demo-row-radio-buttons-group-label">Select One</FormLabel>
+                <FormLabel id="demo-row-radio-buttons-group-label">Select</FormLabel>
                 <RadioGroup
                     row
                     aria-labelledby="demo-row-radio-buttons-group-label"
                     name="row-radio-buttons-group"
                 >
                     <FormControlLabel value="1" control={<Radio name='collectedBy' />} label="Collected By" />
-                    <FormControlLabel value="2" control={<Radio name='handledBy' />} label="Handled By" />
+                    {/* <FormControlLabel value="2" control={<Radio name='handledBy' />} label="Handled By" /> */}
                 </RadioGroup>
             </FormControl>
             </Grid>

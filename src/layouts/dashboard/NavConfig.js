@@ -42,45 +42,47 @@ const navConfig = [
     icon: getIcon('eva:people-fill'),
     permission: permissionSet === [] ? 0 :permissionSet.builerPayment,
     children: [
-      { 
-        head: '',
-        title: 'Builder Pay',
-        path: '#',
-        icon: getIcon(''),
-      },
-      {
-        head: 'builderpayment',
-        title: 'builder payment',
-        path: '/app/builerPayment',
-        icon: getIcon(''),
-      },
+      // { 
+      //   head: '',
+      //   title: 'Builder Pay',
+      //   path: '#',
+      //   icon: getIcon(''),
+      // },
+      // {
+      //   head: 'builderpayment',
+      //   title: 'builder payment',
+      //   path: '/app/builerPayment',
+      //   icon: getIcon(''),
+      // },
       // -------------------------------Option START--------------------------------- //
-      { 
-        head: '',
-        title: 'Opinion',
-        path: '#',
-        icon: getIcon(''),
-      },
+
+      // { 
+      //   head: '',
+      //   title: 'Opinion',
+      //   path: '/app/option/prepareReports',
+      //   icon: getIcon(''),
+      // },
+
       {
         head: 'prepareReports',
-        title: 'Prepare Reports',
+        title: 'Opinion',
         path: '/app/option/prepareReports',
         icon: getIcon(''),
       },
-      {
-        head: 'duDupe',
-        title: 'Du Dupe',
-        path: '/app/option/duDupe',
-        icon: getIcon(''),
-      },
+      // {
+      //   head: 'duDupe',
+      //   title: 'Du Dupe',
+      //   path: '/app/option/duDupe',
+      //   icon: getIcon(''),
+      // },
       // -------------------------------Option END--------------------------------- //
       // -------------------------------Disbursal START--------------------------------- //
-      { 
-        head: '',
-        title: 'Disbursal',
-        path: '#',
-        icon: getIcon(''),
-      },
+      // { 
+      //   head: '',
+      //   title: 'Disbursal',
+      //   path: '/app/disbursal/registration/list/',
+      //   icon: getIcon(''),
+      // },
       { 
         head: 'registration',
         title: 'Registration',
@@ -93,31 +95,74 @@ const navConfig = [
         path: '/app/disbursal/bt/list/',
         icon: getIcon(''),
       },
+
+      {
+        head: 'AuthorityLetters',
+        title: 'Authority Letters',
+        path: '/app/format/AuthorityLetters/list',
+        icon: getIcon(''),
+      },
+      {
+        head: 'DepositOfPayment',
+        title: 'Deposit Of Payment',
+        path: '/app/format/DepositOfPayment/list',
+        icon: getIcon(''),
+      },
+
       // -------------------------------Disbursal END--------------------------------- //
       // -------------------------------Bill START--------------------------------- //
-      { 
-        head: '',
-        title: 'Bill',
-        path: '#',
-        icon: getIcon(''),
-      },
-      { 
-        head: 'professionalFee',
-        title: 'Professional Fee',
-        path: '/app/bill/professionalFee/0',
-        icon: getIcon(''),
-      },
-      { 
-        head: 'expenses',
-        title: 'Expenses',
-        path: '/app/bill/expenses/0',
-        icon: getIcon(''),
-      },
+      // { 
+      //   head: '',
+      //   title: 'Bill',
+      //   path: '/app/bill/professionalFee/0',
+      //   icon: getIcon(''),
+      // },
+      // { 
+      //   head: 'professionalFee',
+      //   title: 'Professional Fee',
+      //   path: '/app/bill/professionalFee/0',
+      //   icon: getIcon(''),
+      // },
+      // { 
+      //   head: 'expenses',
+      //   title: 'Expenses',
+      //   path: '/app/bill/expenses/0',
+      //   icon: getIcon(''),
+      // },
       // -------------------------------Bill END--------------------------------- //
 
     ]
   },
   // -------------------------------Transection END--------------------------------- //
+
+
+  // {
+  //   title: 'Format',
+  //   path: '#', 
+  //   icon: getIcon('eva:people-fill'),
+  //   permission: permissionSet === [] ? 0 :permissionSet.builerPayment,
+  //   children: [
+  //     { 
+  //       head: '',
+  //       title: 'Format',
+  //       path: '/app/format/AuthorityLetters',
+  //       icon: getIcon(''),
+  //     },
+  //     {
+  //       head: 'AuthorityLetters',
+  //       title: 'Authority Letters',
+  //       path: '/app/format/AuthorityLetters',
+  //       icon: getIcon(''),
+  //     },
+  //     {
+  //       head: 'DepositOfPayment',
+  //       title: 'Deposit Of Payment',
+  //       path: '/app/format/DepositOfPayment',
+  //       icon: getIcon(''),
+  //     },
+
+  //   ]
+  // },
 
     // -------------------------------Option START--------------------------------- //
     // {
@@ -194,38 +239,31 @@ const navConfig = [
 
   // -------------------------------Transection START--------------------------------- //
   {
-    title: 'Reports',
+    title: 'Opinion Reports',
     path: '#', 
     icon: getIcon('eva:people-fill'),
     permission: permissionSet === [] ? 0 :permissionSet.builerPayment,
     children: [
       // -------------------------------Report Builder START--------------------------------- //
-      { 
-        head: '',
-        title: 'Builder Pay',
-        path: '#',
-        icon: getIcon(''),
-      },
-      { 
-        head: 'paymentLedger',
-        title: 'Register',
-        path: '/app/reportBuilderPay/paymentLedger/0',
-        icon: getIcon(''),
-      },
-      { 
-        head: 'reportBuilderPayList',
-        title: 'Executive Wise',
-        path: '/app/reportBuilderPay/executiveWiseMISReport/0',
-        icon: getIcon(''),
-      },
+      // { 
+      //   head: '',
+      //   title: 'Builder Pay',
+      //   path: '#',
+      //   icon: getIcon(''),
+      // },
+      // { 
+      //   head: 'paymentLedger',
+      //   title: 'Register',
+      //   path: '/app/reportBuilderPay/paymentLedger/0',
+      //   icon: getIcon(''),
+      // },
+      // { 
+      //   head: 'reportBuilderPayList',
+      //   title: 'Executive Wise',
+      //   path: '/app/reportBuilderPay/executiveWiseMISReport/0',
+      //   icon: getIcon(''),
+      // },
       // -------------------------------Report Builder END--------------------------------- //
-      // -------------------------------Report (Opinion) START--------------------------------- //
-      { 
-        head: '',
-        title: 'Opinion',
-        path: '#',
-        icon: getIcon(''),
-      },
       { 
         head: 'bankWiseMISReport',
         title: 'Bank Wise MIS Report',
@@ -250,14 +288,15 @@ const navConfig = [
         path: '/app/reportOpinion/typeWiseMISReport/0',
         icon: getIcon(''),
       },
-      // -------------------------------Report (Opinion) END--------------------------------- //
-      // -------------------------------Report (Disbursal) START--------------------------------- //
-      { 
-        head: '',
-        title: 'Disbursal',
-        path: '#',
-        icon: getIcon(''),
-      },
+    ]
+  },
+
+  {
+    title: 'Disbursal Report',
+    path: '#', 
+    icon: getIcon('eva:people-fill'),
+    permission: permissionSet === [] ? 0 :permissionSet.reportBuilderPay,
+    children: [
       { 
         head: 'registrationBank',
         title: 'Registration Bank',
@@ -336,29 +375,31 @@ const navConfig = [
         path: '/app/reportDisbursal/accountSummary/0',
         icon: getIcon(''),
       },
-      // -------------------------------Report (Disbursal) END--------------------------------- //
-      // -------------------------------MIS Report START--------------------------------- //
-      { 
-        head: '',
-        title: 'MIS Report',
-        path: '#',
-        icon: getIcon(''),
-      },
-      { 
-        head: 'executiveWiseMis',
-        title: 'Executive Wise MIS',
-        path: '/app/misReport/executiveWiseMis/0',
-        icon: getIcon(''),
-      },
-      { 
-        head: 'bankWiseMis',
-        title: 'Bank Wise MIS',
-        path: '/app/misReport/bankWiseMis/0',
-        icon: getIcon(''),
-      },
-      // -------------------------------MIS Report END--------------------------------- //
     ]
   },
+
+  // {
+  //   title: 'MIS Report',
+  //   path: '/app/reportBuilderPay', 
+  //   icon: getIcon('eva:people-fill'),
+  //   permission: permissionSet === [] ? 0 :permissionSet.reportBuilderPay,
+  //   children: [
+  //     { 
+  //       head: 'executiveWiseMis',
+  //       title: 'Executive Wise MIS',
+  //       path: '/app/misReport/executiveWiseMis/0',
+  //       icon: getIcon(''),
+  //     },
+  //     { 
+  //       head: 'bankWiseMis',
+  //       title: 'Bank Wise MIS',
+  //       path: '/app/misReport/bankWiseMis/0',
+  //       icon: getIcon(''),
+  //     },
+  //   ]
+  // },
+
+
   // -------------------------------Transection END--------------------------------- //
 
   // -------------------------------Report Builder START--------------------------------- //
@@ -547,7 +588,7 @@ const navConfig = [
   { 
     head: 'master',
     title: 'Master',
-    path: '/app/master',
+    path: '#',
     icon: getIcon('eva:pie-chart-2-fill'),
     permission: permissionSet === [] ? 0 :permissionSet.master,
     children: [
@@ -599,9 +640,16 @@ const navConfig = [
         path: '/app/master/fee',
         icon: getIcon(''),
       },
+      
     ]
   },
 
+  { 
+    title: 'user',
+    path: '/app/master/user',
+    icon: getIcon('eva:pie-chart-2-fill'),
+    permission: permissionSet === [] ? 0 :permissionSet.dashboard,
+  },
   {
     title: 'logout',
     path: '/logout',

@@ -66,3 +66,38 @@ def authUserList(request):
 
 
 
+@api_view(['POST'])
+def authUserCreate(request):
+    try:
+        checkData = userSerializer(data= request.data, many=False)
+        if checkData.is_valid():
+            checkData.save()
+        else:
+            return Response(
+                data={"message": "invalid Form Data","data": checkData.is_valid()},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+    except Exception as e: 
+        return Response(
+            data={"message": "The Invite Key could not be created.","error": str(e)},
+            status=status.HTTP_400_BAD_REQUEST
+            )
+    return Response('success')
+
+@api_view(['POST'])
+def authUserUpdate(request,id):
+    userUPDATE = user.objects.get(id= id)
+    checkData = userSerializer(userUPDATE, data= request.data, partial=True)
+    if checkData.is_valid():
+            checkData.save()
+    else:
+        return Response(
+            data={"message": "invalid Form Data","data": checkData.is_valid()},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    return Response('success')
+
+@api_view(['GET'])
+def authUserDelete(request,id):
+    user.objects.filter(id=id).delete()
+    return Response('success')

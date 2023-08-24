@@ -101,27 +101,35 @@ def Delete(request,id):
 
 @api_view(['POST'])
 def BankWiseReport(request): 
+
+    caseRecived = request.data.get('caseRecived', False)
+    caseSent = request.data.get('caseSent', False)
+    casePending = request.data.get('casePending', False)
+    caseHold = request.data.get('caseHold', False)
+
     ReportData = optionPrepareReport.objects.filter(
-                Q(reportDate__range= [request.data['from'], request.data['to']]) & Q(bank= request.data['bank']) & Q(branch= request.data['branch'])
+                Q(reciptDate__range= [request.data['from'], request.data['to']]) 
+                & Q(bank= request.data['bank']) 
+                & Q(branch= request.data['branch'])
             )     
-    if request.data['caseRecived'] is not False:
+    if caseRecived is not False:
         ReportData = optionPrepareReport.objects.filter(
-            Q(reportDate__range= [request.data['from'], request.data['to']]) & Q(bank= request.data['bank']) & Q(branch= request.data['branch'])
+            Q(reciptDate__range= [request.data['from'], request.data['to']]) & Q(bank= request.data['bank']) & Q(branch= request.data['branch'])
         )
 
-    if request.data['caseSent'] is not False:
+    if caseSent is not False:
         ReportData = optionPrepareReport.objects.filter(
-            Q(reportDate__range= [request.data['from'], request.data['to']]) & Q(bank= request.data['bank']) & Q(branch= request.data['branch'])
+            Q(reciptDate__range= [request.data['from'], request.data['to']]) & Q(bank= request.data['bank']) & Q(branch= request.data['branch'])
         )
     
-    if request.data['casePending'] is not False:
+    if casePending is not False:
         ReportData = optionPrepareReport.objects.filter(
-            Q(reportDate__range= [request.data['from'], request.data['to']]) & Q(bank= request.data['bank']) & Q(branch= request.data['branch']) & Q(statusValue= "Pending")
+            Q(reciptDate__range= [request.data['from'], request.data['to']]) & Q(bank= request.data['bank']) & Q(branch= request.data['branch']) & Q(statusValue= "Pending")
         )
     
-    if request.data['caseHold'] is not False:
+    if caseHold is not False:
         ReportData = optionPrepareReport.objects.filter(
-            Q(reportDate__range= [request.data['from'], request.data['to']]) & Q(bank= request.data['bank']) & Q(branch= request.data['branch']) & Q(statusValue= "Hold")
+            Q(reciptDate__range= [request.data['from'], request.data['to']]) & Q(bank= request.data['bank']) & Q(branch= request.data['branch']) & Q(statusValue= "Hold")
         )
 
     List = optionPrepareReportSerializer(ReportData, many= True)
@@ -135,9 +143,13 @@ def BankWiseReport(request):
         branchSerialise = branchSerializer(branchItem, many= False)
         item['branchName'] = branchSerialise.data
         # User 
-        userItem = user.objects.filter(id= item['preparedBy']).first()
-        userSerialise = userSerializer(userItem, many= False)
-        item['preparedByName'] = userSerialise.data
+        if item['preparedBy']:
+            userItem = user.objects.filter(id= item['preparedBy']).first()
+            userSerialise = userSerializer(userItem, many= False)
+            item['preparedByName'] = userSerialise.data
+        else:
+            item['preparedByName'] = []
+
         
     return Response(List.data)
 
@@ -155,11 +167,11 @@ def StatusWiseReport(request):
     if receiveDate == True:
         if status != '':
             ReportData = optionPrepareReport.objects.filter(
-                Q(reportDate__range= [fromDate, fromTo]) & Q(bank= bank) & Q(branch= branch) & Q(statusValue= status)
+                Q(reciptDate__range= [fromDate, fromTo]) & Q(bank= bank) & Q(branch= branch) & Q(statusValue= status)
             )
         else:
             ReportData = optionPrepareReport.objects.filter(
-                Q(reportDate__range= [fromDate, fromTo]) & Q(bank= bank) & Q(branch= branch)
+                Q(reciptDate__range= [fromDate, fromTo]) & Q(bank= bank) & Q(branch= branch)
             )
     elif sendOnDate == True:
         if status != '':
@@ -192,10 +204,13 @@ def StatusWiseReport(request):
         branchSerialise = branchSerializer(branchItem, many= False)
         item['branchName'] = branchSerialise.data
         # User 
-        userItem = user.objects.filter(id= item['preparedBy']).first()
-        userSerialise = userSerializer(userItem, many= False)
-        item['preparedByName'] = userSerialise.data
-        
+
+        if item['preparedBy']:
+            userItem = user.objects.filter(id= item['preparedBy']).first()
+            userSerialise = userSerializer(userItem, many= False)
+            item['preparedByName'] = userSerialise.data
+        else:
+            item['preparedByName'] = []
     return Response(List.data)
 
 @api_view(['POST'])
@@ -208,15 +223,15 @@ def ExecutiveWiseReport(request):
      
     if collectedBy == True:
         ReportData = optionPrepareReport.objects.filter(
-            Q(reportDate__range= [fromDate, fromTo]) & Q(collectedBy= executive)
+            Q(reciptDate__range= [fromDate, fromTo]) & Q(collectedBy= executive)
         )
     elif handledBy == True:
         ReportData = optionPrepareReport.objects.filter(
-            Q(reportDate__range= [fromDate, fromTo]) & Q(preparedBy= executive)
+            Q(reciptDate__range= [fromDate, fromTo]) & Q(preparedBy= executive)
         )
     else:
         ReportData = optionPrepareReport.objects.filter(
-                Q(reportDate__range= [fromDate, fromTo])
+                Q(reciptDate__range= [fromDate, fromTo])
             ) 
 
     List = optionPrepareReportSerializer(ReportData, many= True)
@@ -230,10 +245,12 @@ def ExecutiveWiseReport(request):
         branchSerialise = branchSerializer(branchItem, many= False)
         item['branchName'] = branchSerialise.data
         # User 
-        userItem = user.objects.filter(id= item['preparedBy']).first()
-        userSerialise = userSerializer(userItem, many= False)
-        item['preparedByName'] = userSerialise.data
-        
+        if item['preparedBy']:
+            userItem = user.objects.filter(id= item['preparedBy']).first()
+            userSerialise = userSerializer(userItem, many= False)
+            item['preparedByName'] = userSerialise.data
+        else:
+            item['preparedByName'] = []
     return Response(List.data)
 
 @api_view(['POST'])
@@ -251,62 +268,61 @@ def TypeWiseReport(request):
 
             if reportType != '' and status != '':
                 ReportData = optionPrepareReport.objects.filter(
-                    Q(reportDate__range= [fromDate, fromTo]) & Q(bank= bankName) & Q(branch= branchName) & Q(report= reportType) & Q(statusValue= status)
+                    Q(reciptDate__range= [fromDate, fromTo]) & Q(bank= bankName) & Q(branch= branchName) & Q(report= reportType) & Q(statusValue= status)
                 )
             elif reportType != '':
                 ReportData = optionPrepareReport.objects.filter(
-                    Q(reportDate__range= [fromDate, fromTo]) & Q(bank= bankName) & Q(branch= branchName) & Q(report= reportType)
+                    Q(reciptDate__range= [fromDate, fromTo]) & Q(bank= bankName) & Q(branch= branchName) & Q(report= reportType)
                 )
             elif status != '':
                 ReportData = optionPrepareReport.objects.filter(
-                    Q(reportDate__range= [fromDate, fromTo]) & Q(bank= bankName) & Q(branch= branchName) & Q(statusValue= status)
+                    Q(reciptDate__range= [fromDate, fromTo]) & Q(bank= bankName) & Q(branch= branchName) & Q(statusValue= status)
                 )
             else:
                 ReportData = optionPrepareReport.objects.filter(
-                    Q(reportDate__range= [fromDate, fromTo]) & Q(bank= bankName) & Q(branch= branchName)
+                    Q(reciptDate__range= [fromDate, fromTo]) & Q(bank= bankName) & Q(branch= branchName)
                 )
 
         else:
 
             if reportType != '' and status != '':
                 ReportData = optionPrepareReport.objects.filter(
-                    Q(reportDate__range= [fromDate, fromTo]) & Q(bank= bankName) & Q(report= reportType) & Q(statusValue= status)
+                    Q(reciptDate__range= [fromDate, fromTo]) & Q(bank= bankName) & Q(report= reportType) & Q(statusValue= status)
                 )
             elif reportType != '':
                 ReportData = optionPrepareReport.objects.filter(
-                    Q(reportDate__range= [fromDate, fromTo]) & Q(bank= bankName) & Q(report= reportType)
+                    Q(reciptDate__range= [fromDate, fromTo]) & Q(bank= bankName) & Q(report= reportType)
                 )
             elif status != '':
                 ReportData = optionPrepareReport.objects.filter(
-                    Q(reportDate__range= [fromDate, fromTo]) & Q(bank= bankName) & Q(statusValue= status)
+                    Q(reciptDate__range= [fromDate, fromTo]) & Q(bank= bankName) & Q(statusValue= status)
                 )
             else:
                 ReportData = optionPrepareReport.objects.filter(
-                    Q(reportDate__range= [fromDate, fromTo]) & Q(bank= bankName)
+                    Q(reciptDate__range= [fromDate, fromTo]) & Q(bank= bankName)
                 )
     
     else:
         if reportType != '' and status != '':
             ReportData = optionPrepareReport.objects.filter(
-                Q(reportDate__range= [fromDate, fromTo]) & Q(report= reportType) & Q(statusValue= status)
+                Q(reciptDate__range= [fromDate, fromTo]) & Q(report= reportType) & Q(statusValue= status)
             )
         elif reportType != '':
             ReportData = optionPrepareReport.objects.filter(
-                Q(reportDate__range= [fromDate, fromTo]) & Q(report= reportType)
+                Q(reciptDate__range= [fromDate, fromTo]) & Q(report= reportType)
             )
         elif status != '':
             ReportData = optionPrepareReport.objects.filter(
-                Q(reportDate__range= [fromDate, fromTo]) & Q(statusValue= status)
+                Q(reciptDate__range= [fromDate, fromTo]) & Q(statusValue= status)
             )
         else:
             ReportData = optionPrepareReport.objects.filter(
-                Q(reportDate__range= [fromDate, fromTo])
+                Q(reciptDate__range= [fromDate, fromTo])
             )
 
     List = optionPrepareReportSerializer(ReportData, many= True)
     for item in List.data:
          # Bank
-        print('####')
         print(item['bank'])
         bankItem = bank.objects.filter(id= item['bank']).first()
         bankSerialise = bankSerializer(bankItem, many= False)
@@ -316,9 +332,13 @@ def TypeWiseReport(request):
         branchSerialise = branchSerializer(branchItem, many= False)
         item['branchName'] = branchSerialise.data
         # User 
-        userItem = user.objects.filter(id= item['preparedBy']).first()
-        userSerialise = userSerializer(userItem, many= False)
-        item['preparedByName'] = userSerialise.data
+        if item['preparedBy']:
+            userItem = user.objects.filter(id= item['preparedBy']).first()
+            userSerialise = userSerializer(userItem, many= False)
+            item['preparedByName'] = userSerialise.data
+        else:
+            item['preparedByName'] = []
+
         
     return Response(List.data)
 

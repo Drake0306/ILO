@@ -96,7 +96,7 @@ function NavItem({ item, active }) {
 
               return (
                 <div key={title}>
-                  {title === "Opinion" || title === "Disbursal" || title === "Bill" || title === "MIS Report"  || title === "Builder Pay"
+                  {title === "Disbursal" || title === "Bill" || title === "MIS Report"  || title === "Builder Pay" || title === "Format"
                   ?
                     <ListItemStyle
                       style={{textAlign: 'center',}}

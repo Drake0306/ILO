@@ -35,6 +35,7 @@ class optionPrepareReport(models.Model):
     statusValue             = models.CharField(max_length=250,blank=True,null=True)
     remarks                 = models.TextField(blank=True,null=True)
     fallowUp                = models.TextField(blank=True,null=True)
+    netFallowUpDate         = models.TextField(blank=True,null=True)
     fileUpload              = models.CharField(max_length=250,blank=True,null=True)
     status                  = models.CharField(max_length=250, default='true')
 
