@@ -51,6 +51,7 @@ export default function EntryFormAL(props) {
     reciptNo: '',
     amount: '',
     documentsCollected: '',
+    executiveName: '',
     builderName: '',
     recDate: '',
     remarks: '',
@@ -95,6 +96,7 @@ export default function EntryFormAL(props) {
         documents: typeof paramsData.documents !== 'undefined' ? paramsData.documents : '',
         documentsCollected: typeof paramsData.documentsCollected !== 'undefined' ? paramsData.documentsCollected : '',
         dateDocCollect: typeof paramsData.dateDocCollect !== 'undefined' ? paramsData.dateDocCollect : [],
+        executiveName: typeof paramsData.executiveName !== 'undefined' ? paramsData.executiveName : [],
         documentSentOn: typeof paramsData.documentSentOn !== 'undefined' ? paramsData.documentSentOn : '',
         CaseClosed: typeof paramsData.CaseClosed !== 'undefined' ? paramsData.CaseClosed : '',
         AckReceived: typeof paramsData.AckReceived !== 'undefined' ? paramsData.AckReceived : '',
@@ -177,6 +179,7 @@ export default function EntryFormAL(props) {
       documents: fromElementsData.documents.value,
       documentsCollected: fromElementsData.documentsCollected.value,
       dateDocCollect: fromElementsData.dateDocCollect.value,
+      executiveName: fromElementsData.executiveName.value,
       documentSentOn: fromElementsData.documentSentOn.value,
       CaseClosed: fromElementsData.CaseClosed.value,
       AckReceived: fromElementsData.AckReceived.value,
@@ -426,7 +429,7 @@ export default function EntryFormAL(props) {
                 fullWidth
                 value={fromData.documents}
                 name="documents" 
-                label="Documents"
+                label="Documents to be collected"
                 multiline
                 rows={2}
               />
@@ -446,6 +449,35 @@ export default function EntryFormAL(props) {
                 >
                   <MenuItem value="YES">YES</MenuItem>
                   <MenuItem value="NO">NO</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+
+            {/* <Grid item xs={12} sm={12} md={3} lg={3}>
+              <TextField
+                onChange={onChangeFields}
+                fullWidth
+                value={fromData.executiveName}
+                name="executiveName" 
+                label="Executive Name"
+              />
+            </Grid> */}
+
+            <Grid item xs={12} sm={12} md={3} lg={3}>
+              <FormControl fullWidth>
+                <InputLabel id="Bank-select-label">Executive Name</InputLabel>
+                <Select
+                  labelId="Bank-select-label"
+                  id="Bank-select"
+                  value={fromData.executiveName}
+                  label="executiveName"
+                  name="executiveName"  
+                  fullWidth
+                  error
+                  required
+                  onChange={onChangeFields}
+                >
+                  {fromDataAutoFill.handledByList.map((option) => (<MenuItem key={option.id} value={option.id}>{option.name}</MenuItem>))}
                 </Select>
               </FormControl>
             </Grid>
@@ -546,7 +578,7 @@ export default function EntryFormAL(props) {
                 </FormControl>
               </Grid>
             
-            <Grid item xs={12} sm={12} md={6} lg={6}>
+            <Grid item xs={12} sm={12} md={4} lg={4}>
               <TextField
                 onChange={onChangeFields}
                 fullWidth
@@ -556,7 +588,7 @@ export default function EntryFormAL(props) {
               />
             </Grid>
             
-            <Grid item xs={12} sm={12} md={6} lg={6}>
+            <Grid item xs={12} sm={12} md={5} lg={5}>
               <TextField
                 onChange={onChangeFields}
                 fullWidth

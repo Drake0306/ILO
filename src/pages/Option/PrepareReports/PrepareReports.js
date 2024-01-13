@@ -38,12 +38,13 @@ import Loader from '../../Loader/Loader';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'id', label: 'ID', alignRight: false },
+  { id: 'id', label: 'Application No', alignRight: false },
   { id: 'bank', label: 'Bank Name', alignRight: false },
   { id: 'branch', label: 'Branch Name', alignRight: false },
   { id: 'customerBorrower', label: 'Name', alignRight: false },
-  { id: 'repNo', label: 'Report No', alignRight: false },
+  // { id: 'repNo', label: 'Report No', alignRight: false },
   { id: 'phoneNo', label: 'Phone No', alignRight: false },
+  // { id: 'applicationNo', label: 'App No', alignRight: false },
   { id: 'statusValue', label: 'Status', alignRight: false },
   // { id: 'contactPerson', label: 'Contact Person', alignRight: false },
   // { id: 'address', label: 'Address', alignRight: false },
@@ -192,7 +193,7 @@ export default function PrepareReports() {
 
   const handleSearch = query => {
     const filtered = filteredUsers.filter(item => {
-      const searchString = `${item.reciptDate} ${item.fileNo} ${item.bankName.name} ${item.branchName.name} ${item.email} ${item.phoneNo}`.toLowerCase();
+      const searchString = `${item.reciptDate} ${item.fileNo} ${item.bankName.name} ${item.branchName.name} ${item.email} ${item.phoneNo} ${item.id} ${item.customerBorrower}`.toLowerCase();
       return searchString.includes(query.toLowerCase());
     });
 
@@ -313,13 +314,15 @@ export default function PrepareReports() {
                             </Stack>
                           </TableCell>
                           
-                          <TableCell component="th" scope="row" padding="none">
+                          {/* <TableCell component="th" scope="row" padding="none">
                             <Stack direction="row" alignItems="center" spacing={2}>
                               <Typography variant="subtitle2" noWrap>
                                 {row.repNo}
                               </Typography>
                             </Stack>
-                          </TableCell>
+                          </TableCell> */}
+                          
+                          
                           
                           <TableCell component="th" scope="row" padding="none">
                             <Stack direction="row" alignItems="center" spacing={2}>
@@ -328,20 +331,26 @@ export default function PrepareReports() {
                               </Typography>
                             </Stack>
                           </TableCell>
-                          
-                          <TableCell component="th" scope="row" padding="none">
+
+                          {/* <TableCell component="th" scope="row" padding="none">
                             <Stack direction="row" alignItems="center" spacing={2}>
                               <Typography variant="subtitle2" noWrap>
-                                {row.statusValue}
+                                {row.applicationNo}
                               </Typography>
                             </Stack>
-                          </TableCell>
+                          </TableCell> */}
+                        
 
                           {/* <TableCell align="left">
                             <Label variant="ghost" color={status === 'false' ? 'error' : 'success'}>
                               {sentenceCase( status === 'true' ? 'active' : 'in active')}
                             </Label>
                           </TableCell> */}
+                          <TableCell align="left">
+                            <Label variant="ghost" color={'secondary'}>
+                              {row.statusValue || 'NA'}
+                            </Label>
+                          </TableCell>
 
                           <TableCell align="right">
                             <UserMoreMenu urlTo={'/app/option/prepareReports/newEntry/'} data={row} dataID={id} deleteURL={'option/delete/'} />

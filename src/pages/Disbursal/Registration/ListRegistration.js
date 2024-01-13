@@ -39,13 +39,16 @@ import Loader from '../../Loader/Loader';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'id', label: 'ID', alignRight: false },
+  // { id: 'id', label: 'ID', alignRight: false },
+  { id: 'transNo', label: 'Transaction No', alignRight: false },
   { id: 'name', label: 'Bank Name', alignRight: false },
   { id: 'branch', label: 'Branch Name', alignRight: false },
   { id: 'registrationDate', label: 'Reg Date', alignRight: false },
-  { id: 'address', label: 'Address', alignRight: false },
-  { id: 'phone', label: 'Phone', alignRight: false },
-  { id: 'status', label: 'Status', alignRight: false },
+  // { id: 'address', label: 'Address', alignRight: false },
+  { id: 'purchaser', label: 'Purchaser', alignRight: false },
+  { id: 'phoneMobile', label: 'Phone', alignRight: false },
+  { id: 'applicationNo', label: 'App No', alignRight: false },
+  { id: 'statusValue', label: 'Status', alignRight: false },
   { id: 'action', label: 'Action', alignRight: false },
 
   // { id: '' },
@@ -188,7 +191,7 @@ export default function ListRegistration() {
 
   const handleSearch = query => {
     const filtered = filteredUsers.filter(item => {
-      const searchString = `${item.reciptDate} ${item.fileNo} ${item.bankName.name} ${item.branchName.name} ${item.phone}`.toLowerCase();
+      const searchString = `${item.reciptDate} ${item.fileNo} ${item.bankName.name} ${item.branchName.name} ${item.phoneMobile} ${item.purchaser} ${item.id} ${item.applicationNo}`.toLowerCase();
       return searchString.includes(query.toLowerCase());
     });
 
@@ -283,8 +286,19 @@ export default function ListRegistration() {
                       >
                         {/* <TableCell padding="checkbox" /> */}
 
-                        <TableCell align="left">{id}</TableCell>
+                        {/* <TableCell align="left">{id}</TableCell> */}
 
+
+                        <TableCell component="th" scope="row" padding="none">
+                          <Stack direction="row" alignItems="center" spacing={2}>
+                            {typeof avatarUrl !== "undefined"? <Avatar alt={bank} src={avatarUrl} /> : null}
+                            <Typography variant="subtitle2" noWrap>
+                              {row.id}
+                            </Typography>
+                          </Stack>
+                        </TableCell>
+
+                        
                         <TableCell component="th" scope="row" padding="none">
                           <Stack direction="row" alignItems="center" spacing={2}>
                             {typeof avatarUrl !== "undefined"? <Avatar alt={bank} src={avatarUrl} /> : null}
@@ -310,10 +324,18 @@ export default function ListRegistration() {
                           </Stack>
                         </TableCell>
                         
-                        <TableCell component="th" scope="row" padding="none">
+                        {/* <TableCell component="th" scope="row" padding="none">
                           <Stack direction="row" alignItems="center" spacing={2}>
                             <Typography variant="subtitle2" noWrap>
                               {address}
+                            </Typography>
+                          </Stack>
+                        </TableCell> */}
+                        
+                        <TableCell component="th" scope="row" padding="none">
+                          <Stack direction="row" alignItems="center" spacing={2}>
+                            <Typography variant="subtitle2" noWrap>
+                              {row.purchaser}
                             </Typography>
                           </Stack>
                         </TableCell>
@@ -321,7 +343,15 @@ export default function ListRegistration() {
                         <TableCell component="th" scope="row" padding="none">
                           <Stack direction="row" alignItems="center" spacing={2}>
                             <Typography variant="subtitle2" noWrap>
-                              {row.phone}
+                              {row.phoneMobile}
+                            </Typography>
+                          </Stack>
+                        </TableCell>
+                        
+                        <TableCell component="th" scope="row" padding="none">
+                          <Stack direction="row" alignItems="center" spacing={2}>
+                            <Typography variant="subtitle2" noWrap>
+                              {row.applicationNo}
                             </Typography>
                           </Stack>
                         </TableCell>
@@ -329,9 +359,12 @@ export default function ListRegistration() {
                         
 
                         <TableCell align="left">
-                          <Label variant="ghost" color={status === 'false' ? 'error' : 'success'}>
-                            {sentenceCase( status === 'true' ? 'active' : 'in active')}
+                          <Label variant="ghost" color={'secondary'}>
+                            {row.statusValue || 'NA'}
                           </Label>
+                          {/* <Label variant="ghost" color={status === 'false' ? 'error' : 'success'}>
+                            {sentenceCase( status === 'true' ? 'active' : 'in active')}
+                          </Label> */}
                         </TableCell>
 
                         <TableCell align="right">

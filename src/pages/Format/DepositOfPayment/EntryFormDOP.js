@@ -52,10 +52,11 @@ export default function EntryFormDOP(props) {
     amount: '',
     documentsCollected: '',
     builderName: '',
+    phoneNo: '',
+    executiveName: '',
     recDate: '',
     remarks: '',
     favoring: '',
-    phoneNo: '',
     dateDocCollect: '',
     documents: '',
     documentSentOn: '',
@@ -96,6 +97,8 @@ export default function EntryFormDOP(props) {
         paymentDetails: typeof paramsData.paymentDetails !== 'undefined' ? paramsData.paymentDetails : '',
         address: typeof paramsData.address !== 'undefined' ? paramsData.address : '',
         builderName: typeof paramsData.builderName !== 'undefined' ? paramsData.builderName : '',
+        phoneNo: typeof paramsData.phoneNo !== 'undefined' ? paramsData.phoneNo : '',
+        executiveName: typeof paramsData.executiveName !== 'undefined' ? paramsData.executiveName : '',
         DateofDeposit: typeof paramsData.DateofDeposit !== 'undefined' ? paramsData.DateofDeposit : '',
         Receiptparticulars: typeof paramsData.Receiptparticulars !== 'undefined' ? paramsData.Receiptparticulars : '',
         dateReceiptSentToBank: typeof paramsData.dateReceiptSentToBank !== 'undefined' ? paramsData.dateReceiptSentToBank : '',
@@ -177,6 +180,8 @@ export default function EntryFormDOP(props) {
       paymentDetails: fromElementsData.paymentDetails.value,
       address: fromElementsData.address.value,
       builderName: fromElementsData.builderName.value,
+      phoneNo: fromElementsData.phoneNo.value,
+      executiveName: fromElementsData.executiveName.value,
       DateofDeposit: fromElementsData.DateofDeposit.value,
       Receiptparticulars: fromElementsData.Receiptparticulars.value,
       dateReceiptSentToBank: fromElementsData.dateReceiptSentToBank.value,
@@ -417,7 +422,7 @@ export default function EntryFormDOP(props) {
             </Grid>
             
 
-            <Grid item xs={12} sm={12} md={6} lg={6}>
+            <Grid item xs={12} sm={12} md={4} lg={4}>
               <TextField
                 onChange={onChangeFields}
                 fullWidth
@@ -427,6 +432,45 @@ export default function EntryFormDOP(props) {
                 error
                 label="Builder Name"
               />
+            </Grid>
+            
+            <Grid item xs={12} sm={12} md={2} lg={2}>
+              <TextField
+                onChange={onChangeFields}
+                fullWidth
+                value={fromData.phoneNo}
+                name="phoneNo" 
+                label="phone No"
+              />
+            </Grid>
+
+            {/* <Grid item xs={12} sm={12} md={3} lg={3}>
+              <TextField
+                onChange={onChangeFields}
+                fullWidth
+                value={fromData.executiveName}
+                name="executiveName" 
+                label="Executive Name"
+              />
+            </Grid> */}
+
+            <Grid item xs={12} sm={12} md={3} lg={3}>
+              <FormControl fullWidth>
+                <InputLabel id="Bank-select-label">Executive Name</InputLabel>
+                <Select
+                  labelId="Bank-select-label"
+                  id="Bank-select"
+                  value={fromData.executiveName}
+                  label="executiveName"
+                  name="executiveName"  
+                  fullWidth
+                  error
+                  required
+                  onChange={onChangeFields}
+                >
+                  {fromDataAutoFill.handledByList.map((option) => (<MenuItem key={option.id} value={option.id}>{option.name}</MenuItem>))}
+                </Select>
+              </FormControl>
             </Grid>
 
             <Grid item xs={12} sm={12} md={3} lg={3}>

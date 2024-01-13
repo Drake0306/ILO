@@ -538,7 +538,7 @@ export default function Registration(props) {
                     fullWidth
                     value={fromData.address}
                     name="address"
-                    label="Bulding Office"
+                    label="Builder office"
                     multiline
                     rows={2}
                   />
@@ -707,7 +707,6 @@ export default function Registration(props) {
                       name="dsa"
                       fullWidth
                       onChange={onChangeFields}
-                      required
                       error
                     >
                       {fromDataAutoFill.dsaList.map((option) => (

@@ -6,27 +6,158 @@ import moment from 'moment/moment';
 import axios from 'axios';
 import { LoadingButton } from '@mui/lab';
 import { Grid, Container, Typography, Link, Stack, Button, Card, TextField, Checkbox, FormControlLabel, Autocomplete, InputLabel, MenuItem, FormControl } from '@mui/material';
+import * as FileSaver from 'file-saver';
+import XLSX from 'sheetjs-style';
+
+import pdfMake from 'pdfmake/build/pdfmake';
+import pdfFonts from 'pdfmake/build/vfs_fonts';
 import JSON_CONST from '../../../components/CONSTVALUE.json';
 
 const ref = React.createRef();
+
+// Register fonts
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 export default function PDFRenderLoanLedger (props) {
     const ref = React.createRef();
     const params = useParams()
     const [paramsData, setParamsData] = useState(params.data && JSON.parse(decodeURI(params.data)));
     const [resData, setResData] = useState([]);
-    const options = {
-        orientation: 'landscape',
-        unit: 'in',
-        format: [4,2]
-    };
+    const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+    const fileExtension = '.xlsx';
+    const [dd, setDD] = useState({
+        pageOrientation: 'landscape',
+        pageSize: 'A4',
+        pageMargins: [ 10, 10, 40, 10 ],
+        content: [
+            {text: 'INTELLECTIVE LAW OFFICES', style: 'header'},
+            {text: 'Advicates, Legal Advisers & Consultants', style: 'headerSub'},
+            {text: `Loan Taken Over Register:-                                                                                  Date As on: ${moment().format('DD-MM-YYYY')}`, style: 'subheader'},
+            {
+                style: 'tableExample',
+                table: {
+                    body: [
+                        [
+                            {text: 'Sr', style: 'tableHeaderMain'}, 
+                            {text:'Take Over', style: 'tableHeaderMain'}, 
+                            {text:'App no', style: 'tableHeaderMain'}, 
+                            // {text:'DSA', style: 'tableHeaderMain'}, 
+                            {text:'Customer', style: 'tableHeaderMain'}, 
+                            {text:'Take Over From', style: 'tableHeaderMain'}, 
+                            {text:'Property', style: 'tableHeaderMain'}, 
+                            {text:'Coll Date', style: 'tableHeaderMain'}, 
+                            {text:'Doc Sent', style: 'tableHeaderMain'}, 
+                            {text:'Handled By', style: 'tableHeaderMain'}, 
+                            // {text:'Amount', style: 'tableHeaderMain'}, 
+                            // {text:'Chq Date', style: 'tableHeaderMain'}, 
+                            // {text:'Chq Rev', style: 'tableHeaderMain'}, 
+                            // {text:'Chq Return', style: 'tableHeaderMain'}, 
+                            {text:'Remark', style: 'tableHeaderMain'}, 
+                            {text:'Other remark', style: 'tableHeaderMain'}
+                        ],
+    
+                        []
+                    ]
+                }
+            },
+        ],
+        styles: {
+            header: {
+                fontSize: 18,
+                bold: true,
+                margin: [0, 0, 0, 10],
+                alignment: 'center'
+            },
+            subheader: {
+                fontSize: 12,
+                bold: true,
+                margin: [0, 10, 0, 5]
+            },
+            subheadingTable: {
+                fontSize: 10,
+                bold: false,
+                margin: [0, 10, 0, 5]
+            },
+            tableExample: {
+                margin: [0, 0, 0, 0],
+            },
+            tableHeader: {
+                fontSize: 9,
+                color: 'black'
+            },
+            tableHeaderMain: {
+                bold: true,
+                color: 'black'
+            },
+            headerSub: {
+                fontSize: 16,
+                alignment: 'center'
+            }
+        },
+        defaultStyle: {
+            // alignment: 'justify'
+        }
+        
+    });
+
+    const exportToExcel = async () => {
+        const ws = XLSX.utils.json_to_sheet(resData);
+        const wb = { Sheets: { 'data': ws }, SheetNames: ['data'] };
+        const excelBuffer = XLSX.write(wb, { bookType : 'xlsx', type: 'array'});
+        const data = new Blob([excelBuffer], {type: fileType});
+        FileSaver.saveAs(data, `Export${fileExtension}`);
+    }
+
+    const exportToPdf = (value) => {
+        pdfMake.createPdf(value).open();
+    }
 
     useEffect(() => {
+
+        // ADD TO ROW FOR THE PDF
+        const tableHeadder = [];
+        tableHeadder.push(dd.content[3].table.body[0]);
+        console.log('1',dd)
+        const fullDD = dd;
+        let fullData = [];
+        const pushToMain = tableHeadder;
         try {
             axios.post(`${JSON_CONST.DB_URL}disbursal/registrationBTGlobalREport`, paramsData)
                 .then((response) => {
                     console.log(response);
+                    response.data.forEach((row) => {
+                        fullData = [];
+                        // Push to Temp
+                        fullData.push({text: row?.id, style: 'tableHeader'})
+                        fullData.push({text: row?.loanTakenFrom, style: 'tableHeader'})
+                        fullData.push({text: row?.applicationNo, style: 'tableHeader'})
+                        // fullData.push({text: row?.dsaName?.name, style: 'tableHeader'})
+                        fullData.push({text: row?.customerName, style: 'tableHeader'})
+                        fullData.push({text: row?.loanTakenFrom, style: 'tableHeader'})
+                        fullData.push({text: row?.propertyDetails, style: 'tableHeader'})
+                        fullData.push({text: row?.collectionDate && moment(row?.collectionDate).format('DD-MM-YYYY'), style: 'tableHeader'})
+                        fullData.push({text: row?.docSentToBankDate && moment(row?.docSentToBankDate).format('DD-MM-YYYY'), style: 'tableHeader'})
+                        fullData.push({text: row?.handledByName?.name, style: 'tableHeader'})
+                        // fullData.push({text: row?.amount, style: 'tableHeader'})
+                        // fullData.push({text: row?.chequeDate && moment(row?.chequeDate).format('DD-MM-YYYY'), style: 'tableHeader'})
+                        // fullData.push({text: row?.chequeReceivedDate && moment(row?.chequeReceivedDate).format('DD-MM-YYYY'), style: 'tableHeader'})
+                        // fullData.push({text: row?.chequeReturnDate && moment(row?.chequeReturnDate).format('DD-MM-YYYY'), style: 'tableHeader'})
+                        fullData.push({text: row?.remarksName?.name, style: 'tableHeader'})
+                        fullData.push({text: row?.otherRemarkIfAny, style: 'tableHeader'})
+
+                        // Push To Main
+                        pushToMain.push(fullData)
+                    });
+
+                    // assign main Value
+                    fullDD.content[3].table.body = pushToMain;
+                    setDD(fullDD);
+                    console.log('pushToMain', pushToMain);
+                    console.log('fullData', fullData);
+                    console.log('dd 2 ', dd);
+
                     setResData(response.data)
+                    
                 }).catch((error) => {
                     console.log(error);
                 });
@@ -34,94 +165,15 @@ export default function PDFRenderLoanLedger (props) {
         catch (err) {
             console.log(err)
         }
-      }, [paramsData]);
+    }, [dd, dd.content, paramsData]);
     return (
-        <>
-            <center>
-                <Pdf targetRef={ref} filename="Professional-Fee.pdf">
-                    {({ toPdf }) => (
-                    <LoadingButton size="large" type="button" onClick={toPdf} variant="contained" color="error" > Generate PDF </LoadingButton>
-                    )}
-                </Pdf>
+        <>  
+            <center mt={5}>
+                <LoadingButton size="large" type="button" onClick={(e) => exportToPdf(dd)} variant="contained" color="error" > EXPORT PDF </LoadingButton>
+                &nbsp; &nbsp;&nbsp;
+                <LoadingButton size="large" type="button" onClick={(e) => exportToExcel(e)} variant="contained" color="success" > EXPORT XLSX </LoadingButton>
+                <br/>
             </center>
-            <div>
-                <div className="book">
-                    <div className="pageTwo" ref={ref}>
-                        <div className="subpageTwo">
-                            <Container >
-                                <Grid container alignItems="center" paddingLeft={0} paddingBottom={0} paddingRight={0} paddingTop={0} spacing={0}>
-                                    <Grid item xs={12} sm={12} md={12} lg={12} className="headTitle">
-                                    <h3>INTELLECTIVE LAW OFFICES</h3>
-                                    <h3 style={{fontSize: '15px'}}>Advicates, Legal Advisers & Consultants</h3>
-                                    </Grid>
-                                    <Grid item xs={4} sm={4} md={4} lg={4} mt={9} className="subHead">
-                                        <h3>Loan Take Over Register</h3>
-                                    </Grid>
-                                    <Grid item xs={2} sm={2} md={2} lg={2} mt={9} className="subHead">
-                                        <h3>&nbsp;</h3>
-                                    </Grid>
-                                    <Grid item xs={2} sm={2} md={2} lg={2} mt={9} className="subHead">
-                                        <h3>&nbsp;</h3>
-                                    </Grid>
-                                    <Grid item xs={4} sm={4} md={4} lg={4} mt={9} className="subHeadEnd">
-                                        <h3>As on Date: {moment().format('DD-MM-YYYY')}</h3>
-                                    </Grid>
-                                    
-                                    
-                                    <Grid item xs={12} sm={12} md={12} lg={12} mt={2} className="">
-                                        <table border={0} className="tableTwo">
-                                            <thead>
-                                                <tr>
-                                                    <th rowSpan={2} className='borderLine' style={{width: '30px'}}><h5>Sl</h5></th>
-                                                    <th rowSpan={2} className='borderLine' style={{width: '70px'}}><h5>Take Over</h5></th>
-                                                    <th rowSpan={2} className='borderLine' style={{width: '70px'}}><h5>App no</h5></th>
-                                                    <th rowSpan={2} className='borderLine' style={{width: '200px'}}><h5>DSA</h5></th>
-                                                    <th rowSpan={2} className='borderLine' style={{width: '150px'}}><h5>Customer Details</h5></th>
-                                                    <th rowSpan={2} className='borderLine' style={{width: '150px'}}><h5>Taken Over From</h5></th>
-                                                    <th rowSpan={2} className='borderLine' style={{width: '70px'}}><h5>Property</h5></th>
-                                                    <th rowSpan={2} className='borderLine' style={{width: '70px'}}><h5>Coll Date</h5></th>
-                                                    <th rowSpan={2} className='borderLine' style={{width: '70px'}}><h5>Doc Sent</h5></th>
-                                                    <th rowSpan={2} className='borderLine' style={{width: '70px'}}><h5>Handled By</h5></th>
-                                                    <th rowSpan={2} className='borderLine' style={{width: '70px'}}><h5>Amount</h5></th>
-                                                    <th rowSpan={2} className='borderLine' style={{width: '70px'}}><h5>Chq Date</h5></th>
-                                                    <th rowSpan={2} className='borderLine' style={{width: '70px'}}><h5>Chq Rev</h5></th>
-                                                    <th rowSpan={2} className='borderLine' style={{width: '70px'}}><h5>Chq Return</h5></th>
-                                                    <th rowSpan={2} className='borderLine' style={{width: '70px'}}><h5>Remark</h5></th>
-                                                    <th rowSpan={2} className='borderLine' style={{width: '70px'}}><h5>Oth Remark</h5></th>
-                                                </tr>
-                                                
-                                            </thead>
-                                            <tbody>
-                                                {resData.map((row) => (
-                                                    <tr key={row.id}>
-                                                        <td className='borderLine' style={{fontSize: '9px', textAlign: 'left'}}> {row?.id} </td>                                                        
-                                                        <td className='borderLine' style={{fontSize: '9px', textAlign: 'left'}}> {row?.loanTakenFrom} </td>                                                        
-                                                        <td className='borderLine' style={{fontSize: '9px', textAlign: 'left'}}> {row?.applicationNo} </td>                                                        
-                                                        <td className='borderLine' style={{fontSize: '9px', textAlign: 'left'}}> {row?.dsa} </td>                                                        
-                                                        <td className='borderLine' style={{fontSize: '9px', textAlign: 'left'}}> {row?.customerName} </td>                                                        
-                                                        <td className='borderLine' style={{fontSize: '9px', textAlign: 'left'}}> {row?.loanTakenFrom} </td>                                                        
-                                                        <td className='borderLine' style={{fontSize: '9px', textAlign: 'left'}}> {row?.propertyDetails} </td>                                                        
-                                                        <td className='borderLine' style={{fontSize: '9px', textAlign: 'left'}}> {row?.collectionDate && moment(row?.collectionDate).format('DD-MM-YYYY')} </td>                                                        
-                                                        <td className='borderLine' style={{fontSize: '9px', textAlign: 'left'}}> {row?.docSentToBankDate && moment(row?.docSentToBankDate).format('DD-MM-YYYY')} </td>                                                        
-                                                        <td className='borderLine' style={{fontSize: '9px', textAlign: 'left'}}> {row?.handledByName?.name} </td>                                                        
-                                                        <td className='borderLine' style={{fontSize: '9px', textAlign: 'left'}}> {row?.amount} </td>                                                        
-                                                        <td className='borderLine' style={{fontSize: '9px', textAlign: 'left'}}> {row?.chequeDate && moment(row?.chequeDate).format('DD-MM-YYYY')} </td>                                                        
-                                                        <td className='borderLine' style={{fontSize: '9px', textAlign: 'left'}}> {row?.chequeReceivedDate && moment(row?.chequeReceivedDate).format('DD-MM-YYYY')} </td>                                                        
-                                                        <td className='borderLine' style={{fontSize: '9px', textAlign: 'left'}}> {row?.chequeReturnDate && moment(row?.chequeReturnDate).format('DD-MM-YYYY')} </td>                                                        
-                                                        <td className='borderLine' style={{fontSize: '9px', textAlign: 'left'}}> {row?.remarksName?.name} </td>                                                        
-                                                        <td className='borderLine' style={{fontSize: '9px', textAlign: 'left'}}> {row?.otherRemarkIfAny} </td>                                                        
-                                                    </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
-                                    </Grid>
-
-                                </Grid>
-                            </Container>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </>
     )
 }

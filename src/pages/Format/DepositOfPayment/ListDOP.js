@@ -39,11 +39,12 @@ import Loader from '../../Loader/Loader';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'id', label: 'ID', alignRight: false },
+  { id: 'id', label: 'Transaction No', alignRight: false },
   { id: 'name', label: 'Bank Name', alignRight: false },
   { id: 'branch', label: 'Branch Name', alignRight: false },
   { id: 'builderName', label: 'Builder Name', alignRight: false },
   { id: 'customerBorrower', label: 'Customer Borrower', alignRight: false },
+  { id: 'phoneNo', label: 'Phone No', alignRight: false },
   { id: 'reciptDate', label: 'Recipt Date', alignRight: false },
   { id: 'statusValue', label: 'Status', alignRight: false },
   { id: 'action', label: 'Action', alignRight: false },
@@ -187,7 +188,7 @@ export default function ListDOP() {
 
   const handleSearch = query => {
     const filtered = filteredUsers.filter(item => {
-      const searchString = `${item.reciptDate} ${item.fileNo} ${item.bankName.name} ${item.branchName.name} ${item.phoneNo}`.toLowerCase();
+      const searchString = `${item.fileNo} ${item.bankName.name} ${item.branchName.name} ${item.phoneNo} ${item.id} ${item.builderName} ${item.customerBorrower}`.toLowerCase();
       return searchString.includes(query.toLowerCase());
     });
 
@@ -316,11 +317,11 @@ export default function ListDOP() {
                               </Typography>
                             </Stack>
                           </TableCell>
-                          
+
                           <TableCell component="th" scope="row" padding="none">
                             <Stack direction="row" alignItems="center" spacing={2}>
                               <Typography variant="subtitle2" noWrap>
-                                {row.reciptDate}
+                                {row.phoneNo}
                               </Typography>
                             </Stack>
                           </TableCell>
@@ -328,7 +329,7 @@ export default function ListDOP() {
                           <TableCell component="th" scope="row" padding="none">
                             <Stack direction="row" alignItems="center" spacing={2}>
                               <Typography variant="subtitle2" noWrap>
-                                {row.statusValue}
+                                {row.reciptDate}
                               </Typography>
                             </Stack>
                           </TableCell>
@@ -339,6 +340,11 @@ export default function ListDOP() {
                               {sentenceCase( status === 'true' ? 'active' : 'in active')}
                             </Label>
                           </TableCell> */}
+                          <TableCell align="left">
+                            <Label variant="ghost" color={'secondary'}>
+                            {row.statusValue || 'NA'}
+                            </Label>
+                          </TableCell>
 
                           <TableCell align="right">
                             <UserMoreMenu urlTo={'/app/format/DepositOfPayment/'} data={row} dataID={id} deleteURL={'disbursal/registration/delete/'} />

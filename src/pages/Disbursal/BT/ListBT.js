@@ -39,14 +39,15 @@ import Loader from '../../Loader/Loader';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'id', label: 'ID', alignRight: false },
+  { id: 'id', label: 'Transaction No', alignRight: false },
   { id: 'name', label: 'Bank Name', alignRight: false },
   { id: 'branch', label: 'Branch Name', alignRight: false },
   { id: 'customerName', label: 'CustomerName', alignRight: false },
-  { id: 'registrationDate', label: 'Reg Date', alignRight: false },
-  { id: 'address', label: 'Address', alignRight: false },
-  { id: 'phone', label: 'Phone', alignRight: false },
-  { id: 'status', label: 'Status', alignRight: false },
+  { id: 'date', label: 'Reg Date', alignRight: false },
+  // { id: 'address', label: 'Address', alignRight: false },
+  { id: 'phoneNo', label: 'Phone', alignRight: false },
+  { id: 'applicationNo', label: 'App No', alignRight: false },
+  { id: 'statusValue', label: 'Status', alignRight: false },
   { id: 'action', label: 'Action', alignRight: false },
 
   // { id: '' },
@@ -188,7 +189,7 @@ export default function ListBT() {
 
   const handleSearch = query => {
     const filtered = filteredUsers.filter(item => {
-      const searchString = `${item.reciptDate} ${item.fileNo} ${item.bankName.name} ${item.branchName.name} ${item.phoneNo}`.toLowerCase();
+      const searchString = `${item.fileNo} ${item.bankName.name} ${item.branchName.name} ${item.phoneNo} ${item.applicationNo} ${item.customerName} ${item.statusValue} ${item.id}`.toLowerCase();
       return searchString.includes(query.toLowerCase());
     });
 
@@ -313,31 +314,39 @@ export default function ListBT() {
                           <TableCell component="th" scope="row" padding="none">
                             <Stack direction="row" alignItems="center" spacing={2}>
                               <Typography variant="subtitle2" noWrap>
-                                {row.registrationDate}
+                                {row.date}
                               </Typography>
                             </Stack>
                           </TableCell>
                           
-                          <TableCell component="th" scope="row" padding="none">
+                          {/* <TableCell component="th" scope="row" padding="none">
                             <Stack direction="row" alignItems="center" spacing={2}>
                               <Typography variant="subtitle2" noWrap>
                                 {address}
                               </Typography>
                             </Stack>
+                          </TableCell> */}
+                          
+                          <TableCell component="th" scope="row" padding="none">
+                            <Stack direction="row" alignItems="center" spacing={2}>
+                              <Typography variant="subtitle2" noWrap>
+                                {row.phoneNo}
+                              </Typography>
+                            </Stack>
                           </TableCell>
                           
                           <TableCell component="th" scope="row" padding="none">
                             <Stack direction="row" alignItems="center" spacing={2}>
                               <Typography variant="subtitle2" noWrap>
-                                {row.phone}
+                                {row.applicationNo}
                               </Typography>
                             </Stack>
                           </TableCell>
                           
 
                           <TableCell align="left">
-                            <Label variant="ghost" color={status === 'false' ? 'error' : 'success'}>
-                              {sentenceCase( status === 'true' ? 'active' : 'in active')}
+                            <Label variant="ghost" color={'secondary'}>
+                              {row.statusValue || 'NA'}
                             </Label>
                           </TableCell>
 

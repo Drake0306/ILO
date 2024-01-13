@@ -33,6 +33,8 @@ export default function DashboardApp() {
   const [ OP, setOP] = useState(0);
   const [ R, setR] = useState(0);
   const [ BT, setBT] = useState(0);
+  const [ AL, setAL] = useState(0);
+  const [ DOP, setDOP] = useState(0);
   const [ DATEArray, setDATEArray] = useState([]);
 
 
@@ -69,6 +71,26 @@ export default function DashboardApp() {
      axios.get(`${JSON_CONST.DB_URL}disbursal/BT/list`)
       .then((response) => {
         setBT(response.data.length)
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+     
+      // AL
+     axios.get(`${JSON_CONST.DB_URL}authorityLetters/registration/list`)
+      .then((response) => {
+        setAL(response.data.length)
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+     
+      // DOP
+     axios.get(`${JSON_CONST.DB_URL}depositOfPayment/registration/list`)
+      .then((response) => {
+        setDOP(response.data.length)
         setIsLoading(false);
       })
       .catch((error) => {
@@ -115,6 +137,14 @@ export default function DashboardApp() {
 
           <Grid item xs={12} sm={6} md={4}>
             <AppWidgetSummary title="BT" total={BT} color="error" icon={'mdi:account-payment-outline'} />
+          </Grid>
+
+          <Grid item xs={12} sm={6} md={4}>
+            <AppWidgetSummary title="Authority Letters" total={AL} color="warning" icon={'mdi:payment-on-delivery'} />
+          </Grid>
+
+          <Grid item xs={12} sm={6} md={4}>
+            <AppWidgetSummary title="Deposit Of Payment" total={DOP} color="error" icon={'mdi:account-payment-outline'} />
           </Grid>
 
           {/* <Grid item xs={12} md={6} lg={8}>
