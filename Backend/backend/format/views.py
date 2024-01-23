@@ -322,3 +322,252 @@ def depositOfPaymentDelete(request,id):
 #     return Response(List.data)
 
 
+@api_view(['POST'])
+def authorityLettersFullReport(request): 
+    fromDate = request.data.get('from', '')
+    fromTo = request.data.get('to', '')
+    bankName = request.data.get('bank', '')
+    branchName = request.data.get('branch', '')
+    registrarOff = request.data.get('registrarOff', '')
+
+    pending = request.data.get('statusValue', '')
+    if pending == '':
+        pending = 'true'
+
+    regiLedger = request.data.get('regiLedger', False)
+    loanLedger = request.data.get('loanLedger', False)
+
+    regiBank = request.data.get('regiBank', False)
+    loanBank = request.data.get('loanBank', False)
+
+    # added check for above fields TODO
+    if regiLedger == True:
+        List = authorityLetterRegCALLBACK(bankName, branchName, pending, registrarOff, fromDate, fromTo)
+    elif loanLedger == True:
+        List = authorityLetterRegCALLBACK(bankName, branchName, pending, registrarOff, fromDate, fromTo)
+    else:
+        List = authorityLetterRegCALLBACK(bankName, branchName, pending, registrarOff, fromDate, fromTo)
+        
+    return Response(List.data)
+
+def authorityLetterRegCALLBACK(bankName, branchName, pending, registrarOff, fromDate, fromTo):
+    if bankName != '':
+
+        if branchName != '':
+
+            if pending == 'true':
+
+                if registrarOff != '':
+                    ReportData = authorityLetter.objects.filter(
+                        Q(reciptDate__range= [fromDate, fromTo]) & Q(bankName= bankName) & Q(branchName= branchName) & Q(status= pending) & Q(registrarOff= registrarOff)
+                    )
+                else:
+                    ReportData = authorityLetter.objects.filter(
+                        Q(reciptDate__range= [fromDate, fromTo]) & Q(bankName= bankName) & Q(branchName= branchName) & Q(status= pending)
+                    )
+
+            else:
+
+                if registrarOff != '':
+                    ReportData = authorityLetter.objects.filter(
+                        Q(reciptDate__range= [fromDate, fromTo]) & Q(bankName= bankName) & Q(branchName= branchName) & Q(registrarOff= registrarOff)
+                    )
+                else:
+                    ReportData = authorityLetter.objects.filter(
+                        Q(reciptDate__range= [fromDate, fromTo]) & Q(bankName= bankName) & Q(branchName= branchName)
+                    )
+
+        else:
+            if pending == 'true':
+                ReportData = authorityLetter.objects.filter(
+                        Q(reciptDate__range= [fromDate, fromTo]) & Q(bankName= bankName) & Q(status= 'true')
+                    )
+            else:
+                ReportData = authorityLetter.objects.filter(
+                    Q(reciptDate__range= [fromDate, fromTo]) & Q(bankName= bankName)
+                )
+
+    elif registrarOff != '':
+        ReportData = authorityLetter.objects.filter(
+                    Q(status= 'true') & Q(registrarOff= registrarOff)
+                )
+    else:
+        if pending == 'true':
+            ReportData = authorityLetter.objects.filter(
+                    Q(reciptDate__range= [fromDate, fromTo]) & Q(status= 'true')
+                )
+        else:
+            ReportData = authorityLetter.objects.filter(
+                    Q(reciptDate__range= [fromDate, fromTo])
+                )
+
+    
+
+    List = authorityLetterSerializer(ReportData, many= True)
+    for item in List.data:
+
+        if item['bank'] != '':
+            bankItem = bank.objects.filter(id= item['bank']).first()
+            bankSerialise = bankSerializer(bankItem, many= False)
+            item['bankName'] = bankSerialise.data
+        
+        if item['branch'] != '':
+            branchItem = branch.objects.filter(id= item['branch']).first()
+            branchItemSerializer = branchSerializer(branchItem, many= False)
+            item['branchName'] = branchItemSerializer.data
+
+        # dsaName
+        # if item['dsa'] != '':
+        #     dsaItem = DSA.objects.filter(id= item['dsa']).first()
+        #     dsaSerialise = DSASerializer(dsaItem, many= False)
+        #     item['dsaName'] = dsaSerialise.data
+        # registrarOffName
+        # if item['registrarOff'] != '':
+        #     registrarOfficeItem = registrarOffice.objects.filter(id= item['registrarOff']).first()
+        #     registrarOfficeSerialise = registrarOfficeSerializer(registrarOfficeItem, many= False)
+        #     item['registrarOffName'] = registrarOfficeSerialise.data
+
+        # if item['remarks'] != '':
+        #     differentRemarksItem = differentRemarks.objects.filter(id= item['remarks']).first()
+        #     differentRemarksItemSerializer = differentRemarksSerializer(differentRemarksItem, many= False)
+        #     item['remarksName'] = differentRemarksItemSerializer.data
+        
+        checkIfFloat = is_number(item['executiveName'])
+        if item['executiveName'] != '' and checkIfFloat == True:
+            handledByItem = handledBy.objects.filter(id= item['executiveName']).first()
+            handledByItemSerializer = handledBySerializer(handledByItem, many= False)
+            item['handledByName'] = handledByItemSerializer.data
+        
+    
+    return List
+
+@api_view(['POST'])
+def depositOfPaymentFullReport(request): 
+    fromDate = request.data.get('from', '')
+    fromTo = request.data.get('to', '')
+    bankName = request.data.get('bank', '')
+    branchName = request.data.get('branch', '')
+    registrarOff = request.data.get('registrarOff', '')
+
+    pending = request.data.get('statusValue', '')
+    if pending == '':
+        pending = 'true'
+
+    regiLedger = request.data.get('regiLedger', False)
+    loanLedger = request.data.get('loanLedger', False)
+
+    regiBank = request.data.get('regiBank', False)
+    loanBank = request.data.get('loanBank', False)
+
+    # added check for above fields TODO
+    if regiLedger == True:
+        List = depositOfPaymentRegCALLBACK(bankName, branchName, pending, registrarOff, fromDate, fromTo)
+    elif loanLedger == True:
+        List = depositOfPaymentRegCALLBACK(bankName, branchName, pending, registrarOff, fromDate, fromTo)
+    else:
+        List = depositOfPaymentRegCALLBACK(bankName, branchName, pending, registrarOff, fromDate, fromTo)
+        
+    return Response(List.data)
+
+def depositOfPaymentRegCALLBACK(bankName, branchName, pending, registrarOff, fromDate, fromTo):
+    if bankName != '':
+
+        if branchName != '':
+
+            if pending == 'true':
+
+                if registrarOff != '':
+                    ReportData = depositOfPayment.objects.filter(
+                        Q(reciptDate__range= [fromDate, fromTo]) & Q(bankName= bankName) & Q(branchName= branchName) & Q(status= pending) & Q(registrarOff= registrarOff)
+                    )
+                else:
+                    ReportData = depositOfPayment.objects.filter(
+                        Q(reciptDate__range= [fromDate, fromTo]) & Q(bankName= bankName) & Q(branchName= branchName) & Q(status= pending)
+                    )
+
+            else:
+
+                if registrarOff != '':
+                    ReportData = depositOfPayment.objects.filter(
+                        Q(reciptDate__range= [fromDate, fromTo]) & Q(bankName= bankName) & Q(branchName= branchName) & Q(registrarOff= registrarOff)
+                    )
+                else:
+                    ReportData = depositOfPayment.objects.filter(
+                        Q(reciptDate__range= [fromDate, fromTo]) & Q(bankName= bankName) & Q(branchName= branchName)
+                    )
+
+        else:
+            if pending == 'true':
+                ReportData = depositOfPayment.objects.filter(
+                        Q(reciptDate__range= [fromDate, fromTo]) & Q(bankName= bankName) & Q(status= 'true')
+                    )
+            else:
+                ReportData = depositOfPayment.objects.filter(
+                    Q(reciptDate__range= [fromDate, fromTo]) & Q(bankName= bankName)
+                )
+
+    elif registrarOff != '':
+        ReportData = depositOfPayment.objects.filter(
+                    Q(status= 'true') & Q(registrarOff= registrarOff)
+                )
+    else:
+        if pending == 'true':
+            ReportData = depositOfPayment.objects.filter(
+                    Q(reciptDate__range= [fromDate, fromTo]) & Q(status= 'true')
+                )
+        else:
+            ReportData = depositOfPayment.objects.filter(
+                    Q(reciptDate__range= [fromDate, fromTo])
+                )
+
+    
+
+    List = depositOfPaymentSerializer(ReportData, many= True)
+    for item in List.data:
+
+        if item['bank'] != '':
+            bankItem = bank.objects.filter(id= item['bank']).first()
+            bankSerialise = bankSerializer(bankItem, many= False)
+            item['bankName'] = bankSerialise.data
+        
+        if item['branch'] != '':
+            branchItem = branch.objects.filter(id= item['branch']).first()
+            branchItemSerializer = branchSerializer(branchItem, many= False)
+            item['branchName'] = branchItemSerializer.data
+
+        # dsaName
+        # if item['dsa'] != '':
+        #     dsaItem = DSA.objects.filter(id= item['dsa']).first()
+        #     dsaSerialise = DSASerializer(dsaItem, many= False)
+        #     item['dsaName'] = dsaSerialise.data
+        # registrarOffName
+        # if item['registrarOff'] != '':
+        #     registrarOfficeItem = registrarOffice.objects.filter(id= item['registrarOff']).first()
+        #     registrarOfficeSerialise = registrarOfficeSerializer(registrarOfficeItem, many= False)
+        #     item['registrarOffName'] = registrarOfficeSerialise.data
+
+        # if item['remarks'] != '':
+        #     differentRemarksItem = differentRemarks.objects.filter(id= item['remarks']).first()
+        #     differentRemarksItemSerializer = differentRemarksSerializer(differentRemarksItem, many= False)
+        #     item['remarksName'] = differentRemarksItemSerializer.data
+        
+        checkIfFloat = is_number(item['executiveName'])
+        if item['executiveName'] != '' and checkIfFloat == True:
+            handledByItem = handledBy.objects.filter(id= item['executiveName']).first()
+            handledByItemSerializer = handledBySerializer(handledByItem, many= False)
+            item['handledByName'] = handledByItemSerializer.data
+        
+    
+    return List
+
+
+def is_number(data):
+    if data is None:
+        return False
+    try:
+        float(data)
+        return True
+    except ValueError:
+        return False
+
+

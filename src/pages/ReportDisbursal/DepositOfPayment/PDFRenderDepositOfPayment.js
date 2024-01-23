@@ -18,7 +18,7 @@ const ref = React.createRef();
 // Register fonts
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
-export default function PDFRenderRegistrationBank (props) {
+export default function PDFRenderDepositOfPayment (props) {
     const ref = React.createRef();
     const params = useParams()
     const [paramsData, setParamsData] = useState(params.data && JSON.parse(decodeURI(params.data)));
@@ -33,39 +33,31 @@ export default function PDFRenderRegistrationBank (props) {
         content: [
             {text: 'INTELLECTIVE LAW OFFICES', style: 'header'},
             {text: 'Advicates, Legal Advisers & Consultants', style: 'headerSub'},
-            {text: `Registration Bank Wise Report:-                                                                                  Date As on: ${moment().format('DD-MM-YYYY')}`, style: 'subheader'},
+            {text: `Deposit Of Payment Wise Report:-                                                                                  Date As on: ${moment().format('DD-MM-YYYY')}`, style: 'subheader'},
             {
                 style: 'tableExample',
                 table: {
                     body: [
                         [
                             {text: 'Sr', style: 'tableHeaderMain'}, 
-                            {text: 'SL', style: 'tableHeaderMain'}, 
-                            {text: 'Vol No', style: 'tableHeaderMain'}, 
-                            // {text:'DSA', style: 'tableHeaderMain'}, 
-                            {text:'App no', style: 'tableHeaderMain'}, 
-                            {text:'Customer', style: 'tableHeaderMain'}, 
-                            {text:'Reg Date', style: 'tableHeaderMain'}, 
-                            {text:'Reg Office', style: 'tableHeaderMain'}, 
-                            {text:'Property Details', style: 'tableHeaderMain'}, 
-                            {text:'Next Follow Up Date', style: 'tableHeaderMain'}, 
-                            {text:'R.D Sent', style: 'tableHeaderMain'}, 
-                            {text:'S.D Sent', style: 'tableHeaderMain'}, 
-                            {text:'T.D Sent', style: 'tableHeaderMain'}, 
-                            // {text:'Amount', style: 'tableHeaderMain'}, 
-                            // {text:'Check Date', style: 'tableHeaderMain'}, 
-                            // {text:'Checzk Rec Date', style: 'tableHeaderMain'}, 
-                            // {text:'Check Return Date', style: 'tableHeaderMain'}, 
+                            {text:'Receipt Date', style: 'tableHeaderMain'}, 
+                            {text: 'Bank APS NO', style: 'tableHeaderMain'}, 
+                            {text: 'Customer Name', style: 'tableHeaderMain'}, 
+                            {text:'Phone', style: 'tableHeaderMain'}, 
+                            {text:'Address', style: 'tableHeaderMain'}, 
+                            {text:'Builder', style: 'tableHeaderMain'}, 
+                            {text:'Executive', style: 'tableHeaderMain'}, 
+                            {text:'Date of Deposit', style: 'tableHeaderMain'}, 
+                            {text:'Ack Received', style: 'tableHeaderMain'}, 
+                            {text:'Ack Filed', style: 'tableHeaderMain'}, 
                             {text:'Status', style: 'tableHeaderMain'},
-                            {text:'Ack', style: 'tableHeaderMain'},
-                            {text:'Other remark', style: 'tableHeaderMain'}
+                            {text:'Remark', style: 'tableHeaderMain'}
                         ],
     
                         [
                             {text: 'OK', style: 'tableHeader'},
                             {text: 'OK', style: 'tableHeader'},
                             {text: 'OK', style: 'tableHeader'},
-                            // {text: 'OK', style: 'tableHeader'},
                             {text: 'OK', style: 'tableHeader'},
                             {text: 'OK', style: 'tableHeader'},
                             {text: 'OK', style: 'tableHeader'},
@@ -158,7 +150,7 @@ export default function PDFRenderRegistrationBank (props) {
         let fullData = [];
         const pushToMain = tableHeadder;
         try {
-            axios.post(`${JSON_CONST.DB_URL}disbursal/registrationBTGlobalREport`, paramsData)
+            axios.post(`${JSON_CONST.DB_URL}depositOfPayment/registrationGlobalREport`, paramsData)
                 .then((response) => {
                     console.log(response);
                     response.data.forEach((row) => {
@@ -167,7 +159,7 @@ export default function PDFRenderRegistrationBank (props) {
                         const addLineBreaks = (str) => {
                             let result = '';
                             while (str.length > 0) {
-                                result += `${str.substring(0, 12)  }\n`;
+                                result += `${str.substring(0, 35)  }\n`;
                                 str = str.substring(10);
                             }
                             return result.trim();
@@ -175,25 +167,18 @@ export default function PDFRenderRegistrationBank (props) {
 
                         // Push to Temp
                         fullData.push({text: row?.id, style: 'tableHeaderAppNo'})
-                        fullData.push({text: row?.slNo, style: 'tableHeaderAppNo'})
-                        fullData.push({text: row?.volNo, style: 'tableHeaderAppNo'})
-                        fullData.push({text: addLineBreaks(row?.applicationNo), style: 'tableHeaderAppNo'})
-                        fullData.push({text: row?.dsaName?.name, style: 'tableHeaderAppNo'})
-                        // fullData.push({text: row?.branchName.name, style: 'tableHeader'})
-                        fullData.push({text: moment(row?.registrationDate).format('DD-MM-YYYY'), style: 'tableHeader'})
-                        fullData.push({text: row?.registrarOffName?.name, style: 'tableHeader'})
-                        fullData.push({text: row?.rdSentOn && moment(row?.rdSentOn).format('DD-MM-YYYY'), style: 'tableHeader'})
-                        fullData.push({text: row?.propertyDetails, style: 'tableHeaderAppNo'})
-                        fullData.push({text: row?.nextDate && moment(row?.nextDate).format('DD-MM-YYYY'), style: 'tableHeader'})
-                        fullData.push({text: row?.sdSentOn && moment(row?.sdSentOn).format('DD-MM-YYYY'), style: 'tableHeader'})
-                        fullData.push({text: row?.tdSentOn && moment(row?.tdSentOn).format('DD-MM-YYYY'), style: 'tableHeader'})
-                        // fullData.push({text: row?.amount, style: 'tableHeader'})
-                        // fullData.push({text: row?.checqueDate && moment(row?.checqueDate).format('DD-MM-YYYY'), style: 'tableHeader'})
-                        // fullData.push({text: row?.chequeRecivedDate && moment(row?.chequeRecivedDate).format('DD-MM-YYYY'), style: 'tableHeader'})
-                        // fullData.push({text: row?.chequeReturnDate && moment(row?.chequeReturnDate).format('DD-MM-YYYY'), style: 'tableHeader'})
-                        fullData.push({text: row?.otherRemarkIfAny, style: 'tableHeaderAppNo'})
+                        fullData.push({text: moment(row?.reciptDate).format('DD-MM-YYYY'), style: 'tableHeader'})
+                        fullData.push({text: row?.refNo, style: 'tableHeaderAppNo'})
+                        fullData.push({text: row?.bankName?.name, style: 'tableHeaderAppNo'})
+                        fullData.push({text: row?.phoneNo, style: 'tableHeaderAppNo'})
+                        fullData.push({text: addLineBreaks(row?.address), style: 'tableHeaderAppNo'})
+                        fullData.push({text: addLineBreaks(row?.builderName), style: 'tableHeaderAppNo'})
+                        fullData.push({text: row?.handledByName?.name, style: 'tableHeaderAppNo'})
+                        fullData.push({text: moment(row?.DateofDeposit).format('DD-MM-YYYY'), style: 'tableHeader'})
+                        fullData.push({text: row?.AckReceived, style: 'tableHeaderAppNo'})
+                        fullData.push({text: addLineBreaks(row?.AckFiled), style: 'tableHeaderAppNo'})
                         fullData.push({text: row?.statusValue, style: 'tableHeaderAppNo'})
-                        fullData.push({text: row?.ackRecived, style: 'tableHeaderAppNo'})
+                        fullData.push({text: addLineBreaks(row?.remarks), style: 'tableHeaderAppNo'})
 
                         // Push To Main
                         pushToMain.push(fullData)

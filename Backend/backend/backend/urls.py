@@ -99,18 +99,21 @@ urlpatterns = [
     path('api/authorityLetters/registration/create', formatAuthorityLettersViewAndDepositOfPayment.authorityLettersRegistrationCreate, name="authorityLetters Create"),
     path('api/authorityLetters/registration/update/<int:id>', formatAuthorityLettersViewAndDepositOfPayment.authorityLettersRegistrationUpdate, name="authorityLetters Update"),
     path('api/authorityLetters/registration/delete/<int:id>', formatAuthorityLettersViewAndDepositOfPayment.authorityLettersRegistrationDelete, name="authorityLetters Delete"),
-    
+    path('api/authorityLetters/registrationGlobalREport', formatAuthorityLettersViewAndDepositOfPayment.authorityLettersFullReport, name="disbursal DisbursalRegFullReport"),
+
     path('api/depositOfPayment/registration/list', formatAuthorityLettersViewAndDepositOfPayment.depositOfPaymentList, name="depositOfPayment List"),
     path('api/depositOfPayment/registration/create', formatAuthorityLettersViewAndDepositOfPayment.depositOfPaymentCreate, name="depositOfPayment Create"),
     path('api/depositOfPayment/registration/update/<int:id>', formatAuthorityLettersViewAndDepositOfPayment.depositOfPaymentUpdate, name="depositOfPayment Update"),
     path('api/depositOfPayment/registration/delete/<int:id>', formatAuthorityLettersViewAndDepositOfPayment.depositOfPaymentDelete, name="depositOfPayment Delete"),
+    path('api/depositOfPayment/registrationGlobalREport', formatAuthorityLettersViewAndDepositOfPayment.depositOfPaymentFullReport, name="disbursal DisbursalRegFullReport"),
+
 
     path('api/disbursal/BT/list', disbursalView.disbursalBTList, name="disbursal List"),
     path('api/disbursal/BT/create', disbursalView.disbursalBTCreate, name="disbursal Create"),
     path('api/disbursal/BT/update/<int:id>', disbursalView.disbursalBTUpdate, name="disbursal Update"),
     path('api/disbursal/BT/delete/<int:id>', disbursalView.disbursalBTDelete, name="disbursal Delete"),
-    
     path('api/disbursal/registrationBTGlobalREport', disbursalView.DisbursalRegFullReport, name="disbursal DisbursalRegFullReport"),
+    
 
     ### Master ###
     #registrarOffice

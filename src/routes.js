@@ -102,6 +102,12 @@ import PDFRenderExutivePeformanceSummary from './pages/ReportDisbursal/ExutivePe
 import AccountSummary from './pages/ReportDisbursal/AccountSummary/AccountSummary';
 import PDFRenderAccountSummary from './pages/ReportDisbursal/AccountSummary/PDFRenderAccountSummary';
 
+import AuthorityLetter from './pages/ReportDisbursal/AuthorityLetter/AuthorityLetter';
+import PDFRenderAuthorityLetter from './pages/ReportDisbursal/AuthorityLetter/PDFRenderAuthorityLetter';
+import DepositOfPayment from './pages/ReportDisbursal/DepositOfPayment/DepositOfPayment';
+import PDFRenderDepositOfPayment from './pages/ReportDisbursal/DepositOfPayment/PDFRenderDepositOfPayment';
+
+
 import MISReportList from './pages/MISReport/MISReportList';
 import BankWiseMIS from './pages/MISReport/BankWiseMIS/BankWiseMIS';
 import PDFRenderBankWiseMIS from './pages/MISReport/BankWiseMIS/PDFRenderBankWiseMIS';
@@ -247,6 +253,13 @@ export default function Router() {
         { path: 'reportDisbursal/exutivePeformanceSummary/PDFRenderExutivePeformanceSummary/:data', element: <PDFRenderExutivePeformanceSummary /> },  // Bill BT
         { path: 'reportDisbursal/accountSummary/:data', element: <AccountSummary /> },  // Bill BT
         { path: 'reportDisbursal/accountSummary/PDFRenderAccountSummary/:data', element: <PDFRenderAccountSummary /> },  // Bill BT
+        
+        { path: 'reportDisbursal/authorityLetter/:data', element: <AuthorityLetter /> },  // Authority Letter
+        { path: 'reportDisbursal/authorityLetter/PDFRenderAuthorityLetter/:data', element: <PDFRenderAuthorityLetter /> },  // Authority Letter
+        
+        { path: 'reportDisbursal/depositOfPayment/:data', element: <DepositOfPayment /> },  // Deposit Of Payment
+        { path: 'reportDisbursal/depositOfPayment/PDFRenderDepositOfPayment/:data', element: <PDFRenderDepositOfPayment /> },  // Deposit Of Payment
+
         // Report (Disbursal) End
 
         // MIS Report Start

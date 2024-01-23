@@ -321,6 +321,7 @@ const navConfig = [
         path: '/app/reportDisbursal/loanLedger/0',
         icon: getIcon(''),
       },
+      
       // { 
       //   head: 'pendingReport',
       //   title: 'Pending Report',
@@ -373,6 +374,18 @@ const navConfig = [
         head: 'accountSummary',
         title: 'Account Summary',
         path: '/app/reportDisbursal/accountSummary/0',
+        icon: getIcon(''),
+      },
+      { 
+        head: 'authorityLetter',
+        title: 'Authority Letter',
+        path: '/app/reportDisbursal/authorityLetter/0',
+        icon: getIcon(''),
+      },
+      { 
+        head: 'depositOfPayment',
+        title: 'Deposit Of Payment',
+        path: '/app/reportDisbursal/depositOfPayment/0',
         icon: getIcon(''),
       },
     ]

@@ -7,7 +7,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { faker } from '@faker-js/faker';
 // @mui
 import { useTheme } from '@mui/material/styles';
-import { Grid, Container, Typography, Link, Stack, Button, Card, TextField, Checkbox, FormControlLabel, Autocomplete, Radio, RadioGroup, FormControl, FormLabel, InputLabel, MenuItem  } from '@mui/material';
+import { Grid, Container, Typography, Link, Stack, Button, Card, TextField, Checkbox, FormControlLabel, Autocomplete, Radio, RadioGroup, FormControl, FormLabel, InputLabel, MenuItem } from '@mui/material';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 
 // form
@@ -25,7 +25,7 @@ import JSON_CONST from '../../../components/CONSTVALUE.json';
 
 // ----------------------------------------------------------------------
 
-export default function RegistrationLedger(props) {
+export default function AuthorityLetter(props) {
 
   const navigate = useNavigate()
   const params = useParams()
@@ -37,8 +37,7 @@ export default function RegistrationLedger(props) {
   const [fromData, setFromData] = useState({
     name: '',
     address: '',
-    bank: '',
-    branch: '',
+    bankName: [],
     path: '',
     id: '',
     status: true
@@ -59,12 +58,12 @@ export default function RegistrationLedger(props) {
     if(typeof props.name !== 'undefined') {
       setUIName(props.name)
     } else {
-      setUIName('Registration Ledger')
+      setUIName('Authority Letter')
     }
     // Update the document title using the browser API
     // ------------------------------ Load data from database------------------------------ //
     api();
-  }, []);
+  }, [props.name]);
 
   const api = async () => {
     let bankList = []
@@ -145,13 +144,9 @@ export default function RegistrationLedger(props) {
       branch: fromElementsData.branch.value,
       from: fromElementsData.from.value,
       to: fromElementsData.to.value,
-      statusValue: fromElementsData.statusValue.value,
       regiLedger: false,
       loanLedger: false,
-      pending: false
     }
-
-
 
     if(typeof props.name !== 'undefined') {
       sendPost.loanLedger = true;
@@ -160,7 +155,7 @@ export default function RegistrationLedger(props) {
       sendPost = JSON.stringify(sendPost);
       sendPost = encodeURI(sendPost);
       
-      navigate(`/app/reportDisbursal/loanLedger/PDFRenderLoanLedger/${sendPost}`, { replace: true,  });
+      navigate(`/app/reportDisbursal/authorityLetter/PDFRenderAuthorityLetter/${sendPost}`, { replace: true,  });
     } else {
       sendPost.loanLedger = false;
       sendPost.regiLedger = true;
@@ -168,7 +163,7 @@ export default function RegistrationLedger(props) {
       sendPost = JSON.stringify(sendPost);
       sendPost = encodeURI(sendPost);
 
-      navigate(`/app/reportDisbursal/registrationLedger/PDFRenderRegistrationLedger/${sendPost}`, { replace: true,  });
+      navigate(`/app/reportDisbursal/authorityLetter/PDFRenderAuthorityLetter/${sendPost}`, { replace: true,  });
     }
   };
   
@@ -188,10 +183,10 @@ export default function RegistrationLedger(props) {
 
       setFromDataAutoFill({...fromDataAutoFill,branchList})
     }
-    else if(event.target.name === 'pending') {
+    else if(event.target.name === 'status') {
       setFromData({
         ...fromData,
-        [event.target.name]: !fromData.pending
+        [event.target.name]: !fromData.status
       });
     } else {
       setFromData({
@@ -210,7 +205,7 @@ export default function RegistrationLedger(props) {
       <Container maxWidth="xl">
         {/* <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            {UIName}
+          {UIName}
           </Typography>
           <Button variant="contained" color="secondary" onClick={() => redirectPage('')} startIcon={<Iconify icon="carbon:list-boxes" />}>
             Home
@@ -224,8 +219,8 @@ export default function RegistrationLedger(props) {
         <form methods="post" onSubmit={onSubmit}>
         <Card>
           <Grid container alignItems="center" paddingLeft={10} paddingBottom={10} paddingRight={10} paddingTop={5} spacing={3}>
-{/*             
-            <Grid mt={2} mb={2} item xs={12} sm={12} md={12} lg={12}>
+            
+            {/* <Grid mt={2} mb={2} item xs={12} sm={12} md={12} lg={12}>
               <Typography variant="overline" gutterBottom>
                 Select The Date Criteria<Iconify icon="bi:arrow-down" />
               </Typography>
@@ -239,19 +234,6 @@ export default function RegistrationLedger(props) {
               </Typography>
               
             </Grid>
-            {/* <Grid item xs={12} sm={12} md={12} lg={12}>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    name="pending"
-                    checked={fromData.pending}
-                    value={fromData.pending}
-                    onChange={onChangeFields}
-                  />
-                }
-                label="Pending"
-              />
-            </Grid> */}
             <Grid item xs={12} sm={12} md={4} lg={4}>
               <TextField
                 onChange={onChangeFields}
@@ -313,31 +295,9 @@ export default function RegistrationLedger(props) {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={12} sm={12} md={4} lg={4} />
-
-            <Grid item xs={12} sm={12} md={4} lg={4}>
-              <FormControl fullWidth>
-                <InputLabel id="branch-select-label">Status</InputLabel>
-                <Select
-                  labelId="branch-select-label"
-                  id="branch-select"
-                  value={fromData.statusValue}
-                  label="statusValue"
-                  name="statusValue"  
-                  fullWidth
-                  onChange={onChangeFields}
-                >
-                  <MenuItem value='Pending'>Pending</MenuItem>
-                  <MenuItem value='Positive'>Positive</MenuItem>
-                  <MenuItem value='Negative'>Negative</MenuItem>
-                  <MenuItem value='Returned'>Returned</MenuItem>
-                  <MenuItem value='Hold'>Hold</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
 
             
-            {/* <Grid item xs={12} sm={12} md={4} lg={4} /> */}
+            <Grid item xs={12} sm={12} md={4} lg={4} />
             <Grid item xs={12} sm={1} md={3} lg={3}>
               <LoadingButton fullWidth size="large" type="submit" variant="outlined" color="info" loading={isSubmitting}>
                 Generate Report

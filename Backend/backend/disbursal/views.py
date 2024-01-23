@@ -226,11 +226,11 @@ def disbursalBTCALLBACK(bankName, branchName, pending, registrarOff, fromDate, f
 
         if branchName != '':
 
-            if pending == 'true':
+            if pending != '':
 
                 if registrarOff != '':
                     ReportData = disbursalBT.objects.filter(
-                        Q(date__range= [fromDate, fromTo]) & Q(bankName= bankName) & Q(branchName= branchName) & Q(status= pending) & Q(registrarOff= registrarOff)
+                        Q(date__range= [fromDate, fromTo]) & Q(bankName= bankName) & Q(branchName= branchName) & Q(statusValue= pending) & Q(registrarOff= registrarOff)
                     )
                 else:
                     ReportData = disbursalBT.objects.filter(
@@ -301,8 +301,8 @@ def DisbursalRegFullReport(request):
     branchName = request.data.get('branch', '')
     registrarOff = request.data.get('registrarOff', '')
 
-    pending = request.data.get('pending', 'false')
-    if pending != 'false':
+    pending = request.data.get('statusValue', '')
+    if pending == '':
         pending = 'true'
 
     regiLedger = request.data.get('regiLedger', False)

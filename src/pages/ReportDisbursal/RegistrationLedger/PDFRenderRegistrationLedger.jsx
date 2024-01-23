@@ -39,6 +39,8 @@ export default function PDFRenderRegistrationLedger (props) {
                     body: [
                         [
                             {text: 'Sr', style: 'tableHeaderMain'}, 
+                            {text: 'SL', style: 'tableHeaderMain'}, 
+                            {text: 'Vol No', style: 'tableHeaderMain'}, 
                             {text:'Bank', style: 'tableHeaderMain'}, 
                             {text:'Reg Date', style: 'tableHeaderMain'}, 
                             {text:'App no', style: 'tableHeaderMain'}, 
@@ -46,11 +48,14 @@ export default function PDFRenderRegistrationLedger (props) {
                             {text:'Property Details', style: 'tableHeaderMain'}, 
                             {text:'Reg Off', style: 'tableHeaderMain'}, 
                             {text:'Property', style: 'tableHeaderMain'}, 
+                            {text:'Next Follow Up Date', style: 'tableHeaderMain'}, 
                             {text:'R.D Sent', style: 'tableHeaderMain'}, 
                             {text:'T.D Sent', style: 'tableHeaderMain'}, 
                             {text:'Courior Date', style: 'tableHeaderMain'}, 
                             {text:'Remarks', style: 'tableHeaderMain'}, 
-                            {text:'Other remark', style: 'tableHeaderMain'}
+                            {text:'Ack', style: 'tableHeaderMain'},
+                            {text:'Other remark', style: 'tableHeaderMain'},
+                            {text:'Status', style: 'tableHeaderMain'},
                         ],
     
                         []
@@ -92,7 +97,12 @@ export default function PDFRenderRegistrationLedger (props) {
             headerSub: {
                 fontSize: 16,
                 alignment: 'center'
-            }
+            },
+            tableHeaderAppNo: {
+                fontSize: 6,
+                color: 'black',
+                margin: [0, 0, 0, 0],
+            },
         },
         defaultStyle: {
             // alignment: 'justify'
@@ -127,21 +137,45 @@ export default function PDFRenderRegistrationLedger (props) {
                     console.log(response);
                     response.data.forEach((row) => {
                         fullData = [];
+
+                        const addLineBreaks = (str) => {
+                            let result = '';
+                            while (str.length > 0) {
+                                result += `${str.substring(0, 12)  }\n`;
+                                str = str.substring(10);
+                            }
+                            return result.trim();
+                        };
+                        
+                        const addLineBreaksMore = (str) => {
+                            let result = '';
+                            while (str.length > 0) {
+                                result += `${str.substring(0, 20)  }\n`;
+                                str = str.substring(10);
+                            }
+                            return result.trim();
+                        };
+
+
                         // Push to Temp
                         fullData.push({text: row?.id, style: 'tableHeader'})
+                        fullData.push({text: row?.slNo, style: 'tableHeaderAppNo'})
                         fullData.push({text: row?.bankName.name, style: 'tableHeader'})
+                        fullData.push({text: row?.volNo, style: 'tableHeaderAppNo'})
                         fullData.push({text: row?.registrationDate && moment(row?.registrationDate).format('DD-MM-YYYY'), style: 'tableHeader'})
-                        fullData.push({text: row?.applicationNo, style: 'tableHeader'})
+                        fullData.push({text: addLineBreaks(row?.applicationNo), style: 'tableHeaderAppNo'})
                         fullData.push({text: row?.seller, style: 'tableHeader'})
                         fullData.push({text: row?.purchaser, style: 'tableHeader'})
                         fullData.push({text: row?.registrarOffName?.name, style: 'tableHeader'})
-                        fullData.push({text: row?.propertyDetails, style: 'tableHeader'})
+                        fullData.push({text: row?.propertyDetails, style: 'tableHeaderAppNo'})
                         fullData.push({text: row?.rdSentOn && moment(row?.rdSentOn).format('DD-MM-YYYY'), style: 'tableHeader'})
+                        fullData.push({text: row?.nextDate && moment(row?.nextDate).format('DD-MM-YYYY'), style: 'tableHeader'})
                         fullData.push({text: row?.tdSentOn && moment(row?.tdSentOn).format('DD-MM-YYYY'), style: 'tableHeader'})
                         fullData.push({text: row?.courierDate && moment(row?.courierDate).format('DD-MM-YYYY'), style: 'tableHeader'})
                         fullData.push({text: row?.remarksName?.name, style: 'tableHeader'})
-                        fullData.push({text: row?.otherRemarkIfAny, style: 'tableHeader'})
-
+                        fullData.push({text: addLineBreaks(row?.ackRecived), style: 'tableHeaderAppNo'})
+                        fullData.push({text: addLineBreaks(row?.otherRemarkIfAny), style: 'tableHeaderAppNo'})
+                        fullData.push({text: row?.statusValue, style: 'tableHeaderAppNo'})
                         // Push To Main
                         pushToMain.push(fullData)
                     });
