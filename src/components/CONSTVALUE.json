@@ -1,4 +1,4 @@
 {
-    "DB_URL": "https://coppertec.in/backend/api/",
-    "TEMP_DB_URL": "http://127.0.0.1:8000/api/"
+    "TEMP_DB_URL": "https://coppertec.in/backend/api/",
+    "DB_URL": "http://127.0.0.1:8000/api/"
 }

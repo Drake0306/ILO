@@ -135,7 +135,8 @@ export default function PDFRenderRegistrationBank (props) {
     });
 
     const exportToExcel = async () => {
-        const ws = XLSX.utils.json_to_sheet(resData);
+        const dataXLSX = resData;
+        const ws = XLSX.utils.json_to_sheet(dataXLSX);
         const wb = { Sheets: { 'data': ws }, SheetNames: ['data'] };
         const excelBuffer = XLSX.write(wb, { bookType : 'xlsx', type: 'array'});
         const data = new Blob([excelBuffer], {type: fileType});
@@ -202,11 +203,41 @@ export default function PDFRenderRegistrationBank (props) {
                     // assign main Value
                     fullDD.content[3].table.body = pushToMain;
                     setDD(fullDD);
-                    console.log('pushToMain', pushToMain);
-                    console.log('fullData', fullData);
-                    console.log('dd 2 ', dd);
 
-                    setResData(response.data)
+                    console.log(response.data)
+                    const resDataConst = response.data;
+                    const setXL = [];
+                    resDataConst.forEach((row) => {
+                        const setXLSX = {
+                            'S.NO': row.id,
+                            'REGN DATE': moment(row.registrationDate).format('DD-MM-YYYY'),
+                            'BANK': row?.bankName?.name,
+                            'BRANCH': row?.branchName?.name,
+                            'APPLICATION NO': row.applicationNo,
+                            'SELLER': row.seller,
+                            'SELLER PHONE NO': row.phone,
+                            'PURCHASER': row.purchaser,
+                            'PURCHASER PHONE NO': row.phoneMobile,
+                            'PROPERTY DETAILS': row.propertyDetails,
+                            'REGISTRAR OFFICE': row.registrarOff,
+                            'DEED WRITER': row.deedWriterAdv,
+                            'BUILDER OFFICE': row.address,
+                            'HANDLED BY/EXECUTIVE NAME': row?.handledByName?.name,
+                            'TRANSACTIN NO': row.transNo,
+                            'ROOT DOCS SENT ON': moment(row.rdSentOn).format('DD-MM-YYYY'),
+                            'SALE DEED SENT AT': moment(row.sentAt).format('DD-MM-YYYY'),
+                            'CASE CLOSED -YES/NO': row.caseCloseVal,
+                            'CASE CLOSED DATE': moment(row.caseClosed).format('DD-MM-YYYY'),
+                            'ACKNOWLEDGEMENT': row.ack,
+                            'REMARKS': row?.remarksName?.name,
+                            'OTHER REMARKS': row.remarks,
+                            'NEXT FOLLOW UP DATE': moment(row.nextDate).format('DD-MM-YYYY'),
+                            'STATUS': row.statusValue,
+                        }
+
+                        setXL.push(setXLSX)
+                    })                    
+                    setResData(setXL)
                     
                 }).catch((error) => {
                     console.log(error);
