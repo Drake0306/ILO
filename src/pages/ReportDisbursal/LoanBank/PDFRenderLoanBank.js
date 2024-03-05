@@ -12,6 +12,7 @@ import XLSX from 'sheetjs-style';
 import pdfMake from 'pdfmake/build/pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
 import JSON_CONST from '../../../components/CONSTVALUE.json';
+import Loader from '../../Loader/Loader';
 
 const ref = React.createRef();
 
@@ -117,6 +118,7 @@ export default function PDFRenderLoanBank (props) {
         const fullDD = dd;
         let fullData = [];
         const pushToMain = tableHeadder;
+        setIsLoading(true);
         try {
             axios.post(`${JSON_CONST.DB_URL}disbursal/registrationBTGlobalREport`, paramsData)
                 .then((response) => {
@@ -144,28 +146,66 @@ export default function PDFRenderLoanBank (props) {
                     // assign main Value
                     fullDD.content[3].table.body = pushToMain;
                     setDD(fullDD);
-                    console.log('pushToMain', pushToMain);
-                    console.log('fullData', fullData);
-                    console.log('dd 2 ', dd);
+                    
 
-                    setResData(response.data)
+                    const resDataConst = response.data;
+                    const setXL = [];
+                    resDataConst.forEach((row, index) => {
+                        const setXLSX = {
+                            'Sl No': index + 1,
+                            'Date': row.registrationDate ? moment(row.registrationDate).format('DD-MM-YYYY') : '',
+                            'Bank ': row?.bankName?.name,
+                            'Branch': row?.branchName?.name,
+                            'Application number': row.applicationNo,
+                            'Customer name': row.customerName,
+                            'Phone number': row.phoneNo,
+                            'Property details': row.propertyDetails,
+                            'Loan taken over': row.loanTakenFrom,
+                            'Handled by': row?.handledByName?.name,
+                            'Transaction number': row.id,
+                            'Document receive on': row.collectionDate ? moment(row.collectionDate).format('DD-MM-YYYY') : '',
+                            'Document sent on': row.docSentToBankDate ? moment(row.docSentToBankDate).format('DD-MM-YYYY') : '',
+                            'Document sent at': row.sentAt,
+                            'Case close': row.caseCloseVal,
+                            'Case close date': row.caseClose ? moment(row.caseClose).format('DD-MM-YYYY') : '',
+                            'Acknowledgment received': row?.ackRecived,
+                            'Volume number': row.volNo,
+                            'Serial number': row.slNo,
+                            'Remarks': row?.remarksName?.name,
+                            'Other remarks': row.otherRemarkIfAny,
+                            'Next follow up date': row.nextDate ? moment(row.nextDate).format('DD-MM-YYYY') : '',
+                            'Status': row.statusValue,
+                        }
+
+                        setXL.push(setXLSX)
+                    })                    
+                    setResData(setXL)
+                    setIsLoading(false);
                     
                 }).catch((error) => {
+                    setIsLoading(false);
                     console.log(error);
                 });
         }
         catch (err) {
+            setIsLoading(false);
             console.log(err)
         }
     }, [dd, dd.content, paramsData]);
+    const [isLoading, setIsLoading] = useState(true);
+
     return (
         <>
-            <center mt={5}>
-                <LoadingButton size="large" type="button" onClick={(e) => exportToPdf(dd)} variant="contained" color="error" > EXPORT PDF </LoadingButton>
-                &nbsp; &nbsp;&nbsp;
-                <LoadingButton size="large" type="button" onClick={(e) => exportToExcel(e)} variant="contained" color="success" > EXPORT XLSX </LoadingButton>
-                <br/>
-            </center>
+            {isLoading ? (
+                    <Loader />
+                ) : (
+                    <center mt={5}>
+                        <LoadingButton size="large" type="button" onClick={(e) => exportToPdf(dd)} variant="contained" color="error" > EXPORT PDF </LoadingButton>
+                        &nbsp; &nbsp;&nbsp;
+                        <LoadingButton size="large" type="button" onClick={(e) => exportToExcel(e)} variant="contained" color="success" > EXPORT XLSX </LoadingButton>
+                        <br/>
+                    </center>
+            )}
         </>
     )
 }

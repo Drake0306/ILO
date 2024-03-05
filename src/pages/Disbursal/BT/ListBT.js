@@ -314,7 +314,7 @@ export default function ListBT() {
                           <TableCell component="th" scope="row" padding="none">
                             <Stack direction="row" alignItems="center" spacing={2}>
                               <Typography variant="subtitle2" noWrap>
-                                {row.date}
+                                {row.registrationDate}
                               </Typography>
                             </Stack>
                           </TableCell>

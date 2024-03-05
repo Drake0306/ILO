@@ -331,115 +331,49 @@ def authorityLettersFullReport(request):
     registrarOff = request.data.get('registrarOff', '')
 
     pending = request.data.get('statusValue', '')
-    if pending == '':
-        pending = 'true'
 
     regiLedger = request.data.get('regiLedger', False)
     loanLedger = request.data.get('loanLedger', False)
 
-    regiBank = request.data.get('regiBank', False)
-    loanBank = request.data.get('loanBank', False)
+    # Assuming regiLedger and loanLedger lead to the same callback, no need for separate checks
+    List = authorityLetterRegCALLBACK(bankName, branchName, pending, registrarOff, fromDate, fromTo)
 
-    # added check for above fields TODO
-    if regiLedger == True:
-        List = authorityLetterRegCALLBACK(bankName, branchName, pending, registrarOff, fromDate, fromTo)
-    elif loanLedger == True:
-        List = authorityLetterRegCALLBACK(bankName, branchName, pending, registrarOff, fromDate, fromTo)
-    else:
-        List = authorityLetterRegCALLBACK(bankName, branchName, pending, registrarOff, fromDate, fromTo)
-        
     return Response(List.data)
+    
+
+def get_serialized_data(model, serializer, model_id):
+    if model_id:
+        item = model.objects.filter(id=model_id).first()
+        if item:
+            return serializer(item, many=False).data
+    return None
+
 
 def authorityLetterRegCALLBACK(bankName, branchName, pending, registrarOff, fromDate, fromTo):
-    if bankName != '':
+    # Creating dictionary filters with condition checks
+    common_filters = {
+        'bank': bankName if bankName != '' else None,
+        'branch': branchName if branchName != '' else None,
+        'statusValue': pending if pending != '' else None
+    }
+    # Removing None entries
+    common_filters = {k: v for k, v in common_filters.items() if v is not None}
 
-        if branchName != '':
+    date_filter = {f'reciptDate__range': [fromDate, fromTo]}
+    filters = {**common_filters, **date_filter}
 
-            if pending == 'true':
+    ReportData = authorityLetter.objects.filter(**filters)
 
-                if registrarOff != '':
-                    ReportData = authorityLetter.objects.filter(
-                        Q(reciptDate__range= [fromDate, fromTo]) & Q(bankName= bankName) & Q(branchName= branchName) & Q(status= pending) & Q(registrarOff= registrarOff)
-                    )
-                else:
-                    ReportData = authorityLetter.objects.filter(
-                        Q(reciptDate__range= [fromDate, fromTo]) & Q(bankName= bankName) & Q(branchName= branchName) & Q(status= pending)
-                    )
-
-            else:
-
-                if registrarOff != '':
-                    ReportData = authorityLetter.objects.filter(
-                        Q(reciptDate__range= [fromDate, fromTo]) & Q(bankName= bankName) & Q(branchName= branchName) & Q(registrarOff= registrarOff)
-                    )
-                else:
-                    ReportData = authorityLetter.objects.filter(
-                        Q(reciptDate__range= [fromDate, fromTo]) & Q(bankName= bankName) & Q(branchName= branchName)
-                    )
-
+    report_list = authorityLetterSerializer(ReportData, many=True)
+    for item in report_list.data:
+        item['bankName'] = get_serialized_data(bank, bankSerializer, item.get('bank', ''))
+        item['branchName'] = get_serialized_data(branch, branchSerializer, item.get('branch', ''))
+        executiveName = item.get('executiveName', '')
+        if is_number(executiveName):
+            item['handledByName'] = get_serialized_data(handledBy, handledBySerializer, executiveName)
         else:
-            if pending == 'true':
-                ReportData = authorityLetter.objects.filter(
-                        Q(reciptDate__range= [fromDate, fromTo]) & Q(bankName= bankName) & Q(status= 'true')
-                    )
-            else:
-                ReportData = authorityLetter.objects.filter(
-                    Q(reciptDate__range= [fromDate, fromTo]) & Q(bankName= bankName)
-                )
-
-    elif registrarOff != '':
-        ReportData = authorityLetter.objects.filter(
-                    Q(status= 'true') & Q(registrarOff= registrarOff)
-                )
-    else:
-        if pending == 'true':
-            ReportData = authorityLetter.objects.filter(
-                    Q(reciptDate__range= [fromDate, fromTo]) & Q(status= 'true')
-                )
-        else:
-            ReportData = authorityLetter.objects.filter(
-                    Q(reciptDate__range= [fromDate, fromTo])
-                )
-
-    
-
-    List = authorityLetterSerializer(ReportData, many= True)
-    for item in List.data:
-
-        if item['bank'] != '':
-            bankItem = bank.objects.filter(id= item['bank']).first()
-            bankSerialise = bankSerializer(bankItem, many= False)
-            item['bankName'] = bankSerialise.data
-        
-        if item['branch'] != '':
-            branchItem = branch.objects.filter(id= item['branch']).first()
-            branchItemSerializer = branchSerializer(branchItem, many= False)
-            item['branchName'] = branchItemSerializer.data
-
-        # dsaName
-        # if item['dsa'] != '':
-        #     dsaItem = DSA.objects.filter(id= item['dsa']).first()
-        #     dsaSerialise = DSASerializer(dsaItem, many= False)
-        #     item['dsaName'] = dsaSerialise.data
-        # registrarOffName
-        # if item['registrarOff'] != '':
-        #     registrarOfficeItem = registrarOffice.objects.filter(id= item['registrarOff']).first()
-        #     registrarOfficeSerialise = registrarOfficeSerializer(registrarOfficeItem, many= False)
-        #     item['registrarOffName'] = registrarOfficeSerialise.data
-
-        # if item['remarks'] != '':
-        #     differentRemarksItem = differentRemarks.objects.filter(id= item['remarks']).first()
-        #     differentRemarksItemSerializer = differentRemarksSerializer(differentRemarksItem, many= False)
-        #     item['remarksName'] = differentRemarksItemSerializer.data
-        
-        checkIfFloat = is_number(item['executiveName'])
-        if item['executiveName'] != '' and checkIfFloat == True:
-            handledByItem = handledBy.objects.filter(id= item['executiveName']).first()
-            handledByItemSerializer = handledBySerializer(handledByItem, many= False)
-            item['handledByName'] = handledByItemSerializer.data
-        
-    
-    return List
+            item['handledByName'] = None
+    return report_list
 
 @api_view(['POST'])
 def depositOfPaymentFullReport(request): 
@@ -448,118 +382,47 @@ def depositOfPaymentFullReport(request):
     bankName = request.data.get('bank', '')
     branchName = request.data.get('branch', '')
     registrarOff = request.data.get('registrarOff', '')
-
     pending = request.data.get('statusValue', '')
-    if pending == '':
-        pending = 'true'
 
+    # These variables seem to be unused in the current context
+    # regiBank = request.data.get('regiBank', False)
+    # loanBank = request.data.get('loanBank', False)
+
+    # Simplified logic for regiLedger and loanLedger
     regiLedger = request.data.get('regiLedger', False)
     loanLedger = request.data.get('loanLedger', False)
 
-    regiBank = request.data.get('regiBank', False)
-    loanBank = request.data.get('loanBank', False)
+    # Since all conditions lead to the same function, you don't need separate checks
+    List = depositOfPaymentRegCALLBACK(bankName, branchName, pending, registrarOff, fromDate, fromTo)
 
-    # added check for above fields TODO
-    if regiLedger == True:
-        List = depositOfPaymentRegCALLBACK(bankName, branchName, pending, registrarOff, fromDate, fromTo)
-    elif loanLedger == True:
-        List = depositOfPaymentRegCALLBACK(bankName, branchName, pending, registrarOff, fromDate, fromTo)
-    else:
-        List = depositOfPaymentRegCALLBACK(bankName, branchName, pending, registrarOff, fromDate, fromTo)
-        
     return Response(List.data)
 
+
 def depositOfPaymentRegCALLBACK(bankName, branchName, pending, registrarOff, fromDate, fromTo):
-    if bankName != '':
+    # Creating dictionary filters with condition checks
+    common_filters = {
+        'bank': bankName if bankName != '' else None,
+        'branch': branchName if branchName != '' else None,
+        'statusValue': pending if pending != '' else None
+    }
+    # Removing None entries
+    common_filters = {k: v for k, v in common_filters.items() if v is not None}
 
-        if branchName != '':
+    date_filter = {f'reciptDate__range': [fromDate, fromTo]}
+    filters = {**common_filters, **date_filter}
 
-            if pending == 'true':
+    ReportData = depositOfPayment.objects.filter(**filters)
 
-                if registrarOff != '':
-                    ReportData = depositOfPayment.objects.filter(
-                        Q(reciptDate__range= [fromDate, fromTo]) & Q(bankName= bankName) & Q(branchName= branchName) & Q(status= pending) & Q(registrarOff= registrarOff)
-                    )
-                else:
-                    ReportData = depositOfPayment.objects.filter(
-                        Q(reciptDate__range= [fromDate, fromTo]) & Q(bankName= bankName) & Q(branchName= branchName) & Q(status= pending)
-                    )
-
-            else:
-
-                if registrarOff != '':
-                    ReportData = depositOfPayment.objects.filter(
-                        Q(reciptDate__range= [fromDate, fromTo]) & Q(bankName= bankName) & Q(branchName= branchName) & Q(registrarOff= registrarOff)
-                    )
-                else:
-                    ReportData = depositOfPayment.objects.filter(
-                        Q(reciptDate__range= [fromDate, fromTo]) & Q(bankName= bankName) & Q(branchName= branchName)
-                    )
-
+    report_list = depositOfPaymentSerializer(ReportData, many=True)
+    for item in report_list.data:
+        item['bankName'] = get_serialized_data(bank, bankSerializer, item.get('bank', ''))
+        item['branchName'] = get_serialized_data(branch, branchSerializer, item.get('branch', ''))
+        executiveName = item.get('executiveName', '')
+        if is_number(executiveName):
+            item['handledByName'] = get_serialized_data(handledBy, handledBySerializer, executiveName)
         else:
-            if pending == 'true':
-                ReportData = depositOfPayment.objects.filter(
-                        Q(reciptDate__range= [fromDate, fromTo]) & Q(bankName= bankName) & Q(status= 'true')
-                    )
-            else:
-                ReportData = depositOfPayment.objects.filter(
-                    Q(reciptDate__range= [fromDate, fromTo]) & Q(bankName= bankName)
-                )
-
-    elif registrarOff != '':
-        ReportData = depositOfPayment.objects.filter(
-                    Q(status= 'true') & Q(registrarOff= registrarOff)
-                )
-    else:
-        if pending == 'true':
-            ReportData = depositOfPayment.objects.filter(
-                    Q(reciptDate__range= [fromDate, fromTo]) & Q(status= 'true')
-                )
-        else:
-            ReportData = depositOfPayment.objects.filter(
-                    Q(reciptDate__range= [fromDate, fromTo])
-                )
-
-    
-
-    List = depositOfPaymentSerializer(ReportData, many= True)
-    for item in List.data:
-
-        if item['bank'] != '':
-            bankItem = bank.objects.filter(id= item['bank']).first()
-            bankSerialise = bankSerializer(bankItem, many= False)
-            item['bankName'] = bankSerialise.data
-        
-        if item['branch'] != '':
-            branchItem = branch.objects.filter(id= item['branch']).first()
-            branchItemSerializer = branchSerializer(branchItem, many= False)
-            item['branchName'] = branchItemSerializer.data
-
-        # dsaName
-        # if item['dsa'] != '':
-        #     dsaItem = DSA.objects.filter(id= item['dsa']).first()
-        #     dsaSerialise = DSASerializer(dsaItem, many= False)
-        #     item['dsaName'] = dsaSerialise.data
-        # registrarOffName
-        # if item['registrarOff'] != '':
-        #     registrarOfficeItem = registrarOffice.objects.filter(id= item['registrarOff']).first()
-        #     registrarOfficeSerialise = registrarOfficeSerializer(registrarOfficeItem, many= False)
-        #     item['registrarOffName'] = registrarOfficeSerialise.data
-
-        # if item['remarks'] != '':
-        #     differentRemarksItem = differentRemarks.objects.filter(id= item['remarks']).first()
-        #     differentRemarksItemSerializer = differentRemarksSerializer(differentRemarksItem, many= False)
-        #     item['remarksName'] = differentRemarksItemSerializer.data
-        
-        checkIfFloat = is_number(item['executiveName'])
-        if item['executiveName'] != '' and checkIfFloat == True:
-            handledByItem = handledBy.objects.filter(id= item['executiveName']).first()
-            handledByItemSerializer = handledBySerializer(handledByItem, many= False)
-            item['handledByName'] = handledByItemSerializer.data
-        
-    
-    return List
-
+            item['handledByName'] = None
+    return report_list
 
 def is_number(data):
     if data is None:

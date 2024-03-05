@@ -45,7 +45,7 @@ class disbursalBT(models.Model):
     bankName              = models.CharField(max_length=250,blank=True,null=True)
     branchName            = models.CharField(max_length=250,blank=True,null=True)
     uid                   = models.CharField(max_length=250,blank=True,null=True)
-    date                  = models.CharField(max_length=250,blank=True, null=True)
+    registrationDate      = models.CharField(max_length=250,blank=True, null=True)
     transNo               = models.CharField(max_length=250,blank=True, null=True)
     caseCloseVal          = models.CharField(max_length=250,blank=True, null=True)
     customerName          = models.CharField(max_length=250,blank=True,null=True)

@@ -212,7 +212,7 @@ export default function Registration(props) {
       amount: fromElementsData.amount.value,
       chequeRecivedDate: fromElementsData.chequeRecivedDate.value,
       chequeReturnDate: fromElementsData.chequeReturnDate.value,
-      nextDate: fromElementsData.chequeReturnDate.value,
+      nextDate: fromElementsData.nextDate.value,
       ackRecived: fromElementsData.ackRecived.value,
       ack: fromElementsData.ack.value,
       volNo: fromElementsData.volNo.value,

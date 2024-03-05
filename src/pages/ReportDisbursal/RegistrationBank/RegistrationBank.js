@@ -22,6 +22,8 @@ import { FormProvider, RHFTextField, RHFCheckbox } from '../../../components/hoo
 import Page from '../../../components/Page';
 import Iconify from '../../../components/Iconify';
 import JSON_CONST from '../../../components/CONSTVALUE.json';
+import Loader from '../../Loader/Loader';
+
 
 // ----------------------------------------------------------------------
 
@@ -39,6 +41,7 @@ export default function RegistrationBank(props) {
     address: '',
     bankName: [],
     path: '',
+    dateType:'registrationDate',
     id: '',
     status: true
   });
@@ -144,7 +147,8 @@ export default function RegistrationBank(props) {
       branch: fromElementsData.branch.value,
       from: fromElementsData.from.value,
       to: fromElementsData.to.value,
-      regiLedger: false,
+      dateType: fromElementsData.dateType.value,
+      regiLedger: true,
       loanLedger: false,
     }
 
@@ -200,6 +204,9 @@ export default function RegistrationBank(props) {
     navigate(`/app/reportDisbursal/${url}`, { replace: true });
   };
 
+  // Loader
+  const [isLoading, setIsLoading] = useState(true);
+
   return (
     <Page title={UIName}>
       <Container maxWidth="xl">
@@ -234,6 +241,25 @@ export default function RegistrationBank(props) {
               </Typography>
               
             </Grid>
+            <Grid item xs={12} sm={12} md={4} lg={4} mb={2}>
+              <FormControl fullWidth>
+                <InputLabel id="typeDate-select-label">Date Type</InputLabel>
+                <Select
+                  labelId="typeDate-select-label"
+                  id="typeDate-select"
+                  value={fromData.dateType}
+                  label="typeDate"
+                  name="dateType"  
+                  fullWidth
+                  required
+                  onChange={onChangeFields}
+                >
+                  <MenuItem value='registrationDate'>Registration Date</MenuItem>
+                  <MenuItem value='nextDate'>Next Follow Up Date</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={12} md={8} lg={8} />
             <Grid item xs={12} sm={12} md={4} lg={4}>
               <TextField
                 onChange={onChangeFields}

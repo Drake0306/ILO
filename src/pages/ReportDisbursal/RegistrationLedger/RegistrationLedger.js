@@ -40,6 +40,7 @@ export default function RegistrationLedger(props) {
     bank: '',
     branch: '',
     path: '',
+    dateType: 'registrationDate',
     id: '',
     status: true
   });
@@ -145,6 +146,7 @@ export default function RegistrationLedger(props) {
       branch: fromElementsData.branch.value,
       from: fromElementsData.from.value,
       to: fromElementsData.to.value,
+      dateType: fromElementsData.dateType.value,
       statusValue: fromElementsData.statusValue.value,
       regiLedger: false,
       loanLedger: false,
@@ -252,6 +254,27 @@ export default function RegistrationLedger(props) {
                 label="Pending"
               />
             </Grid> */}
+
+            <Grid item xs={12} sm={12} md={4} lg={4} mb={2}>
+              <FormControl fullWidth>
+                <InputLabel id="typeDate-select-label">Date Type</InputLabel>
+                <Select
+                  labelId="typeDate-select-label"
+                  id="typeDate-select"
+                  value={fromData.dateType}
+                  label="typeDate"
+                  name="dateType"  
+                  fullWidth
+                  required
+                  onChange={onChangeFields}
+                >
+                  <MenuItem value='registrationDate'>Registration Date</MenuItem>
+                  <MenuItem value='nextDate'>Next Follow Up Date</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={12} md={8} lg={8} />
+
             <Grid item xs={12} sm={12} md={4} lg={4}>
               <TextField
                 onChange={onChangeFields}

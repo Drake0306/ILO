@@ -132,166 +132,55 @@ def disbursalBTDelete(request,id):
     disbursalBT.objects.filter(id=id).delete()
     return Response('success')
 
-def disbursalRegCALLBACK(bankName, branchName, pending, registrarOff, fromDate, fromTo):
-    if bankName != '':
+def disbursalRegCALLBACK(bankName, branchName, pending, registrarOff, fromDate, fromTo, dateType):
+    # Creating dictionary filters with condition checks
+    common_filters = {
+        'bankName': bankName if bankName != '' else None,
+        'branchName': branchName if branchName != '' else None,
+        'statusValue': pending if pending != '' else None
+    }
+    # Removing None entries
+    common_filters = {k: v for k, v in common_filters.items() if v is not None}
 
-        if branchName != '':
+    date_filter = {f'{dateType}__range': [fromDate, fromTo]}
+    filters = {**common_filters, **date_filter}
 
-            if pending == 'true':
+    ReportData = disbursalRegistration.objects.filter(**filters)
 
-                if registrarOff != '':
-                    ReportData = disbursalRegistration.objects.filter(
-                        Q(registrationDate__range= [fromDate, fromTo]) & Q(bankName= bankName) & Q(branchName= branchName) & Q(status= pending) & Q(registrarOff= registrarOff)
-                    )
-                else:
-                    ReportData = disbursalRegistration.objects.filter(
-                        Q(registrationDate__range= [fromDate, fromTo]) & Q(bankName= bankName) & Q(branchName= branchName) & Q(status= pending)
-                    )
+    report_list = disbursalRegistrationSerializer(ReportData, many=True)
+    for item in report_list.data:
+        item['dsaName'] = get_serialized_data(DSA, DSASerializer, item.get('dsa', ''))
+        item['registrarOffName'] = get_serialized_data(registrarOffice, registrarOfficeSerializer, item.get('registrarOff', ''))
+        item['bankName'] = get_serialized_data(bank, bankSerializer, item.get('bankName', ''))
+        item['branchName'] = get_serialized_data(branch, branchSerializer, item.get('branchName', ''))
+        item['remarksName'] = get_serialized_data(differentRemarks, differentRemarksSerializer, item.get('remarks', ''))
+        item['handledByName'] = get_serialized_data(handledBy, handledBySerializer, item.get('handledBy', ''))
 
-            else:
+    return report_list
 
-                if registrarOff != '':
-                    ReportData = disbursalRegistration.objects.filter(
-                        Q(registrationDate__range= [fromDate, fromTo]) & Q(bankName= bankName) & Q(branchName= branchName) & Q(registrarOff= registrarOff)
-                    )
-                else:
-                    ReportData = disbursalRegistration.objects.filter(
-                        Q(registrationDate__range= [fromDate, fromTo]) & Q(bankName= bankName) & Q(branchName= branchName)
-                    )
+def disbursalBTCALLBACK(bankName, branchName, pending, registrarOff, fromDate, fromTo, dateType):
+    # Creating dictionary filters with condition checks
+    common_filters = {
+        'bankName': bankName if bankName != '' else None,
+        'branchName': branchName if branchName != '' else None,
+        'statusValue': pending if pending != '' else None
+    }
+    # Removing None entries
+    common_filters = {k: v for k, v in common_filters.items() if v is not None}
 
-        else:
-            if pending == 'true':
-                ReportData = disbursalRegistration.objects.filter(
-                        Q(registrationDate__range= [fromDate, fromTo]) & Q(bankName= bankName) & Q(status= 'true')
-                    )
-            else:
-                ReportData = disbursalRegistration.objects.filter(
-                    Q(registrationDate__range= [fromDate, fromTo]) & Q(bankName= bankName)
-                )
+    date_filter = {f'{dateType}__range': [fromDate, fromTo]}
+    filters = {**common_filters, **date_filter}
 
-    elif registrarOff != '':
-        ReportData = disbursalRegistration.objects.filter(
-                    Q(status= 'true') & Q(registrarOff= registrarOff)
-                )
-    else:
-        if pending == 'true':
-            ReportData = disbursalRegistration.objects.filter(
-                    Q(registrationDate__range= [fromDate, fromTo]) & Q(status= 'true')
-                )
-        else:
-            ReportData = disbursalRegistration.objects.filter(
-                    Q(registrationDate__range= [fromDate, fromTo])
-                )
+    ReportData = disbursalBT.objects.filter(**filters)
 
-    
+    report_list = disbursalBTSerializer(ReportData, many=True)
+    for item in report_list.data:
+        item['bankName'] = get_serialized_data(bank, bankSerializer, item.get('bankName', ''))
+        item['branchName'] = get_serialized_data(branch, branchSerializer, item.get('branchName', ''))
+        item['remarksName'] = get_serialized_data(differentRemarks, differentRemarksSerializer, item.get('remarks', ''))
+        item['handledByName'] = get_serialized_data(handledBy, handledBySerializer, item.get('handledBy', ''))
 
-    List = disbursalRegistrationSerializer(ReportData, many= True)
-    for item in List.data:
-        # dsaName
-        if item['dsa'] != '':
-            dsaItem = DSA.objects.filter(id= item['dsa']).first()
-            dsaSerialise = DSASerializer(dsaItem, many= False)
-            item['dsaName'] = dsaSerialise.data
-        # registrarOffName
-        if item['registrarOff'] != '':
-            registrarOfficeItem = registrarOffice.objects.filter(id= item['registrarOff']).first()
-            registrarOfficeSerialise = registrarOfficeSerializer(registrarOfficeItem, many= False)
-            item['registrarOffName'] = registrarOfficeSerialise.data
-
-        if item['bankName'] != '':
-            bankItem = bank.objects.filter(id= item['bankName']).first()
-            bankSerialise = bankSerializer(bankItem, many= False)
-            item['bankName'] = bankSerialise.data
-        
-        if item['branchName'] != '':
-            branchItem = branch.objects.filter(id= item['branchName']).first()
-            branchItemSerializer = branchSerializer(branchItem, many= False)
-            item['branchName'] = branchItemSerializer.data
-        
-        if item['remarks'] != '':
-            differentRemarksItem = differentRemarks.objects.filter(id= item['remarks']).first()
-            differentRemarksItemSerializer = differentRemarksSerializer(differentRemarksItem, many= False)
-            item['remarksName'] = differentRemarksItemSerializer.data
-        
-        if item['handledBy'] != '':
-            handledByItem = handledBy.objects.filter(id= item['handledBy']).first()
-            handledByItemSerializer = handledBySerializer(handledByItem, many= False)
-            item['handledByName'] = handledByItemSerializer.data
-        
-    
-    return List
-
-def disbursalBTCALLBACK(bankName, branchName, pending, registrarOff, fromDate, fromTo):
-    if bankName != '':
-
-        if branchName != '':
-
-            if pending != '':
-
-                if registrarOff != '':
-                    ReportData = disbursalBT.objects.filter(
-                        Q(date__range= [fromDate, fromTo]) & Q(bankName= bankName) & Q(branchName= branchName) & Q(statusValue= pending) & Q(registrarOff= registrarOff)
-                    )
-                else:
-                    ReportData = disbursalBT.objects.filter(
-                        Q(date__range= [fromDate, fromTo]) & Q(bankName= bankName) & Q(branchName= branchName) & Q(status= pending)
-                    )
-
-            else:
-
-                if registrarOff != '':
-                    ReportData = disbursalBT.objects.filter(
-                        Q(date__range= [fromDate, fromTo]) & Q(bankName= bankName) & Q(branchName= branchName) & Q(registrarOff= registrarOff)
-                    )
-                else:
-                    ReportData = disbursalBT.objects.filter(
-                        Q(date__range= [fromDate, fromTo]) & Q(bankName= bankName) & Q(branchName= branchName)
-                    )
-
-        else:
-            if pending == 'true':
-                ReportData = disbursalBT.objects.filter(
-                    Q(date__range= [fromDate, fromTo]) & Q(bankName= bankName) & Q(status= 'true')
-                )
-            else:
-                ReportData = disbursalBT.objects.filter(
-                    Q(date__range= [fromDate, fromTo]) & Q(bankName= bankName)
-                )
-
-    else:
-        if pending == 'true':
-            ReportData = disbursalBT.objects.filter(
-                    Q(date__range= [fromDate, fromTo]) & Q(status= 'true')
-                )
-        else:
-            ReportData = disbursalBT.objects.filter(
-                    Q(date__range= [fromDate, fromTo])
-                )
-        
-    List = disbursalBTSerializer(ReportData, many= True)
-    for item in List.data:
-        if item['bankName'] != '':
-            bankItem = bank.objects.filter(id= item['bankName']).first()
-            bankSerialise = bankSerializer(bankItem, many= False)
-            item['bankName'] = bankSerialise.data
-
-        if item['branchName'] != '':
-            branchItem = branch.objects.filter(id= item['branchName']).first()
-            branchItemSerializer = branchSerializer(branchItem, many= False)
-            item['branchName'] = branchItemSerializer.data
-        
-        if item['remarks'] != '':
-            differentRemarksItem = differentRemarks.objects.filter(id= item['remarks']).first()
-            differentRemarksItemSerializer = differentRemarksSerializer(differentRemarksItem, many= False)
-            item['remarksName'] = differentRemarksItemSerializer.data
-        
-        if item['handledBy'] != '':
-            handledByItem = handledBy.objects.filter(id= item['handledBy']).first()
-            handledByItemSerializer = handledBySerializer(handledByItem, many= False)
-            item['handledByName'] = handledByItemSerializer.data
-    
-    
-    return List
+    return report_list
 
 @api_view(['POST'])
 def DisbursalRegFullReport(request): 
@@ -300,25 +189,28 @@ def DisbursalRegFullReport(request):
     bankName = request.data.get('bank', '')
     branchName = request.data.get('branch', '')
     registrarOff = request.data.get('registrarOff', '')
+    dateType = request.data.get('dateType', 'registrationDate')
 
     pending = request.data.get('statusValue', '')
-    if pending == '':
-        pending = 'true'
 
     regiLedger = request.data.get('regiLedger', False)
     loanLedger = request.data.get('loanLedger', False)
 
-    regiBank = request.data.get('regiBank', False)
-    loanBank = request.data.get('loanBank', False)
-
-    # added check for above fields TODO
-    if regiLedger == True:
-        List = disbursalRegCALLBACK(bankName, branchName, pending, registrarOff, fromDate, fromTo)
-    elif loanLedger == True:
-        List = disbursalBTCALLBACK(bankName, branchName, pending, registrarOff, fromDate, fromTo)
+    # Use a conditional expression to choose the appropriate callback
+    if loanLedger:
+        List = disbursalBTCALLBACK(bankName, branchName, pending, registrarOff, fromDate, fromTo, dateType)
     else:
-        List = disbursalRegCALLBACK(bankName, branchName, pending, registrarOff, fromDate, fromTo)
-        
+        # Default to disbursalRegCALLBACK if regiLedger is True or neither is True
+        List = disbursalRegCALLBACK(bankName, branchName, pending, registrarOff, fromDate, fromTo, dateType)
+
     return Response(List.data)
 
+
+
+def get_serialized_data(model, serializer, model_id):
+    if model_id:
+        item = model.objects.filter(id=model_id).first()
+        if item:
+            return serializer(item, many=False).data
+    return None
 

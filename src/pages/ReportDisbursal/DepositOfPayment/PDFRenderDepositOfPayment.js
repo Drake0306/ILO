@@ -12,6 +12,7 @@ import XLSX from 'sheetjs-style';
 import pdfMake from 'pdfmake/build/pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
 import JSON_CONST from '../../../components/CONSTVALUE.json';
+import Loader from '../../Loader/Loader';
 
 const ref = React.createRef();
 
@@ -40,6 +41,7 @@ export default function PDFRenderDepositOfPayment (props) {
                     body: [
                         [
                             {text: 'Sr', style: 'tableHeaderMain'}, 
+                            {text:'Transection No', style: 'tableHeaderMain'}, 
                             {text:'Receipt Date', style: 'tableHeaderMain'}, 
                             {text: 'Bank APS NO', style: 'tableHeaderMain'}, 
                             {text: 'Customer Name', style: 'tableHeaderMain'}, 
@@ -149,11 +151,13 @@ export default function PDFRenderDepositOfPayment (props) {
         const fullDD = dd;
         let fullData = [];
         const pushToMain = tableHeadder;
+        setIsLoading(true);
+
         try {
             axios.post(`${JSON_CONST.DB_URL}depositOfPayment/registrationGlobalREport`, paramsData)
                 .then((response) => {
                     console.log(response);
-                    response.data.forEach((row) => {
+                    response.data.forEach((row, index) => {
                         fullData = [];
 
                         const addLineBreaks = (str) => {
@@ -166,7 +170,8 @@ export default function PDFRenderDepositOfPayment (props) {
                         };
 
                         // Push to Temp
-                        fullData.push({text: row?.id, style: 'tableHeaderAppNo'})
+                        fullData.push({text: index + 1, style: 'tableHeaderAppNo'})
+                        fullData.push({text: row.id, style: 'tableHeaderAppNo'})
                         fullData.push({text: moment(row?.reciptDate).format('DD-MM-YYYY'), style: 'tableHeader'})
                         fullData.push({text: row?.refNo, style: 'tableHeaderAppNo'})
                         fullData.push({text: row?.bankName?.name, style: 'tableHeaderAppNo'})
@@ -187,29 +192,66 @@ export default function PDFRenderDepositOfPayment (props) {
                     // assign main Value
                     fullDD.content[3].table.body = pushToMain;
                     setDD(fullDD);
-                    console.log('pushToMain', pushToMain);
-                    console.log('fullData', fullData);
-                    console.log('dd 2 ', dd);
-
-                    setResData(response.data)
                     
+                    const resDataConst = response.data;
+                    const setXL = [];
+                    resDataConst.forEach((row, index) => {
+                        const setXLSX = {
+                            'Sl No': index + 1,
+                            'Transection No': row.id,
+                            'Receipt date': row.reciptDate ? moment(row.reciptDate).format('DD-MM-YYYY') : '',
+                            'Bank Ref': row.refNo,
+                            'Bank ': row?.bankName?.name,
+                            'Branch': row?.branchName?.name,
+                            'Customer name': row.customerBorrower,
+                            'Payment details': row.paymentDetails,
+                            'Property Address': row.address,
+                            'Builder name': row.builderName,
+                            'Phone No': row.phoneNo,
+                            'Executive Name': row?.handledByName?.name,
+                            'Date of Deposit': row.DateofDeposit ? moment(row.DateofDeposit).format('DD-MM-YYYY') : '',
+                            'Receipt Particulars': row.Receiptparticulars,
+                            'Date receipt sent to Bank': row.dateReceiptSentToBank ? moment(row.dateReceiptSentToBank).format('DD-MM-YYYY') : '',
+                            'Case close': row.CaseClosed,
+                            'Acknowledgment received': row.AckReceived,
+                            'Acknowledgment': row.AckFiled,
+                            'Status': row.statusValue,
+                            'Volume number': row.volNo,
+                            'Serial number': row.sn,
+                            'Remarks': row.remarks,
+                        }
+
+                        setXL.push(setXLSX)
+                    })                    
+                    setResData(setXL)
+                    setIsLoading(false);
+
                 }).catch((error) => {
                     console.log(error);
+                    setIsLoading(false);
+
                 });
         }
         catch (err) {
             console.log(err)
+            setIsLoading(false);
+
         }
     }, [dd, dd.content, paramsData]);
+    const [isLoading, setIsLoading] = useState(true);
+
     return (
         <>
-
-            <center mt={5}>
-                <LoadingButton size="large" type="button" onClick={(e) => exportToPdf(dd)} variant="contained" color="error" > EXPORT PDF </LoadingButton>
-                &nbsp; &nbsp;&nbsp;
-                <LoadingButton size="large" type="button" onClick={(e) => exportToExcel(e)} variant="contained" color="success" > EXPORT XLSX </LoadingButton>
-                <br/>
-            </center>
+            {isLoading ? (
+                <Loader />
+                ) : (
+                <center mt={5}>
+                    <LoadingButton size="large" type="button" onClick={(e) => exportToPdf(dd)} variant="contained" color="error" > EXPORT PDF </LoadingButton>
+                    &nbsp; &nbsp;&nbsp;
+                    <LoadingButton size="large" type="button" onClick={(e) => exportToExcel(e)} variant="contained" color="success" > EXPORT XLSX </LoadingButton>
+                    <br/>
+                </center>
+            )}
         </>
     )
 }

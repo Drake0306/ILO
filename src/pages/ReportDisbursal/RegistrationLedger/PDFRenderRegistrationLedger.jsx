@@ -12,6 +12,7 @@ import XLSX from 'sheetjs-style';
 import pdfMake from 'pdfmake/build/pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
 import JSON_CONST from '../../../components/CONSTVALUE.json';
+import Loader from '../../Loader/Loader';
 
 const ref = React.createRef();
 
@@ -39,8 +40,6 @@ export default function PDFRenderRegistrationLedger (props) {
                     body: [
                         [
                             {text: 'Sr', style: 'tableHeaderMain'}, 
-                            {text: 'SL', style: 'tableHeaderMain'}, 
-                            {text: 'Vol No', style: 'tableHeaderMain'}, 
                             {text:'Bank', style: 'tableHeaderMain'}, 
                             {text:'Reg Date', style: 'tableHeaderMain'}, 
                             {text:'App no', style: 'tableHeaderMain'}, 
@@ -51,7 +50,9 @@ export default function PDFRenderRegistrationLedger (props) {
                             {text:'Next Follow Up Date', style: 'tableHeaderMain'}, 
                             {text:'R.D Sent', style: 'tableHeaderMain'}, 
                             {text:'T.D Sent', style: 'tableHeaderMain'}, 
-                            {text:'Courior Date', style: 'tableHeaderMain'}, 
+                            {text:'Courior Date', style: 'tableHeaderMain'},
+                            {text: 'SL', style: 'tableHeaderMain'}, 
+                            {text: 'Vol No', style: 'tableHeaderMain'},  
                             {text:'Remarks', style: 'tableHeaderMain'}, 
                             {text:'Ack', style: 'tableHeaderMain'},
                             {text:'Other remark', style: 'tableHeaderMain'},
@@ -111,7 +112,8 @@ export default function PDFRenderRegistrationLedger (props) {
     });
 
     const exportToExcel = async () => {
-        const ws = XLSX.utils.json_to_sheet(resData);
+        const dataXLSX = resData;
+        const ws = XLSX.utils.json_to_sheet(dataXLSX);
         const wb = { Sheets: { 'data': ws }, SheetNames: ['data'] };
         const excelBuffer = XLSX.write(wb, { bookType : 'xlsx', type: 'array'});
         const data = new Blob([excelBuffer], {type: fileType});
@@ -131,20 +133,23 @@ export default function PDFRenderRegistrationLedger (props) {
         const fullDD = dd;
         let fullData = [];
         const pushToMain = tableHeadder;
+        setIsLoading(true);
         try {
             axios.post(`${JSON_CONST.DB_URL}disbursal/registrationBTGlobalREport`, paramsData)
                 .then((response) => {
-                    console.log(response);
-                    response.data.forEach((row) => {
+                    console.log('##',response.data);
+                    response.data.forEach((row, index) => {
                         fullData = [];
 
                         const addLineBreaks = (str) => {
                             let result = '';
-                            while (str.length > 0) {
-                                result += `${str.substring(0, 12)  }\n`;
-                                str = str.substring(10);
+                            if(str) {
+                                while (str.length > 0) {
+                                    result += `${str.substring(0, 12)  }\n`;
+                                    str = str.substring(10);
+                                }
+                                return result.trim();
                             }
-                            return result.trim();
                         };
                         
                         const addLineBreaksMore = (str) => {
@@ -158,10 +163,8 @@ export default function PDFRenderRegistrationLedger (props) {
 
 
                         // Push to Temp
-                        fullData.push({text: row?.id, style: 'tableHeader'})
-                        fullData.push({text: row?.slNo, style: 'tableHeaderAppNo'})
+                        fullData.push({text: index + 1, style: 'tableHeader'})
                         fullData.push({text: row?.bankName.name, style: 'tableHeader'})
-                        fullData.push({text: row?.volNo, style: 'tableHeaderAppNo'})
                         fullData.push({text: row?.registrationDate && moment(row?.registrationDate).format('DD-MM-YYYY'), style: 'tableHeader'})
                         fullData.push({text: addLineBreaks(row?.applicationNo), style: 'tableHeaderAppNo'})
                         fullData.push({text: row?.seller, style: 'tableHeader'})
@@ -172,6 +175,8 @@ export default function PDFRenderRegistrationLedger (props) {
                         fullData.push({text: row?.nextDate && moment(row?.nextDate).format('DD-MM-YYYY'), style: 'tableHeader'})
                         fullData.push({text: row?.tdSentOn && moment(row?.tdSentOn).format('DD-MM-YYYY'), style: 'tableHeader'})
                         fullData.push({text: row?.courierDate && moment(row?.courierDate).format('DD-MM-YYYY'), style: 'tableHeader'})
+                        fullData.push({text: row?.slNo, style: 'tableHeaderAppNo'})
+                        fullData.push({text: row?.volNo, style: 'tableHeaderAppNo'})
                         fullData.push({text: row?.remarksName?.name, style: 'tableHeader'})
                         fullData.push({text: addLineBreaks(row?.ackRecived), style: 'tableHeaderAppNo'})
                         fullData.push({text: addLineBreaks(row?.otherRemarkIfAny), style: 'tableHeaderAppNo'})
@@ -183,29 +188,66 @@ export default function PDFRenderRegistrationLedger (props) {
                     // assign main Value
                     fullDD.content[3].table.body = pushToMain;
                     setDD(fullDD);
-                    console.log('pushToMain', pushToMain);
-                    console.log('fullData', fullData);
-                    console.log('dd 2 ', dd);
-
-                    setResData(response.data)
                     
+                    const resDataConst = response.data;
+                    const setXL = [];
+                    resDataConst.forEach((row, index) => {
+                        const setXLSX = {
+                            'S.NO': index + 1,
+                            'REGN DATE': row.registrationDate ? moment(row.registrationDate).format('DD-MM-YYYY') : '',
+                            'BANK': row?.bankName?.name,
+                            'BRANCH': row?.branchName?.name,
+                            'APPLICATION NO': row.applicationNo,
+                            'SELLER': row.seller,
+                            'SELLER PHONE NO': row.phone,
+                            'PURCHASER': row.purchaser,
+                            'PURCHASER PHONE NO': row.phoneMobile,
+                            'PROPERTY DETAILS': row.propertyDetails,
+                            'REGISTRAR OFFICE': row?.registrarOffName?.name,
+                            'DEED WRITER': row.deedWriterAdv,
+                            'BUILDER OFFICE': row.address,
+                            'HANDLED BY/EXECUTIVE NAME': row?.handledByName?.name,
+                            'TRANSACTIN NO': row.id,
+                            'ROOT DOCS SENT ON': row.rdSentOn ? moment(row.rdSentOn).format('DD-MM-YYYY') : '',
+                            'SALE DEED SENT AT': row.sentAt ? moment(row.sentAt).format('DD-MM-YYYY') : '',
+                            'CASE CLOSED -YES/NO': row.caseCloseVal,
+                            'CASE CLOSED DATE': row.caseClosed ? moment(row.caseClosed).format('DD-MM-YYYY') : '',
+                            'ACKNOWLEDGEMENT': row.ack,
+                            'REMARKS': row?.remarksName?.name,
+                            'OTHER REMARKS': row.remarks,
+                            'NEXT FOLLOW UP DATE': row.nextDate ? moment(row.nextDate).format('DD-MM-YYYY') : '',
+                            'STATUS': row.statusValue,
+                        }
+
+                        setXL.push(setXLSX)
+                    })                    
+                    setResData(setXL)
+                    setIsLoading(false);
                 }).catch((error) => {
+                    setIsLoading(false);
                     console.log(error);
                 });
         }
         catch (err) {
+            setIsLoading(false);
             console.log(err)
         }
     }, [dd, dd.content, paramsData]);
 
+    // Loader
+    const [isLoading, setIsLoading] = useState(true);
+
     return (
-        <>  
+        <>  {isLoading ? (
+            <Loader />
+          ) : (
             <center mt={5}>
                 <LoadingButton size="large" type="button" onClick={(e) => exportToPdf(dd)} variant="contained" color="error" > EXPORT PDF </LoadingButton>
                 &nbsp; &nbsp;&nbsp;
                 <LoadingButton size="large" type="button" onClick={(e) => exportToExcel(e)} variant="contained" color="success" > EXPORT XLSX </LoadingButton>
                 <br/>
             </center>
+          )}
         </>
     )
 }

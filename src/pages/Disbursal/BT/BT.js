@@ -37,7 +37,7 @@ export default function BT(props) {
     bankName: '',
     branchName: '',
     uid: '',
-    date: moment().format('YYYY-MM-DD'),
+    registrationDate: moment().format('YYYY-MM-DD'),
     transNo: '',
     customerName: '',
     phoneNo: '',
@@ -176,7 +176,7 @@ export default function BT(props) {
       const sendPost = {
         bankName: fromElementsData.bankName.value,
         branchName: fromElementsData.branchName.value,
-        date: fromElementsData.date.value,
+        registrationDate: fromElementsData.registrationDate.value,
         transNo: fromData.id,
         customerName: fromElementsData.customerName.value,
         uid: fromElementsData.uid.value,
@@ -266,7 +266,7 @@ export default function BT(props) {
               setFromData({
                 bankName: '',
                 branchName: '',
-                date: '',
+                registrationDate: '',
                 transNo: '',
                 uid: '',
                 phoneNo: '',
@@ -391,8 +391,8 @@ export default function BT(props) {
                 <TextField
                   onChange={onChangeFields}
                   fullWidth
-                  value={fromData.date}
-                  name="date" 
+                  value={fromData.registrationDate}
+                  name="registrationDate" 
                   label="Date"
                   required
                   error 
