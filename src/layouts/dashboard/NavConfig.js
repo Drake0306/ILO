@@ -39,7 +39,7 @@ const navConfig = [
   {
     title: 'Transection',
     path: '#', 
-    icon: getIcon('eva:people-fill'),
+    icon: getIcon('eva:car-fill'),
     permission: permissionSet === [] ? 0 :permissionSet.builerPayment,
     children: [
       // { 
@@ -65,7 +65,7 @@ const navConfig = [
 
       {
         head: 'prepareReports',
-        title: 'Opinion',
+        title: 'Bill System',
         path: '/app/option/prepareReports',
         icon: getIcon(''),
       },
@@ -239,9 +239,9 @@ const navConfig = [
 
   // -------------------------------Transection START--------------------------------- //
   {
-    title: 'Opinion Reports',
+    title: 'Bill System',
     path: '#', 
-    icon: getIcon('eva:people-fill'),
+    icon: getIcon('eva:file-text-fill'),
     permission: permissionSet === [] ? 0 :permissionSet.builerPayment,
     children: [
       // -------------------------------Report Builder START--------------------------------- //
@@ -294,7 +294,7 @@ const navConfig = [
   {
     title: 'Disbursal Report',
     path: '#', 
-    icon: getIcon('eva:people-fill'),
+    icon: getIcon('eva:file-text-outline'),
     permission: permissionSet === [] ? 0 :permissionSet.reportBuilderPay,
     children: [
       { 
@@ -602,7 +602,7 @@ const navConfig = [
     head: 'master',
     title: 'Master',
     path: '#',
-    icon: getIcon('eva:pie-chart-2-fill'),
+    icon: getIcon('eva:monitor-fill'),
     permission: permissionSet === [] ? 0 :permissionSet.master,
     children: [
       { 
@@ -660,13 +660,13 @@ const navConfig = [
   { 
     title: 'user',
     path: '/app/master/user',
-    icon: getIcon('eva:pie-chart-2-fill'),
+    icon: getIcon('eva:person-add-fill'),
     permission: permissionSet === [] ? 0 :permissionSet.dashboard,
   },
   {
     title: 'logout',
     path: '/logout',
-    icon: getIcon('eva:pie-chart-2-fill'),
+    icon: getIcon('eva:log-out-fill'),
     logout: true,
     permission: true,
   },

@@ -13,6 +13,16 @@ import { Grid, Container, Typography, Link, Stack, Button, Card, TextField, Chec
 import pdfMake from 'pdfmake/build/pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
 
+import CardActions from '@mui/material/CardActions';
+import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
+import { styled } from '@mui/material/styles';
+import Box from '@mui/material/Box';
+import Paper from '@mui/material/Paper';
+import Icon from '@mui/material/Icon';
+import PictureAsPdfOutlinedIcon from '@mui/icons-material/PictureAsPdfOutlined';
+import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
+
 
 import JSON_CONST from '../../../components/CONSTVALUE.json';
 
@@ -20,6 +30,15 @@ const ref = React.createRef();
 
 export default function PDFRenderBankWiseMISReport (props) {
     const ref = React.createRef();
+
+    const Item = styled(Paper)(({ theme }) => ({
+        backgroundColor: '#FFFFFF',
+        ...theme.typography.body2,
+        padding: theme.spacing(1),
+        textAlign: 'center',
+        color: theme.palette.text.secondary,
+    }));
+    
     const params = useParams()
     const [paramsData, setParamsData] = useState(params.data && JSON.parse(decodeURI(params.data)));
     const [resData, setResData] = useState([]);
@@ -31,7 +50,7 @@ export default function PDFRenderBankWiseMISReport (props) {
         const wb = { Sheets: { 'data': ws }, SheetNames: ['data'] };
         const excelBuffer = XLSX.write(wb, { bookType : 'xlsx', type: 'array'});
         const data = new Blob([excelBuffer], {type: fileType});
-        FileSaver.saveAs(data, `Export${fileExtension}`);
+        FileSaver.saveAs(data, `Export All Status Wise Cases Received${fileExtension}`);
     }
 
     const [dd, setDD] = useState({
@@ -147,12 +166,54 @@ export default function PDFRenderBankWiseMISReport (props) {
 
     return (
         <>
-            <center>
-                <LoadingButton size="large" type="button" onClick={(e) => exportToPdf(dd)} variant="contained" color="error" > EXPORT PDF </LoadingButton>
-                    &nbsp; &nbsp;&nbsp;
-                <LoadingButton size="large" type="button" onClick={(e) => exportToExcel(e)} variant="contained" color="success" > EXPORT XLSX </LoadingButton>
-                <br/>
-            </center>
+            <Box sx={{ flexGrow: 1 }}>
+                <Grid container spacing={2}>
+                    <Grid item xs={6}>
+                    <Item style={{backgroundColor: '#FFFFFF',display: 'flex', justifyContent: 'right', marginTop: '200px'}}>
+                        <Card style={{backgroundColor: '#B14019'}} sx={{ minWidth: 345 }}>
+                            <CardMedia
+                                sx={{ height: 140 }}
+                                image={''}
+                                title=""
+                            >
+                                <PictureAsPdfOutlinedIcon style={{marginTop: '20px', fontSize: '140px', color: 'white'}} />
+                            </CardMedia>
+                            <CardContent>
+                                <Typography gutterBottom variant="h5" component="div" style={{color: 'white'}}>
+                                PDF EXPORT 
+                                </Typography>
+                            </CardContent>
+                            <CardActions>
+                                <Button style={{backgroundColor: '#F9F9F9'}} onClick={(e) => exportToPdf(dd)} size="small">PDF</Button>
+                                &nbsp;&nbsp;&nbsp;<sub style={{color: '#F9F9F9'}}>Click to open/download</sub>
+                            </CardActions>
+                        </Card>
+                    </Item>
+                    </Grid>
+                    <Grid item xs={6}>
+                    <Item style={{backgroundColor: '#FFFFFF',display: 'flex', justifyContent: 'left', marginTop: '200px'}}>
+                    <Card style={{backgroundColor: '#1C9F44'}} sx={{ minWidth: 345 }}>
+                            <CardMedia
+                                sx={{ height: 140 }}
+                                image=""
+                                title=""
+                            >
+                                <FileDownloadOutlinedIcon style={{marginTop: '20px', fontSize: '140px', color: 'white'}} />
+                            </CardMedia>
+                            <CardContent>
+                                <Typography gutterBottom variant="h5" component="div" style={{color: 'white'}}>
+                                XLSX EXPORT
+                                </Typography>
+                            </CardContent>
+                            <CardActions>
+                                <Button style={{backgroundColor: '#F9F9F9'}} onClick={(e) => exportToExcel(e)} size="small">XLSX </Button>
+                                &nbsp;&nbsp;&nbsp;<sub style={{color: '#F9F9F9'}}>Click to open/download</sub>
+                            </CardActions>
+                        </Card>
+                    </Item>
+                    </Grid>
+                </Grid>
+            </Box>
         </>
     )
 }

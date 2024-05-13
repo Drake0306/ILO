@@ -132,7 +132,7 @@ def disbursalBTDelete(request,id):
     disbursalBT.objects.filter(id=id).delete()
     return Response('success')
 
-def disbursalRegCALLBACK(bankName, branchName, pending, registrarOff, fromDate, fromTo, dateType):
+def disbursalRegCALLBACK(bankName, branchName, pending, registrarOff, fromDate=None, fromTo=None, dateType=None):
     # Creating dictionary filters with condition checks
     common_filters = {
         'bankName': bankName if bankName != '' else None,
@@ -142,8 +142,11 @@ def disbursalRegCALLBACK(bankName, branchName, pending, registrarOff, fromDate, 
     # Removing None entries
     common_filters = {k: v for k, v in common_filters.items() if v is not None}
 
-    date_filter = {f'{dateType}__range': [fromDate, fromTo]}
-    filters = {**common_filters, **date_filter}
+    filters = common_filters.copy()
+
+    if fromDate and fromTo and dateType:
+        date_filter = {f'{dateType}__range': [fromDate, fromTo]}
+        filters.update(date_filter)
 
     ReportData = disbursalRegistration.objects.filter(**filters)
 
@@ -158,7 +161,8 @@ def disbursalRegCALLBACK(bankName, branchName, pending, registrarOff, fromDate, 
 
     return report_list
 
-def disbursalBTCALLBACK(bankName, branchName, pending, registrarOff, fromDate, fromTo, dateType):
+
+def disbursalBTCALLBACK(bankName, branchName, pending, registrarOff, fromDate=None, fromTo=None, dateType=None):
     # Creating dictionary filters with condition checks
     common_filters = {
         'bankName': bankName if bankName != '' else None,
@@ -168,8 +172,11 @@ def disbursalBTCALLBACK(bankName, branchName, pending, registrarOff, fromDate, f
     # Removing None entries
     common_filters = {k: v for k, v in common_filters.items() if v is not None}
 
-    date_filter = {f'{dateType}__range': [fromDate, fromTo]}
-    filters = {**common_filters, **date_filter}
+    filters = common_filters.copy()
+
+    if fromDate and fromTo and dateType:
+        date_filter = {f'{dateType}__range': [fromDate, fromTo]}
+        filters.update(date_filter)
 
     ReportData = disbursalBT.objects.filter(**filters)
 

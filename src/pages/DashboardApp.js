@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { faker } from '@faker-js/faker';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
+
 // @mui
 import { useTheme } from '@mui/material/styles';
 import { Grid, Container, Typography } from '@mui/material';
@@ -28,6 +30,7 @@ import {
 // ----------------------------------------------------------------------
 
 export default function DashboardApp() {
+  const navigate = useNavigate()
   const theme = useTheme();
   const [ BP, setBP] = useState(0);
   const [ OP, setOP] = useState(0);
@@ -42,64 +45,86 @@ export default function DashboardApp() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    // Initialize count of responses received
+    let responsesReceived = 0;
+
+    const handleResponse = () => {
+        // eslint-disable-next-line no-plusplus
+        responsesReceived++;
+        // Check if all responses have been received
+        if (responsesReceived === 6) {
+            // All responses received, set isLoading to false
+            setIsLoading(false);
+        }
+    };
+
     // BP
     axios.get(`${JSON_CONST.DB_URL}builderPayment/list`)
      .then((response) => {
       setBP(response.data.length)
+      handleResponse();
      })
      .catch((error) => {
        console.log(error);
+       handleResponse(); // Handle error as a response received
      });
     
      // OP
      axios.get(`${JSON_CONST.DB_URL}option/list`)
       .then((response) => {
         setOP(response.data.length)
+        handleResponse();
       })
       .catch((error) => {
         console.log(error);
+        handleResponse(); // Handle error as a response received
       });
      // R
      axios.get(`${JSON_CONST.DB_URL}disbursal/registration/list`)
       .then((response) => {
         setR(response.data.length)
+        handleResponse();
       })
       .catch((error) => {
         console.log(error);
+        handleResponse(); // Handle error as a response received
       });
      // BT
      axios.get(`${JSON_CONST.DB_URL}disbursal/BT/list`)
       .then((response) => {
         setBT(response.data.length)
-        setIsLoading(false);
+        handleResponse();
       })
       .catch((error) => {
         console.log(error);
+        handleResponse(); // Handle error as a response received
       });
      
       // AL
      axios.get(`${JSON_CONST.DB_URL}authorityLetters/registration/list`)
       .then((response) => {
         setAL(response.data.length)
-        setIsLoading(false);
+        handleResponse();
       })
       .catch((error) => {
         console.log(error);
+        handleResponse(); // Handle error as a response received
       });
      
       // DOP
      axios.get(`${JSON_CONST.DB_URL}depositOfPayment/registration/list`)
       .then((response) => {
         setDOP(response.data.length)
-        setIsLoading(false);
+        handleResponse();
       })
       .catch((error) => {
         console.log(error);
+        handleResponse(); // Handle error as a response received
       });
 
       getLastmonthsDate();
  
- }, [])
+ }, []);
 
  const getLastmonthsDate = () => {
    const data = [];
@@ -112,6 +137,10 @@ export default function DashboardApp() {
     setDATEArray(data);
  }
 
+ const redirectPage = async (url) => {
+    navigate(`${url}`, { replace: true });
+}
+
   return (
     <Page title="Dashboard">
       {isLoading ? (
@@ -122,29 +151,29 @@ export default function DashboardApp() {
           Hi, Welcome - Loan Information System (ILO)
         </Typography>
 
-        <Grid container spacing={3}>
+        <Grid container spacing={6}>
           {/* <Grid item xs={12} sm={6} md={3}>
             <AppWidgetSummary title="Builder Payment" total={BP} icon={'fluent:payment-28-filled'} />
           </Grid> */}
 
-          <Grid item xs={12} sm={6} md={4}>
-            <AppWidgetSummary title="Option" total={OP} color="info" icon={'fluent:payment-28-regular'} />
+          <Grid className='zoom' item xs={12} sm={6} md={4}>
+            <AppWidgetSummary onClick={() => redirectPage('/app/option/prepareReports')} title="Option" total={OP} color="info" icon={'fluent:payment-28-regular'} />
           </Grid>
 
-          <Grid item xs={12} sm={6} md={4}>
-            <AppWidgetSummary title="Registration" total={R} color="warning" icon={'mdi:payment-on-delivery'} />
+          <Grid className='zoom' item xs={12} sm={6} md={4}>
+            <AppWidgetSummary onClick={() => redirectPage('/app/disbursal/registration/list/')} title="Registration" total={R} color="warning" icon={'mdi:payment-on-delivery'} />
           </Grid>
 
-          <Grid item xs={12} sm={6} md={4}>
-            <AppWidgetSummary title="BT" total={BT} color="error" icon={'mdi:account-payment-outline'} />
+          <Grid className='zoom' item xs={12} sm={6} md={4}>
+            <AppWidgetSummary onClick={() => redirectPage('/app/disbursal/bt/list/')} title="BT" total={BT} color="error" icon={'mdi:account-payment-outline'} />
           </Grid>
 
-          <Grid item xs={12} sm={6} md={4}>
-            <AppWidgetSummary title="Authority Letters" total={AL} color="warning" icon={'mdi:payment-on-delivery'} />
+          <Grid className='zoom' item xs={12} sm={6} md={4}>
+            <AppWidgetSummary onClick={() => redirectPage('/app/format/AuthorityLetters/list')} title="Authority Letters" total={AL} color="warning" icon={'mdi:payment-on-delivery'} />
           </Grid>
 
-          <Grid item xs={12} sm={6} md={4}>
-            <AppWidgetSummary title="Deposit Of Payment" total={DOP} color="error" icon={'mdi:account-payment-outline'} />
+          <Grid className='zoom' item xs={12} sm={6} md={4}>
+            <AppWidgetSummary onClick={() => redirectPage('/app/disbursal/DepositOfPayment/list/')} title="Deposit Of Payment" total={DOP} color="error" icon={'mdi:account-payment-outline'} />
           </Grid>
 
           {/* <Grid item xs={12} md={6} lg={8}>

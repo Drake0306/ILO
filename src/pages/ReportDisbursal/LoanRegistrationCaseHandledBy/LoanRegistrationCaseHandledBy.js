@@ -265,7 +265,6 @@ export default function LoanRegistrationCaseHandledBy(props) {
                 value={fromData.from}
                 name="from" 
                 label="From"
-                required
                 type="date"
                 InputLabelProps={{
                   shrink: true,
@@ -279,7 +278,6 @@ export default function LoanRegistrationCaseHandledBy(props) {
                 value={fromData.to}
                 name="to" 
                 label="To"
-                required
                 type="date"
                 InputLabelProps={{
                   shrink: true,

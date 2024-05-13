@@ -9,6 +9,16 @@ import { Grid, Container, Typography, Link, Stack, Button, Card, TextField, Chec
 import * as FileSaver from 'file-saver';
 import XLSX from 'sheetjs-style';
 
+import CardActions from '@mui/material/CardActions';
+import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
+import { styled } from '@mui/material/styles';
+import Box from '@mui/material/Box';
+import Paper from '@mui/material/Paper';
+import Icon from '@mui/material/Icon';
+import PictureAsPdfOutlinedIcon from '@mui/icons-material/PictureAsPdfOutlined';
+import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
+
 import pdfMake from 'pdfmake/build/pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
 import JSON_CONST from '../../../components/CONSTVALUE.json';
@@ -18,6 +28,14 @@ const ref = React.createRef();
 
 // Register fonts
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
+
+const Item = styled(Paper)(({ theme }) => ({
+    backgroundColor: '#FFFFFF',
+    ...theme.typography.body2,
+    padding: theme.spacing(1),
+    textAlign: 'center',
+    color: theme.palette.text.secondary,
+}));
 
 export default function PDFRenderLoanBank (props) {
     const ref = React.createRef();
@@ -36,21 +54,26 @@ export default function PDFRenderLoanBank (props) {
             {text: `Loan Taken Over Report:-                                                                                  Date As on: ${moment().format('DD-MM-YYYY')}`, style: 'subheader'},
             {
                 style: 'tableExample',
+
                 table: {
                     body: [
                         [
-                            {text: 'Sr', style: 'tableHeaderMain'}, 
+                            {text: 'Sl No', style: 'tableHeaderMain'}, 
+                            {text: 'Date', style: 'tableHeaderMain'}, 
+                            {text: 'Bank', style: 'tableHeaderMain'}, 
+                            {text: 'Branch', style: 'tableHeaderMain'}, 
                             {text:'App no', style: 'tableHeaderMain'}, 
-                            // {text:'DSA', style: 'tableHeaderMain'}, 
                             {text:'Customer', style: 'tableHeaderMain'}, 
+                            {text: 'Phone', style: 'tableHeaderMain'}, 
+                            {text: 'Property details', style: 'tableHeaderMain'}, 
                             {text:'Take Over', style: 'tableHeaderMain'}, 
+                            {text:'Handled by', style: 'tableHeaderMain'}, 
+                            {text:'Transaction number', style: 'tableHeaderMain'}, 
                             {text:'Doc Sent To Bank', style: 'tableHeaderMain'}, 
-                            // {text:'Amount', style: 'tableHeaderMain'}, 
-                            // {text:'Chq Date', style: 'tableHeaderMain'}, 
-                            // {text:'Chq Rev', style: 'tableHeaderMain'}, 
-                            // {text:'Chq Return', style: 'tableHeaderMain'}, 
                             {text:'Remark', style: 'tableHeaderMain'}, 
-                            {text:'Other remark', style: 'tableHeaderMain'}
+                            {text:'Other remark', style: 'tableHeaderMain'},
+                            {text:'Next follow up date', style: 'tableHeaderMain'},
+                            {text:'Status', style: 'tableHeaderMain'},
                         ],
     
                         []
@@ -79,17 +102,19 @@ export default function PDFRenderLoanBank (props) {
                 margin: [0, 0, 0, 0],
             },
             tableHeader: {
-                fontSize: 9,
-                color: 'black'
-            },
-            tableHeaderMain: {
-                bold: true,
+                fontSize: 6,
                 color: 'black'
             },
             headerSub: {
                 fontSize: 16,
                 alignment: 'center'
-            }
+            },
+            tableHeaderMain: {
+                bold: true,
+                fontSize: 10,
+                color: 'black',
+                margin: [0, 0, 0, 0],
+            },
         },
         defaultStyle: {
             // alignment: 'justify'
@@ -102,7 +127,7 @@ export default function PDFRenderLoanBank (props) {
         const wb = { Sheets: { 'data': ws }, SheetNames: ['data'] };
         const excelBuffer = XLSX.write(wb, { bookType : 'xlsx', type: 'array'});
         const data = new Blob([excelBuffer], {type: fileType});
-        FileSaver.saveAs(data, `Export${fileExtension}`);
+        FileSaver.saveAs(data, `Export INTELLECTIVE LAW OFFICES Loan Taken Over Report${fileExtension}`);
     }
 
     const exportToPdf = (value) => {
@@ -117,27 +142,44 @@ export default function PDFRenderLoanBank (props) {
         console.log('1',dd)
         const fullDD = dd;
         let fullData = [];
+
+        const addLineBreaks = (str) => {
+            let result = '';
+            if(str) {
+                while (str.length > 0) {
+                    result += `${str.substring(0, 12)  }\n`;
+                    str = str.substring(10);
+                }
+                return result.trim();
+            }
+        };
+
+
         const pushToMain = tableHeadder;
         setIsLoading(true);
         try {
             axios.post(`${JSON_CONST.DB_URL}disbursal/registrationBTGlobalREport`, paramsData)
                 .then((response) => {
                     console.log(response);
-                    response.data.forEach((row) => {
+                    response.data.forEach((row, innerIndex) => {
                         fullData = [];
                         // Push to Temp
-                        fullData.push({text: row?.id, style: 'tableHeader'})
-                        fullData.push({text: row?.applicationNo, style: 'tableHeader'})
-                        // fullData.push({text: row?.dsaName?.name, style: 'tableHeader'})
+                        fullData.push({text: innerIndex + 1, style: 'tableHeader'})
+                        fullData.push({text: row.registrationDate ? moment(row.registrationDate).format('DD-MM-YYYY') : '', style: 'tableHeader'})
+                        fullData.push({text: row?.bankName?.name, style: 'tableHeader'})
+                        fullData.push({text: row?.branchName?.name, style: 'tableHeader'})
+                        fullData.push({text: addLineBreaks(row?.applicationNo), style: 'tableHeader'})
                         fullData.push({text: row?.customerName, style: 'tableHeader'})
+                        fullData.push({text: row?.phoneNo, style: 'tableHeader'})
+                        fullData.push({text: row?.propertyDetails, style: 'tableHeader'})
                         fullData.push({text: row?.loanTakenFrom, style: 'tableHeader'})
+                        fullData.push({text: row?.handledByName?.name, style: 'tableHeader'})
+                        fullData.push({text: row?.id && moment(row?.docSentToBankDate).format('DD-MM-YYYY'), style: 'tableHeader'})
                         fullData.push({text: row?.docSentToBankDate && moment(row?.docSentToBankDate).format('DD-MM-YYYY'), style: 'tableHeader'})
-                        // fullData.push({text: row?.amount, style: 'tableHeader'})
-                        // fullData.push({text: row?.chequeDate && moment(row?.chequeDate).format('DD-MM-YYYY'), style: 'tableHeader'})
-                        // fullData.push({text: row?.chequeReceivedDate && moment(row?.chequeReceivedDate).format('DD-MM-YYYY'), style: 'tableHeader'})
-                        // fullData.push({text: row?.chequeReturnDate && moment(row?.chequeReturnDate).format('DD-MM-YYYY'), style: 'tableHeader'})
                         fullData.push({text: row?.remarksName?.name, style: 'tableHeader'})
                         fullData.push({text: row?.otherRemarkIfAny, style: 'tableHeader'})
+                        fullData.push({text: row?.nextDate, style: 'tableHeader'})
+                        fullData.push({text: row?.statusValue, style: 'tableHeader'})
 
                         // Push To Main
                         pushToMain.push(fullData)
@@ -199,12 +241,54 @@ export default function PDFRenderLoanBank (props) {
             {isLoading ? (
                     <Loader />
                 ) : (
-                    <center mt={5}>
-                        <LoadingButton size="large" type="button" onClick={(e) => exportToPdf(dd)} variant="contained" color="error" > EXPORT PDF </LoadingButton>
-                        &nbsp; &nbsp;&nbsp;
-                        <LoadingButton size="large" type="button" onClick={(e) => exportToExcel(e)} variant="contained" color="success" > EXPORT XLSX </LoadingButton>
-                        <br/>
-                    </center>
+                    <Box sx={{ flexGrow: 1 }}>
+                        <Grid container spacing={2}>
+                            <Grid item xs={6}>
+                            <Item style={{backgroundColor: '#FFFFFF',display: 'flex', justifyContent: 'right', marginTop: '200px'}}>
+                                <Card style={{backgroundColor: '#B14019'}} sx={{ minWidth: 345 }}>
+                                    <CardMedia
+                                        sx={{ height: 140 }}
+                                        image={''}
+                                        title=""
+                                    >
+                                        <PictureAsPdfOutlinedIcon style={{marginTop: '20px', fontSize: '140px', color: 'white'}} />
+                                    </CardMedia>
+                                    <CardContent>
+                                        <Typography gutterBottom variant="h5" component="div" style={{color: 'white'}}>
+                                        PDF EXPORT 
+                                        </Typography>
+                                    </CardContent>
+                                    <CardActions>
+                                        <Button style={{backgroundColor: '#F9F9F9'}} onClick={(e) => exportToPdf(dd)} size="small">PDF</Button>
+                                        &nbsp;&nbsp;&nbsp;<sub style={{color: '#F9F9F9'}}>Click to open/download</sub>
+                                    </CardActions>
+                                </Card>
+                            </Item>
+                            </Grid>
+                            <Grid item xs={6}>
+                            <Item style={{backgroundColor: '#FFFFFF',display: 'flex', justifyContent: 'left', marginTop: '200px'}}>
+                            <Card style={{backgroundColor: '#1C9F44'}} sx={{ minWidth: 345 }}>
+                                    <CardMedia
+                                        sx={{ height: 140 }}
+                                        image=""
+                                        title=""
+                                    >
+                                        <FileDownloadOutlinedIcon style={{marginTop: '20px', fontSize: '140px', color: 'white'}} />
+                                    </CardMedia>
+                                    <CardContent>
+                                        <Typography gutterBottom variant="h5" component="div" style={{color: 'white'}}>
+                                        XLSX EXPORT
+                                        </Typography>
+                                    </CardContent>
+                                    <CardActions>
+                                        <Button style={{backgroundColor: '#F9F9F9'}} onClick={(e) => exportToExcel(e)} size="small">XLSX </Button>
+                                        &nbsp;&nbsp;&nbsp;<sub style={{color: '#F9F9F9'}}>Click to open/download</sub>
+                                    </CardActions>
+                                </Card>
+                            </Item>
+                            </Grid>
+                        </Grid>
+                    </Box>
             )}
         </>
     )

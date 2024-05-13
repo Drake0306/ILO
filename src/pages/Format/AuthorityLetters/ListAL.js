@@ -21,8 +21,13 @@ import {
   TableContainer,
   TablePagination,
   OutlinedInput,
-  InputAdornment
+  InputAdornment,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Grid
 } from '@mui/material';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 // components
 import Page from '../../../components/Page';
 import Label from '../../../components/Label';
@@ -39,15 +44,15 @@ import Loader from '../../Loader/Loader';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'id', label: 'Transaction No', alignRight: false },
-  { id: 'name', label: 'Bank Name', alignRight: false },
-  { id: 'branch', label: 'Branch Name', alignRight: false },
-  { id: 'builderName', label: 'Builder Name', alignRight: false },
-  { id: 'customerBorrower', label: 'Customer Borrower', alignRight: false },
-  { id: 'phoneNo', label: 'Phone No', alignRight: false },
-  { id: 'reciptDate', label: 'Recipt Date', alignRight: false },
-  { id: 'statusValue', label: 'Status', alignRight: false },
-  { id: 'action', label: 'Action', alignRight: false },
+  { id: 'id', label: '*Transaction No', alignRight: false , search: true},
+  { id: 'name', label: '*Bank Name', alignRight: false , search: true},
+  { id: 'branch', label: '*Branch Name', alignRight: false , search: true},
+  { id: 'builderName', label: '*Builder Name', alignRight: false , search: true},
+  { id: 'customerBorrower', label: '*Customer Borrower', alignRight: false , search: true},
+  { id: 'phoneNo', label: '*Phone No', alignRight: false , search: true},
+  { id: 'reciptDate', label: 'Recipt Date', alignRight: false , search: false},
+  { id: 'statusValue', label: '*Status', alignRight: false , search: true},
+  // { id: 'action', label: 'Action', alignRight: false },
 
   // { id: '' },
 ];
@@ -99,6 +104,73 @@ export default function ListAL() {
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const [USERLIST, setUSERLIST] = useState([]);
+
+  // Search area START
+
+  const [fromDataAutoFill, setFromDataAutoFill] = useState({
+    bankList: [],
+    branchList: [],
+    userList: [],
+    handledByList: [],
+  });
+
+  const [refBranch, setRefBranch] = useState([]);
+
+  useEffect(() => {
+    api();
+  }, []);
+
+
+  const arrageList = (response) => {
+    const list = []
+    response.data.forEach((row) => {
+      if(row.status === 'true') {
+        list.push(row)
+      }
+    })
+
+    return list
+  }
+
+  const api = async () => {
+    let bankList = []
+    let branchList = []
+    let userList = []
+    let handledByList = []
+
+    await axios.get(`${JSON_CONST.DB_URL}master/bank/list`)
+      .then((response) => {
+        bankList = arrageList(response);
+      })
+
+    await axios.get(`${JSON_CONST.DB_URL}master/branch/list`)
+      .then((response) => {
+        branchList = arrageList(response);
+      })
+    
+    await axios.get(`${JSON_CONST.DB_URL}auth/userList`)
+      .then((response) => {
+        console.log(response)
+        userList = arrageList(response);
+      })
+
+    await axios.get(`${JSON_CONST.DB_URL}master/handledBy/list`)
+      .then((response) => {
+        handledByList = arrageList(response);
+      })
+    
+    setFromDataAutoFill({
+      bankList,
+      branchList,
+      userList,
+      handledByList
+    })
+
+    setRefBranch(branchList)
+
+  }
+
+  // Search area END
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -189,7 +261,7 @@ export default function ListAL() {
 
   const handleSearch = query => {
     const filtered = filteredUsers.filter(item => {
-      const searchString = `${item.fileNo} ${item.bankName.name} ${item.branchName.name} ${item.phoneNo} ${item.builderName} ${item.customerBorrower} ${item.statusValue} ${item.id}`.toLowerCase();
+      const searchString = `${item.bankName.name} ${item.branchName.name} ${item.phoneNo} ${item.builderName} ${item.customerBorrower} ${item.statusValue} ${item.id}`.toLowerCase();
       return searchString.includes(query.toLowerCase());
     });
 
@@ -243,19 +315,39 @@ export default function ListAL() {
 
           <Card sx={{ width: '100%' }}>
             {/* <UserListToolbar selected={selected} data={USERLIST} searchName={"bank Name"} numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} /> */}
-            <SearchStyle
-              style={{marginTop: '20px', marginLeft: '20px'}}
-              value={searchQuery}
-              onChange={handleInputChange}
-              autoFocus
-              // eslint-disable-next-line no-template-curly-in-string
-              placeholder={`Search ...`}
-              startAdornment={
-                <InputAdornment position="start">
-                  <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled', width: 20, height: 20 }} />
-                </InputAdornment>
-              }
-            />
+            <Grid container alignItems="center" paddingLeft={10} paddingBottom={10} paddingRight={10} paddingTop={5} spacing={3}>
+              <Grid item xs={12} sm={12} md={9} lg={9}>
+                <SearchStyle
+                  style={{marginTop: '20px', marginLeft: '20px'}}
+                  value={searchQuery}
+                  onChange={handleInputChange}
+                  autoFocus
+                  // eslint-disable-next-line no-template-curly-in-string
+                  placeholder={`Search from " *yellow fields "`}
+                  startAdornment={
+                    <InputAdornment position="start">
+                      <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled', width: 20, height: 20 }} />
+                    </InputAdornment>
+                  }
+                />
+              </Grid>
+              <Grid item xs={12} sm={12} md={3} lg={3} mt={2}>
+                <FormControl fullWidth>
+                  <InputLabel id="Bank-select-label">Bank</InputLabel>
+                  <Select
+                    labelId="Bank-select-label"
+                    id="Bank-select"
+                    value={searchQuery}
+                    label="bank"
+                    name="bank"  
+                    fullWidth
+                    onChange={handleInputChange}
+                  >
+                    {fromDataAutoFill.bankList.map((option) => (<MenuItem key={option.id} value={option.name}>{option.name}</MenuItem>))}
+                  </Select>
+                </FormControl>
+              </Grid>
+            </Grid>
             <Scrollbar>
               <TableContainer sx={{ minWidth: 100}}>
                 <Table>

@@ -38,7 +38,8 @@ export default function AppWidgetSummary({ title, total, icon, color = 'primary'
         boxShadow: 0,
         textAlign: 'center',
         color: (theme) => theme.palette[color].darker,
-        bgcolor: (theme) => theme.palette[color].lighter,
+        // bgcolor: (theme) => theme.palette[color].main,
+        backgroundColor: "#fff5e5 !important",
         ...sx,
       }}
       {...other}
@@ -60,6 +61,9 @@ export default function AppWidgetSummary({ title, total, icon, color = 'primary'
 
       <Typography variant="subtitle2" sx={{ opacity: 0.72 }}>
         {title}
+        <br />
+        <br />
+        <span><b>Click TO View</b></span>
       </Typography>
     </Card>
   );

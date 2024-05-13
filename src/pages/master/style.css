@@ -1,5 +1,6 @@
 .zoom {
   transition: transform .2s;
+  cursor: pointer;
 }
 .zoom:hover {
     -ms-transform: scale(1.1); /* IE 9 */

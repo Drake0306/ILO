@@ -21,8 +21,13 @@ import {
   TableContainer,
   TablePagination,
   OutlinedInput,
-  InputAdornment
+  InputAdornment,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Grid
 } from '@mui/material';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 // components
 import Page from '../../../components/Page';
 import Label from '../../../components/Label';
@@ -38,20 +43,20 @@ import Loader from '../../Loader/Loader';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'id', label: 'Application No', alignRight: false },
-  { id: 'bank', label: 'Bank Name', alignRight: false },
-  { id: 'branch', label: 'Branch Name', alignRight: false },
-  { id: 'customerBorrower', label: 'Name', alignRight: false },
+  { id: 'id', label: '*Application No', alignRight: false, search: true },
+  { id: 'bank', label: '*Bank Name', alignRight: false, search: true },
+  { id: 'branch', label: '*Branch Name', alignRight: false, search: true },
+  { id: 'customerBorrower', label: '*Name', alignRight: false, search: true },
   // { id: 'repNo', label: 'Report No', alignRight: false },
-  { id: 'phoneNo', label: 'Phone No', alignRight: false },
+  { id: 'phoneNo', label: '*Phone No', alignRight: false, search: true },
   // { id: 'applicationNo', label: 'App No', alignRight: false },
-  { id: 'statusValue', label: 'Status', alignRight: false },
+  { id: 'statusValue', label: '*Status', alignRight: false, search: true },
   // { id: 'contactPerson', label: 'Contact Person', alignRight: false },
   // { id: 'address', label: 'Address', alignRight: false },
   // { id: 'email', label: 'Email', alignRight: false },
   // { id: 'phoneOne', label: 'Phone One', alignRight: false },
   // { id: 'status', label: 'Active Status', alignRight: false },
-  { id: 'action', label: 'Action', alignRight: false },
+  // { id: 'action', label: 'Action', alignRight: false, search: false },
   // { id: '' },
 ];
 
@@ -102,6 +107,73 @@ export default function PrepareReports() {
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const [USERLIST, setUSERLIST] = useState([]);
+
+  // Search area START
+
+  const [fromDataAutoFill, setFromDataAutoFill] = useState({
+    bankList: [],
+    branchList: [],
+    userList: [],
+    handledByList: [],
+  });
+
+  const [refBranch, setRefBranch] = useState([]);
+
+  useEffect(() => {
+    api();
+  }, []);
+
+
+  const arrageList = (response) => {
+    const list = []
+    response.data.forEach((row) => {
+      if(row.status === 'true') {
+        list.push(row)
+      }
+    })
+
+    return list
+  }
+
+  const api = async () => {
+    let bankList = []
+    let branchList = []
+    let userList = []
+    let handledByList = []
+
+    await axios.get(`${JSON_CONST.DB_URL}master/bank/list`)
+      .then((response) => {
+        bankList = arrageList(response);
+      })
+
+    await axios.get(`${JSON_CONST.DB_URL}master/branch/list`)
+      .then((response) => {
+        branchList = arrageList(response);
+      })
+    
+    await axios.get(`${JSON_CONST.DB_URL}auth/userList`)
+      .then((response) => {
+        console.log(response)
+        userList = arrageList(response);
+      })
+
+    await axios.get(`${JSON_CONST.DB_URL}master/handledBy/list`)
+      .then((response) => {
+        handledByList = arrageList(response);
+      })
+    
+    setFromDataAutoFill({
+      bankList,
+      branchList,
+      userList,
+      handledByList
+    })
+
+    setRefBranch(branchList)
+
+  }
+
+  // Search area END
 
 
   const handleRequestSort = (event, property) => {
@@ -171,6 +243,7 @@ export default function PrepareReports() {
      .catch((error) => {
        console.log(error);
      });
+     
  
   }, [])
 
@@ -193,7 +266,7 @@ export default function PrepareReports() {
 
   const handleSearch = query => {
     const filtered = filteredUsers.filter(item => {
-      const searchString = `${item.reciptDate} ${item.fileNo} ${item.bankName.name} ${item.branchName.name} ${item.email} ${item.phoneNo} ${item.id} ${item.customerBorrower}`.toLowerCase();
+      const searchString = `${item.reciptDate} ${item.fileNo} ${item.bankName.name} ${item.branchName.name} ${item.email} ${item.phoneNo} ${item.id} ${item.customerBorrower} ${item.statusValue}`.toLowerCase();
       return searchString.includes(query.toLowerCase());
     });
 
@@ -224,14 +297,14 @@ export default function PrepareReports() {
   // }, [filteredData])
 
   return (
-    <Page title="Prepare Reports">
+    <Page title="Vetting Reports">
       {isLoading ? (
         <Loader />
       ) : (
         <Container maxWidth="">
           <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
             <Typography variant="h4" gutterBottom>
-            Prepare Reports
+            Vetting Reports
             </Typography>
             <Button variant="contained" onClick={() => redirectPage('prepareReports/newEntry/0')} startIcon={<Iconify icon="eva:plus-fill" />}>
               New Entry
@@ -244,21 +317,41 @@ export default function PrepareReports() {
           </Stack> */}
 
           <Card sx={{ width: '100%' }}>
-            {/* <UserListToolbar selected={selected} data={USERLIST} searchName={"Prepare Reports"} numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} /> */}
-
-            <SearchStyle
-              style={{marginTop: '20px', marginLeft: '20px'}}
-              value={searchQuery}
-              onChange={handleInputChange}
-              autoFocus
-              // eslint-disable-next-line no-template-curly-in-string
-              placeholder={`Search ...`}
-              startAdornment={
-                <InputAdornment position="start">
-                  <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled', width: 20, height: 20 }} />
-                </InputAdornment>
-              }
-            />
+            {/* <UserListToolbar selected={selected} data={USERLIST} searchName={"Vetting Reports"} numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} /> */}
+            
+            <Grid container alignItems="center" paddingLeft={10} paddingBottom={10} paddingRight={10} paddingTop={5} spacing={3}>
+              <Grid item xs={12} sm={12} md={9} lg={9}>
+                <SearchStyle
+                  style={{marginTop: '20px', marginLeft: '20px'}}
+                  value={searchQuery}
+                  onChange={handleInputChange}
+                  autoFocus
+                  // eslint-disable-next-line no-template-curly-in-string
+                  placeholder={`Search from " *yellow fields "`}
+                  startAdornment={
+                    <InputAdornment position="start">
+                      <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled', width: 20, height: 20 }} />
+                    </InputAdornment>
+                  }
+                />
+              </Grid>
+              <Grid item xs={12} sm={12} md={3} lg={3} mt={2}>
+                <FormControl fullWidth>
+                  <InputLabel id="Bank-select-label">Bank</InputLabel>
+                  <Select
+                    labelId="Bank-select-label"
+                    id="Bank-select"
+                    value={searchQuery}
+                    label="bank"
+                    name="bank"  
+                    fullWidth
+                    onChange={handleInputChange}
+                  >
+                    {fromDataAutoFill.bankList.map((option) => (<MenuItem key={option.id} value={option.name}>{option.name}</MenuItem>))}
+                  </Select>
+                </FormControl>
+              </Grid>
+            </Grid>
             <Scrollbar>
               <TableContainer sx={{ minWidth: 100}}>
                 <Table>

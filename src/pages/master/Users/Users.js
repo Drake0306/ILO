@@ -176,7 +176,7 @@ export default function Users() {
           <Typography variant="h4" gutterBottom>
             Users Master
           </Typography>
-          <Button variant="flat" style={{backgroundColor: '#F37022', color: '#FEFEFE'}} onClick={() => redirectPage('newEntry/0')} startIcon={<Iconify icon="eva:plus-fill" />}>
+          <Button variant="contained" onClick={() => redirectPage('newEntry/0')} startIcon={<Iconify icon="eva:plus-fill" />}>
             New Entry
           </Button>
         </Stack>

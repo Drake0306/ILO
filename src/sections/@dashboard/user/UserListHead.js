@@ -61,7 +61,12 @@ export default function UserListHead({
               direction={orderBy === headCell.id ? order : 'asc'}
               onClick={createSortHandler(headCell.id)}
             >
-              {headCell.label}
+              {headCell.search ? (
+                <span style={{background: '#ffd93d', borderRadius: '5px', padding: '1px 5px 1px 5px'}}>{headCell.label}</span>
+              ) : (
+                <span style={{borderRadius: '5px', padding: '1px 5px 1px 5px'}}>{headCell.label}</span>
+              )}
+              
               {orderBy === headCell.id ? (
                 <Box sx={{ ...visuallyHidden }}>{order === 'desc' ? 'sorted descending' : 'sorted ascending'}</Box>
               ) : null}

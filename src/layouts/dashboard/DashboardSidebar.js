@@ -31,7 +31,8 @@ const AccountStyle = styled('div')(({ theme }) => ({
   alignItems: 'center',
   padding: theme.spacing(2, 2.5),
   borderRadius: Number(theme.shape.borderRadius) * 1.5,
-  backgroundColor: theme.palette.grey[500_12],
+  backgroundColor: 'rgb(0 0 0)',
+  // backgroundColor: theme.palette.grey[500_12],
 }));
 
 // ----------------------------------------------------------------------
@@ -72,10 +73,10 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
           <AccountStyle>
             <Avatar src={account.photoURL} alt="photoURL" />
             <Box sx={{ ml: 2 }}>
-              <Typography variant="subtitle2" sx={{ color: 'text.primary' }}>
+              <Typography variant="subtitle2" sx={{ color: 'white' }}>
                 {session?.user.name}
               </Typography>
-              <Typography variant="body2" sx={{ color: 'text.secondary', textTransform: 'uppercase' }}>
+              <Typography variant="body2" sx={{ color: 'white', textTransform: 'uppercase' }}>
                 {session?.user.permission}
               </Typography>
             </Box>

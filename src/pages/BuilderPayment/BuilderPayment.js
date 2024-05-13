@@ -252,7 +252,7 @@ export default function BuilderPayment() {
               onChange={handleInputChange}
               autoFocus
               // eslint-disable-next-line no-template-curly-in-string
-              placeholder={`Search ...`}
+              placeholder={`Search from " *yellow fields "`}
               startAdornment={
                 <InputAdornment position="start">
                   <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled', width: 20, height: 20 }} />

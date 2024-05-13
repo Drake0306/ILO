@@ -313,14 +313,14 @@ export default function EntryFormPR(props) {
   }, [])
 
   return (
-    <Page title="Prepare Reports">
+    <Page title="Vetting Reports">
       {isLoading ? (
         <Loader />
       ) : (
         <Container maxWidth="xl">
           {/* <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
             <Typography variant="h4" gutterBottom>
-            Prepare Reports
+            Vetting Reports
             </Typography>
             <Button variant="contained" color="secondary" onClick={() => redirectPage('')} startIcon={<Iconify icon="carbon:list-boxes" />}>
               Home
@@ -336,7 +336,7 @@ export default function EntryFormPR(props) {
             <Grid container alignItems="center" paddingLeft={10} paddingBottom={10} paddingRight={10} paddingTop={5} spacing={3}>
               <Grid mt={2} mb={2} item xs={12} sm={12} md={12} lg={12}>
                 <Typography variant="h4" gutterBottom>
-                  Prepare Reports |
+                  Vetting Reports |
                   <Typography ml={1} variant="overline" gutterBottom>
                     Details <Iconify icon="bi:arrow-down" />
                   </Typography>
