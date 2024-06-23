@@ -40,7 +40,7 @@ export default function EntryFormPR(props) {
     branch: '',
     uid: '',
     apsNo: '',
-    report: 'Leagal Report',
+    report: 'ODV',
     customerBorrower: '',
     repNo: '',
     profCharges: '',
@@ -409,7 +409,7 @@ export default function EntryFormPR(props) {
                   fullWidth
                   value={fromData.bankRefNo}
                   name="bankRefNo" 
-                  label="Bank Ref No"
+                  label="Our Legal Ref No"
                 />
               </Grid>
               
@@ -437,15 +437,16 @@ export default function EntryFormPR(props) {
                     error 
                     onChange={onChangeFields}
                   >
-                    <MenuItem value='Leagal Report'>Leagal Report</MenuItem>
-                    <MenuItem value='Vetting Report'>Vetting Report</MenuItem>
-                    <MenuItem value='TSR'>TSR</MenuItem>
-                    <MenuItem value='Opinion'>Opinion</MenuItem>
+                    {/* <MenuItem value='Leagal Report'>Leagal Report</MenuItem>
+                    <MenuItem value='Vetting Report'>Vetting Report</MenuItem> */}
                     <MenuItem value='ODV'>ODV</MenuItem>
+                    <MenuItem value='TSR'>Vetting</MenuItem>
+                    <MenuItem value='Others'>Others</MenuItem>
+                    {/* <MenuItem value='TSR'>TSR</MenuItem>
+                    <MenuItem value='Opinion'>Opinion</MenuItem>
                     <MenuItem value='Project'>Project</MenuItem>
                     <MenuItem value='Certified Copy'>Certified Copy</MenuItem>
-                    <MenuItem value='ROC Search'>ROC Search</MenuItem>
-                    <MenuItem value='Others'>Others</MenuItem>
+                    <MenuItem value='ROC Search'>ROC Search</MenuItem> */}
                   </Select>
                 </FormControl>
               </Grid>
@@ -477,7 +478,7 @@ export default function EntryFormPR(props) {
                   fullWidth
                   value={fromData.uid}
                   name="uid"  
-                  label="UID No"
+                  label="Seller Name"
                   
                 />
               </Grid>
@@ -492,7 +493,7 @@ export default function EntryFormPR(props) {
                 />
               </Grid>
 
-              <Grid item xs={12} sm={12} md={3} lg={3}>
+              <Grid item xs={12} sm={12} md={3} lg={3} style={{display: 'none'}}>
                 <TextField
                   onChange={onChangeFields}
                   fullWidth
@@ -503,7 +504,7 @@ export default function EntryFormPR(props) {
               </Grid>
               
               
-              <Grid item xs={12} sm={12} md={3} lg={3}>
+              <Grid item xs={12} sm={12} md={3} lg={3} style={{display: 'none'}}>
                 <TextField
                   onChange={onChangeFields}
                   fullWidth
@@ -512,7 +513,7 @@ export default function EntryFormPR(props) {
                   label="Prof Charges"
                 />
               </Grid>
-              <Grid item xs={12} sm={12} md={3} lg={3}>
+              <Grid item xs={12} sm={12} md={3} lg={3} style={{display: 'none'}}>
                 <TextField
                   onChange={onChangeFields}
                   fullWidth
@@ -521,7 +522,7 @@ export default function EntryFormPR(props) {
                   label="Inspection Receipt"
                 />
               </Grid>
-              <Grid item xs={12} sm={12} md={3} lg={3}>
+              <Grid item xs={12} sm={12} md={3} lg={3} style={{display: 'none'}}>
                 <TextField
                   onChange={onChangeFields}
                   fullWidth
@@ -530,7 +531,7 @@ export default function EntryFormPR(props) {
                   label="Out Of Pocket Exp"
                 />
               </Grid>
-              <Grid item xs={12} sm={12} md={4} lg={4}>
+              {/* <Grid item xs={12} sm={12} md={4} lg={4}>
                 <TextField
                   onChange={onChangeFields}
                   fullWidth
@@ -538,6 +539,24 @@ export default function EntryFormPR(props) {
                   name="searchExp" 
                   label="Search Exp"
                 />
+              </Grid> */}
+
+              <Grid item xs={12} sm={12} md={3} lg={3}>
+                <FormControl fullWidth>
+                  <InputLabel id="searchExp-select-label">ODV Done By</InputLabel>
+                  <Select
+                    labelId="searchExp-select-label"
+                    id="searchExp-select"
+                    value={fromData.searchExp}
+                    label="searchExp"
+                    name="searchExp"  
+                    fullWidth
+                    
+                    onChange={onChangeFields}
+                  >
+                    {fromDataAutoFill.handledByList.map((option) => (<MenuItem key={option.id} value={option.id}>{option.name}</MenuItem>))}
+                  </Select>
+                </FormControl>
               </Grid>
 
               <Grid mt={0} mb={0} item xs={12} sm={12} md={12} lg={12}>
@@ -623,7 +642,7 @@ export default function EntryFormPR(props) {
                 </FormControl>
               </Grid>
 
-              <Grid item xs={12} sm={12} md={3} lg={3}>
+              <Grid item xs={12} sm={12} md={3} lg={3} style={{display: 'none'}}>
                 <TextField
                   onChange={onChangeFields}
                   fullWidth
@@ -672,7 +691,7 @@ export default function EntryFormPR(props) {
                 />
               </Grid>
 
-              <Grid item xs={12} sm={12} md={3} lg={3}>
+              <Grid item xs={12} sm={12} md={3} lg={3} style={{display: 'none'}}>
                 <TextField
                   onChange={onChangeFields}
                   fullWidth
@@ -682,7 +701,7 @@ export default function EntryFormPR(props) {
                 />
               </Grid>
 
-              <Grid item xs={12} sm={12} md={3} lg={3}>
+              <Grid item xs={12} sm={12} md={3} lg={3} style={{display: 'none'}}>
                 <FormControl fullWidth>
                   <InputLabel id="collectedBy-select-label">Collected By</InputLabel>
                   <Select
@@ -704,7 +723,7 @@ export default function EntryFormPR(props) {
               
               
 
-              <Grid item xs={12} sm={12} md={3} lg={3}>
+              <Grid item xs={12} sm={12} md={3} lg={3} style={{display: 'none'}}>
                 <FormControl fullWidth>
                   <InputLabel id="reportSentThru-select-label">Report Sent Through</InputLabel>
                   <Select
@@ -723,7 +742,7 @@ export default function EntryFormPR(props) {
               </Grid>
 
 
-              <Grid item xs={12} sm={12} md={3} lg={3}>
+              <Grid item xs={12} sm={12} md={3} lg={3} style={{display: 'none'}}>
                 <FormControl fullWidth>
                   <InputLabel id="nature-select-label">Nature</InputLabel>
                   <Select
@@ -733,7 +752,6 @@ export default function EntryFormPR(props) {
                     label="nature"
                     name="nature"  
                     fullWidth
-                    required
                     error 
                     onChange={onChangeFields}
                   >
@@ -817,7 +835,7 @@ export default function EntryFormPR(props) {
                   
                 />
               </Grid>
-              <Grid item xs={12} sm={12} md={12} lg={12}>
+              <Grid item xs={12} sm={12} md={12} lg={12} style={{display: 'none'}}>
                 <TextField
                   onChange={onChangeFields}
                   fullWidth
@@ -830,7 +848,7 @@ export default function EntryFormPR(props) {
                 />
               </Grid>
 
-              <Grid item xs={12} sm={12} md={3} lg={3}>
+              <Grid item xs={12} sm={12} md={3} lg={3} style={{display: 'none'}}>
                 <TextField
                   onChange={onChangeFields}
                   fullWidth
@@ -844,7 +862,7 @@ export default function EntryFormPR(props) {
                 />
               </Grid>
 
-              <Grid item xs={12} sm={12} md={6} lg={6}>
+              <Grid item xs={12} sm={12} md={6} lg={6} style={{display: 'none'}}>
                 <TextField
                   onChange={onChangeFields}
                   fullWidth

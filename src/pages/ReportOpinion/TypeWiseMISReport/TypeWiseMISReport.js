@@ -283,15 +283,15 @@ export default function TypeWiseMISReport(props) {
                   fullWidth
                   onChange={onChangeFields}
                 >
-                  <MenuItem value='Leagal Report'>Leagal Report</MenuItem>
-                  <MenuItem value='Vetting Report'>Vetting Report</MenuItem>
+                  <MenuItem value='ODV'>ODV</MenuItem>
+                  <MenuItem value='Vetting Report'>Vetting</MenuItem>
+                  <MenuItem value='Others'>Others</MenuItem>
+                  {/* <MenuItem value='Leagal Report'>Leagal Report</MenuItem>
                   <MenuItem value='TSR'>TSR</MenuItem>
                   <MenuItem value='Opinion'>Opinion</MenuItem>
-                  <MenuItem value='ODV'>ODV</MenuItem>
                   <MenuItem value='Project'>Project</MenuItem>
                   <MenuItem value='Certified Copy'>Certified Copy</MenuItem>
-                  <MenuItem value='ROC Search'>ROC Search</MenuItem>
-                  <MenuItem value='Others'>Others</MenuItem>
+                  <MenuItem value='ROC Search'>ROC Search</MenuItem> */}
                 </Select>
               </FormControl>
             </Grid>

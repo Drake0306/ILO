@@ -109,11 +109,41 @@ export default function PDFRenderExecutiveWiseMISReportTwo (props) {
     }
 
     const exportToExcel = async () => {
-        const ws = XLSX.utils.json_to_sheet(resData);
-        const wb = { Sheets: { 'data': ws }, SheetNames: ['data'] };
-        const excelBuffer = XLSX.write(wb, { bookType : 'xlsx', type: 'array'});
-        const data = new Blob([excelBuffer], {type: fileType});
-        FileSaver.saveAs(data, `Export INTELLECTIVE LAW OFFICES EXECUTIVE WISE${fileExtension}`);
+        // const ws = XLSX.utils.json_to_sheet(resData);
+        // const wb = { Sheets: { 'data': ws }, SheetNames: ['data'] };
+        // const excelBuffer = XLSX.write(wb, { bookType : 'xlsx', type: 'array'});
+        // const data = new Blob([excelBuffer], {type: fileType});
+        // FileSaver.saveAs(data, `Export INTELLECTIVE LAW OFFICES EXECUTIVE WISE${fileExtension}`);
+
+        // Extract keys to use as headers
+        const headers = Object.keys(resData[0]);
+
+        // Create an array of arrays from the data object
+        const dataArray = resData.map(item => headers.map(header => item[header]));
+
+        // Create worksheet
+        const worksheet = XLSX.utils.aoa_to_sheet([['INTELLECTIVE LAW OFFICES EXECUTIVE WISE'], [], headers, ...dataArray]);
+
+        // Style the header row
+        const headerStyle = {
+            font: { bold: true },
+            alignment: { horizontal: 'center' },
+            fill: { fgColor: { rgb: 'FFFFAA00' } } // Example: Yellow background
+        };
+
+        worksheet.A1.s = headerStyle; // Apply style to the custom header
+
+        headers.forEach((header, index) => {
+            const cellAddress = XLSX.utils.encode_cell({ r: 2, c: index });
+            worksheet[cellAddress].s = headerStyle; // Apply style to each header cell
+        });
+
+        // Create workbook and append worksheet
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+
+        // Write the workbook to a file
+        XLSX.writeFile(workbook, 'Export INTELLECTIVE LAW OFFICES EXECUTIVE WISE.xlsx');
     }
 
 
