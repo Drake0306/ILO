@@ -379,7 +379,7 @@ export default function EntryFormPR(props) {
                 </FormControl>
               </Grid>
 
-              <Grid item xs={12} sm={12} md={4} lg={4}>
+              <Grid item xs={12} sm={12} md={3} lg={3}>
                 <FormControl fullWidth>
                   <InputLabel id="Branch-select-label">Branch</InputLabel>
                   <Select
@@ -401,19 +401,18 @@ export default function EntryFormPR(props) {
                 </FormControl>
               </Grid>
 
-              
-
-              <Grid item xs={12} sm={12} md={2} lg={2}>
+              <Grid item xs={12} sm={12} md={3} lg={3}>
                 <TextField
                   onChange={onChangeFields}
                   fullWidth
-                  value={fromData.bankRefNo}
-                  name="bankRefNo" 
-                  label="Our Legal Ref No"
+                  value={fromData.customerBorrower}
+                  name="customerBorrower" 
+                  label="Customer Borrower"
+                  required
+                  error 
                 />
               </Grid>
-              
-              
+
               <Grid item xs={12} sm={12} md={3} lg={3}>
                 <TextField
                   onChange={onChangeFields}
@@ -423,6 +422,78 @@ export default function EntryFormPR(props) {
                   label="APS No"
                 />
               </Grid>
+
+              
+
+              <Grid item xs={12} sm={12} md={3} lg={3}>
+                <TextField
+                  onChange={onChangeFields}
+                  fullWidth
+                  value={fromData.bankRefNo}
+                  name="bankRefNo" 
+                  label="Our Legal Ref No"
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={12} md={3} lg={3}>
+                <TextField
+                  onChange={onChangeFields}
+                  fullWidth
+                  value={fromData.uid}
+                  name="uid"  
+                  label="Seller Name"
+                  
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={12} md={3} lg={3}>
+                <TextField
+                  onChange={onChangeFields}
+                  fullWidth
+                  value={fromData.phoneNo}
+                  name="phoneNo" 
+                  label="Phone No"
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={12} md={3} lg={3}>
+                <FormControl fullWidth>
+                  <InputLabel id="searchExp-select-label">ODV Done By</InputLabel>
+                  <Select
+                    labelId="searchExp-select-label"
+                    id="searchExp-select"
+                    value={fromData.searchExp}
+                    label="searchExp"
+                    name="searchExp"  
+                    fullWidth
+                    
+                    onChange={onChangeFields}
+                  >
+                    {fromDataAutoFill.handledByList.map((option) => (<MenuItem key={option.id} value={option.id}>{option.name}</MenuItem>))}
+                  </Select>
+                </FormControl>
+              </Grid>
+
+              <Grid item xs={12} sm={12} md={3} lg={3}>
+                <FormControl fullWidth>
+                  <InputLabel id="preparedBy-select-label">Prepared By</InputLabel>
+                  <Select
+                    labelId="preparedBy-select-label"
+                    id="preparedBy-select"
+                    value={fromData.preparedBy}
+                    label="preparedBy"
+                    name="preparedBy"  
+                    fullWidth
+                    
+                    onChange={onChangeFields}
+                  >
+                    {fromDataAutoFill.handledByList.map((option) => (<MenuItem key={option.id} value={option.id}>{option.name}</MenuItem>))}
+                  </Select>
+                </FormControl>
+              </Grid>
+              
+              
+              
               <Grid item xs={12} sm={12} md={3} lg={3}>
                 <FormControl fullWidth>
                   <InputLabel id="report-select-label">Report</InputLabel>
@@ -461,37 +532,10 @@ export default function EntryFormPR(props) {
                   disabled
                 />
               </Grid>
-              <Grid item xs={12} sm={12} md={3} lg={3}>
-                <TextField
-                  onChange={onChangeFields}
-                  fullWidth
-                  value={fromData.customerBorrower}
-                  name="customerBorrower" 
-                  label="Customer Borrower"
-                  required
-                  error 
-                />
-              </Grid>
-              <Grid item xs={12} sm={12} md={3} lg={3}>
-                <TextField
-                  onChange={onChangeFields}
-                  fullWidth
-                  value={fromData.uid}
-                  name="uid"  
-                  label="Seller Name"
-                  
-                />
-              </Grid>
+              
+              
 
-              <Grid item xs={12} sm={12} md={3} lg={3}>
-                <TextField
-                  onChange={onChangeFields}
-                  fullWidth
-                  value={fromData.phoneNo}
-                  name="phoneNo" 
-                  label="Phone No"
-                />
-              </Grid>
+              
 
               <Grid item xs={12} sm={12} md={3} lg={3} style={{display: 'none'}}>
                 <TextField
@@ -541,23 +585,7 @@ export default function EntryFormPR(props) {
                 />
               </Grid> */}
 
-              <Grid item xs={12} sm={12} md={3} lg={3}>
-                <FormControl fullWidth>
-                  <InputLabel id="searchExp-select-label">ODV Done By</InputLabel>
-                  <Select
-                    labelId="searchExp-select-label"
-                    id="searchExp-select"
-                    value={fromData.searchExp}
-                    label="searchExp"
-                    name="searchExp"  
-                    fullWidth
-                    
-                    onChange={onChangeFields}
-                  >
-                    {fromDataAutoFill.handledByList.map((option) => (<MenuItem key={option.id} value={option.id}>{option.name}</MenuItem>))}
-                  </Select>
-                </FormControl>
-              </Grid>
+              
 
               <Grid mt={0} mb={0} item xs={12} sm={12} md={12} lg={12}>
                 <Typography variant="overline" gutterBottom>
@@ -624,23 +652,7 @@ export default function EntryFormPR(props) {
                 </FormControl>
               </Grid>
 
-              <Grid item xs={12} sm={12} md={3} lg={3}>
-                <FormControl fullWidth>
-                  <InputLabel id="preparedBy-select-label">Prepared By</InputLabel>
-                  <Select
-                    labelId="preparedBy-select-label"
-                    id="preparedBy-select"
-                    value={fromData.preparedBy}
-                    label="preparedBy"
-                    name="preparedBy"  
-                    fullWidth
-                    
-                    onChange={onChangeFields}
-                  >
-                    {fromDataAutoFill.handledByList.map((option) => (<MenuItem key={option.id} value={option.id}>{option.name}</MenuItem>))}
-                  </Select>
-                </FormControl>
-              </Grid>
+              
 
               <Grid item xs={12} sm={12} md={3} lg={3} style={{display: 'none'}}>
                 <TextField

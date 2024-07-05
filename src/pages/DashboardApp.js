@@ -157,7 +157,7 @@ export default function DashboardApp() {
           </Grid> */}
 
           <Grid className='zoom' item xs={12} sm={6} md={4}>
-            <AppWidgetSummary onClick={() => redirectPage('/app/option/prepareReports')} title="Option" total={OP} color="info" icon={'fluent:payment-28-regular'} />
+            <AppWidgetSummary onClick={() => redirectPage('/app/option/prepareReports')} title="Bill System" total={OP} color="info" icon={'fluent:payment-28-regular'} />
           </Grid>
 
           <Grid className='zoom' item xs={12} sm={6} md={4}>

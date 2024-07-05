@@ -107,6 +107,16 @@ export default function ListRegistration() {
 
   const [USERLIST, setUSERLIST] = useState([]);
 
+
+  // Bank Search Area
+  const [BankSearch, setBankSearch] = useState('');
+  const banksearchList = e => {
+    const query = e.target.value;
+    setBankSearch(query);    
+  };
+
+
+
   // Search area START
 
   const [fromDataAutoFill, setFromDataAutoFill] = useState({
@@ -339,13 +349,14 @@ export default function ListRegistration() {
                   <Select
                     labelId="Bank-select-label"
                     id="Bank-select"
-                    value={searchQuery}
+                    value={BankSearch}
                     label="bank"
                     name="bank"  
                     fullWidth
-                    onChange={handleInputChange}
+                    onChange={banksearchList}
                   >
-                    {fromDataAutoFill.bankList.map((option) => (<MenuItem key={option.id} value={option.name}>{option.name}</MenuItem>))}
+                    <MenuItem value=''>All</MenuItem>
+                    {fromDataAutoFill.bankList.map((option) => (<MenuItem key={option.id} value={option.id}>{option.name}</MenuItem>))}
                   </Select>
                 </FormControl>
               </Grid>
@@ -363,9 +374,12 @@ export default function ListRegistration() {
                   onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
-                  {filteredData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { id, bank, branch, contactPerson,bankName, branchName, address, email, phoneOne, status, avatarUrl } = row;
-                    const isItemSelected = selected.indexOf(bank) !== -1;
+                {filteredData
+                    .filter((row) => BankSearch === '' || row.bankName.id === BankSearch)
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((row) => {
+                      const { id, bank, branch, contactPerson,bankName, branchName, address, email, phoneOne, status, avatarUrl } = row;
+                      const isItemSelected = selected.indexOf(bank) !== -1;
 
                     return (
                       <TableRow

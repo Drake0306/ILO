@@ -42,9 +42,36 @@ export default function LoginForm() {
     formState: { isSubmitting },
   } = methods;
 
+  const jwtToken = async (e) => {
+    try {
+      const data = {
+        username: e.email,
+        password: e.password
+      };
+      await axios.post(`${JSON_CONST.DB_URL}token/`, data, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+        .then((response) => {
+          console.log(response);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+    catch (err) {
+      console.log(err)
+    }
+  }
+
   const onSubmit = async (e) => {
     try {
-      await axios.post(`${JSON_CONST.DB_URL}auth/login`, e)
+      await axios.post(`${JSON_CONST.DB_URL}auth/login`, e, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
         .then((response) => {
           console.log(response);
           if (response.data === 'User Cannot Be Found') {

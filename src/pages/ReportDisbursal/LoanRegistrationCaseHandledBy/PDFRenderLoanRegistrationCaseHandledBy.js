@@ -118,11 +118,39 @@ export default function PDFRenderLoanRegistrationCaseHandledBy (props) {
     });
 
     const exportToExcel = async () => {
-        const ws = XLSX.utils.json_to_sheet(resData);
+        // Prepare the title row
+        const title = [['Export INTELLECTIVE LAW OFFICES | Advicates, Legal Advisers & Consultants']];
+        const emptyRow = [['']]; // Empty row to skip a line
+
+        const dataXLSX = [...title, ...emptyRow, ...resData];
+
+        // Create worksheet and workbook
+        const ws = XLSX.utils.json_to_sheet(dataXLSX, { skipHeader: true });
         const wb = { Sheets: { 'data': ws }, SheetNames: ['data'] };
-        const excelBuffer = XLSX.write(wb, { bookType : 'xlsx', type: 'array'});
-        const data = new Blob([excelBuffer], {type: fileType});
-        FileSaver.saveAs(data, `Export INTELLECTIVE LAW OFFICES Loan Registration Case Handled By ${fileExtension}`);
+
+        // Merge cells for the title
+        // ws['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 20 } }];
+
+        // Set title row style to bold
+        // eslint-disable-next-line dot-notation
+        ws['A1'].s = { font: { bold: true } };
+
+        // Set column widths
+        const colWidths = [
+            { wch: 10 }, // Sl No
+            { wch: 20 }, // Bank
+            { wch: 15 }, // Date
+            { wch: 25 }, // Application number
+            { wch: 30 }, // Property details
+            { wch: 30 }, // Remarks
+            { wch: 30 }, // Other remarks
+        ];
+        ws['!cols'] = colWidths;
+
+        // Generate Excel file
+        const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+        const data = new Blob([excelBuffer], { type: fileType });
+        FileSaver.saveAs(data, `Export INTELLECTIVE LAW OFFICES Loan Registration Case Handled By${fileExtension}`);
     }
 
     const exportToPdf = (value) => {
@@ -168,11 +196,35 @@ export default function PDFRenderLoanRegistrationCaseHandledBy (props) {
                     // assign main Value
                     fullDD.content[3].table.body = pushToMain;
                     setDD(fullDD);
-                    console.log('pushToMain', pushToMain);
-                    console.log('fullData', fullData);
-                    console.log('dd 2 ', dd);
 
-                    setResData(response.data)
+                    const resDataConst = response.data;
+                    const setXL = [];
+
+                    const setHeders = {
+                        'Sl No': 'Sl No',
+                        'Bank ': 'Bank ',
+                        'Date': 'Date',
+                        'Application number': 'Application number',
+                        'Property details': 'Property details',
+                        'Remarks': 'Remarks',
+                        'Other remarks': 'Other remarks',
+                    };
+                    setXL.push(setHeders)
+
+                    resDataConst.forEach((row, index) => {
+                        const setXLSX = {
+                            'Sl No': index + 1,
+                            'Bank ': row?.bankName?.name,
+                            'Date': row.registrationDate ? moment(row.registrationDate).format('DD-MM-YYYY') : '',
+                            'Application number': row.applicationNo,
+                            'Property details': row.propertyDetails,
+                            'Remarks': row?.remarksName?.name,
+                            'Other remarks': row.otherRemarkIfAny,
+                        }
+
+                        setXL.push(setXLSX)
+                    })                    
+                    setResData(setXL)
                     
                 }).catch((error) => {
                     console.log(error);

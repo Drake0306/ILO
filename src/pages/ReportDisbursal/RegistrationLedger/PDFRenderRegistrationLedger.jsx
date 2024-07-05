@@ -67,7 +67,7 @@ export default function PDFRenderRegistrationLedger (props) {
                             {text:'Property', style: 'tableHeaderMain'}, 
                             {text:'Next Follow Up Date', style: 'tableHeaderMain'}, 
                             {text:'R.D Sent', style: 'tableHeaderMain'}, 
-                            {text:'T.D Sent', style: 'tableHeaderMain'}, 
+                            // {text:'T.D Sent', style: 'tableHeaderMain'}, 
                             {text:'Courior Date', style: 'tableHeaderMain'},
                             {text: 'SL', style: 'tableHeaderMain'}, 
                             {text: 'Vol No', style: 'tableHeaderMain'},  
@@ -130,11 +130,55 @@ export default function PDFRenderRegistrationLedger (props) {
     });
 
     const exportToExcel = async () => {
-        const dataXLSX = resData;
-        const ws = XLSX.utils.json_to_sheet(dataXLSX);
+        // Prepare the title row
+        const title = [['Export INTELLECTIVE LAW OFFICES | Advicates, Legal Advisers & Consultants']];
+        const emptyRow = [['']]; // Empty row to skip a line
+
+        const dataXLSX = [...title, ...emptyRow, ...resData];
+
+        // Create worksheet and workbook
+        const ws = XLSX.utils.json_to_sheet(dataXLSX, { skipHeader: true });
         const wb = { Sheets: { 'data': ws }, SheetNames: ['data'] };
-        const excelBuffer = XLSX.write(wb, { bookType : 'xlsx', type: 'array'});
-        const data = new Blob([excelBuffer], {type: fileType});
+
+        // Merge cells for the title
+        // ws['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 20 } }];
+
+        // Set title row style to bold
+        // eslint-disable-next-line dot-notation
+        ws['A1'].s = { font: { bold: true } };
+
+        // Set column widths
+        const colWidths = [
+            { wch: 10 }, // S.NO
+            { wch: 15 }, // REGN DATE
+            { wch: 20 }, // BANK
+            { wch: 20 }, // BRANCH
+            { wch: 20 }, // APPLICATION NO
+            { wch: 20 }, // SELLER
+            { wch: 15 }, // SELLER PHONE NO
+            { wch: 20 }, // PURCHASER
+            { wch: 15 }, // PURCHASER PHONE NO
+            { wch: 30 }, // PROPERTY DETAILS
+            { wch: 20 }, // REGISTRAR OFFICE
+            { wch: 20 }, // DEED WRITER
+            { wch: 30 }, // BUILDER OFFICE
+            { wch: 30 }, // HANDLED BY/EXECUTIVE NAME
+            { wch: 20 }, // TRANSACTIN NO
+            { wch: 15 }, // ROOT DOCS SENT ON
+            { wch: 15 }, // SALE DEED SENT AT
+            { wch: 20 }, // CASE CLOSED -YES/NO
+            { wch: 15 }, // CASE CLOSED DATE
+            { wch: 20 }, // ACKNOWLEDGEMENT
+            { wch: 30 }, // REMARKS
+            { wch: 30 }, // OTHER REMARKS
+            { wch: 20 }, // NEXT FOLLOW UP DATE
+            { wch: 15 }  // STATUS
+        ];
+        ws['!cols'] = colWidths;
+
+        // Generate Excel file
+        const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+        const data = new Blob([excelBuffer], { type: fileType });
         FileSaver.saveAs(data, `Export INTELLECTIVE LAW OFFICES Registration Ledger Wise Report${fileExtension}`);
     }
 
@@ -202,7 +246,7 @@ export default function PDFRenderRegistrationLedger (props) {
                         fullData.push({text: row?.propertyDetails, style: 'tableHeaderAppNo'})
                         fullData.push({text: row?.rdSentOn && moment(row?.rdSentOn).format('DD-MM-YYYY'), style: 'tableHeader'})
                         fullData.push({text: row?.nextDate && moment(row?.nextDate).format('DD-MM-YYYY'), style: 'tableHeader'})
-                        fullData.push({text: row?.tdSentOn && moment(row?.tdSentOn).format('DD-MM-YYYY'), style: 'tableHeader'})
+                        // fullData.push({text: row?.tdSentOn && moment(row?.tdSentOn).format('DD-MM-YYYY'), style: 'tableHeader'})
                         fullData.push({text: rearrangeDates(row?.courierDate), style: 'tableHeader'})
                         fullData.push({text: row?.slNo, style: 'tableHeaderAppNo'})
                         fullData.push({text: row?.volNo, style: 'tableHeaderAppNo'})
@@ -220,6 +264,36 @@ export default function PDFRenderRegistrationLedger (props) {
                     
                     const resDataConst = response.data;
                     const setXL = [];
+
+                    const setHeders = {
+                        'S.NO': 'S.NO',
+                        'REGN DATE': 'REGN DATE',
+                        'BANK': 'BANK',
+                        'BRANCH': 'BRANCH',
+                        'APPLICATION NO': 'APPLICATION NO',
+                        'SELLER': 'SELLER',
+                        'SELLER PHONE NO': 'SELLER PHONE NO',
+                        'PURCHASER': 'PURCHASER',
+                        'PURCHASER PHONE NO': 'PURCHASER PHONE NO',
+                        'PROPERTY DETAILS': 'PROPERTY DETAILS',
+                        'REGISTRAR OFFICE': 'REGISTRAR OFFICE',
+                        'DEED WRITER': 'DEED WRITER',
+                        'BUILDER OFFICE': 'BUILDER OFFICE',
+                        'HANDLED BY/EXECUTIVE NAME': 'HANDLED BY/EXECUTIVE NAME',
+                        'TRANSACTIN NO': 'TRANSACTIN NO',
+                        'ROOT DOCS SENT ON': 'ROOT DOCS SENT ON',
+                        'SALE DEED SENT AT': 'SALE DEED SENT AT',
+                        'CASE CLOSED -YES/NO': 'CASE CLOSED -YES/NO',
+                        'CASE CLOSED DATE': 'CASE CLOSED DATE',
+                        'ACKNOWLEDGEMENT': 'ACKNOWLEDGEMENT',
+                        'REMARKS': 'REMARKS',
+                        'OTHER REMARKS': 'OTHER REMARKS',
+                        'NEXT FOLLOW UP DATE': 'NEXT FOLLOW UP DATE',
+                        'STATUS': 'STATUS'
+                    };
+
+                    setXL.push(setHeders)
+                    
                     resDataConst.forEach((row, index) => {
                         const setXLSX = {
                             'S.NO': index + 1,

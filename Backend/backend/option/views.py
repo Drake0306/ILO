@@ -7,10 +7,11 @@ from django.db.models import Q
 
 # django rest import
 from rest_framework import generics, permissions
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
 from datetime import datetime, timedelta, date
+from rest_framework.permissions import IsAuthenticated
 
 # import json
 import json
@@ -28,6 +29,7 @@ from globalMaster.serializers import branchSerializer
 from authUser.serializers import userSerializer
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def List(request):
     DataList = optionPrepareReport.objects.filter().order_by('-id')
     LIST = optionPrepareReportSerializer(DataList, many= True)

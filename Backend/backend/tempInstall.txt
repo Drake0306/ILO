@@ -1,0 +1,9 @@
+pip install django-cors-headers
+pip install djangorestframework-simplejwt
+pip install pyjwt==v1.7.1
+
+old
+
+
+new
+pip install django-cors-headers

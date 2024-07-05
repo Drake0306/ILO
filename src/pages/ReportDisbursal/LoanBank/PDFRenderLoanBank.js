@@ -123,10 +123,54 @@ export default function PDFRenderLoanBank (props) {
     });
 
     const exportToExcel = async () => {
-        const ws = XLSX.utils.json_to_sheet(resData);
+        // Prepare the title row
+        const title = [['Export INTELLECTIVE LAW OFFICES | Advicates, Legal Advisers & Consultants']];
+        const emptyRow = [['']]; // Empty row to skip a line
+
+        const dataXLSX = [...title, ...emptyRow, ...resData];
+
+        // Create worksheet and workbook
+        const ws = XLSX.utils.json_to_sheet(dataXLSX, { skipHeader: true });
         const wb = { Sheets: { 'data': ws }, SheetNames: ['data'] };
-        const excelBuffer = XLSX.write(wb, { bookType : 'xlsx', type: 'array'});
-        const data = new Blob([excelBuffer], {type: fileType});
+
+        // Merge cells for the title
+        // ws['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 20 } }];
+
+        // Set title row style to bold
+        // eslint-disable-next-line dot-notation
+        ws['A1'].s = { font: { bold: true } };
+
+        // Set column widths
+        const colWidths = [
+            { wch: 10 }, // Sl No
+            { wch: 15 }, // Date
+            { wch: 20 }, // Bank
+            { wch: 20 }, // Branch
+            { wch: 25 }, // Application number
+            { wch: 25 }, // Customer name
+            { wch: 15 }, // Phone number
+            { wch: 30 }, // Property details
+            { wch: 20 }, // Loan taken over
+            { wch: 20 }, // Handled by
+            { wch: 25 }, // Transaction number
+            { wch: 20 }, // Document receive on
+            { wch: 20 }, // Document sent on
+            { wch: 20 }, // Document sent at
+            { wch: 15 }, // Case close
+            { wch: 20 }, // Case close date
+            { wch: 25 }, // Acknowledgment received
+            { wch: 20 }, // Volume number
+            { wch: 20 }, // Serial number
+            { wch: 30 }, // Remarks
+            { wch: 30 }, // Other remarks
+            { wch: 20 }, // Next follow up date
+            { wch: 15 }  // Status
+        ];
+        ws['!cols'] = colWidths;
+
+        // Generate Excel file
+        const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+        const data = new Blob([excelBuffer], { type: fileType });
         FileSaver.saveAs(data, `Export INTELLECTIVE LAW OFFICES Loan Taken Over Report${fileExtension}`);
     }
 
@@ -192,6 +236,34 @@ export default function PDFRenderLoanBank (props) {
 
                     const resDataConst = response.data;
                     const setXL = [];
+
+                    const setHeders = {
+                        'Sl No': 'Sl No',
+                        'Date': 'Date',
+                        'Bank ': 'Bank ',
+                        'Branch': 'Branch',
+                        'Application number': 'Application number',
+                        'Customer name': 'Customer name',
+                        'Phone number': 'Phone number',
+                        'Property details': 'Property details',
+                        'Loan taken over': 'Loan taken over',
+                        'Handled by': 'Handled by',
+                        'Transaction number': 'Transaction number',
+                        'Document receive on': 'Document receive on',
+                        'Document sent on': 'Document sent on',
+                        'Document sent at': 'Document sent at',
+                        'Case close': 'Case close',
+                        'Case close date': 'Case close date',
+                        'Acknowledgment received': 'Acknowledgment received',
+                        'Volume number': 'Volume number',
+                        'Serial number': 'Serial number',
+                        'Remarks': 'Remarks',
+                        'Other remarks': 'Other remarks',
+                        'Next follow up date': 'Next follow up date',
+                        'Status': 'Status'
+                    };
+                    setXL.push(setHeders)
+
                     resDataConst.forEach((row, index) => {
                         const setXLSX = {
                             'Sl No': index + 1,

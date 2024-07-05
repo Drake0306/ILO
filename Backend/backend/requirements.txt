@@ -24,3 +24,5 @@ types-cryptography==3.3.23
 typing_extensions==4.4.0
 tzdata==2022.4
 urllib3==1.26.12
+PyJWT==v1.7.1
+
