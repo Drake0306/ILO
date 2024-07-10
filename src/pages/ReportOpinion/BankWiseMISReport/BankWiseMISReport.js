@@ -212,6 +212,21 @@ export default function BankWiseMISReport(props) {
               </Typography>
               
             </Grid>
+             <Grid item xs={12} sm={12} md={12} lg={12}>
+            <FormControl>
+                <FormLabel id="demo-row-radio-buttons-group-label">Select One</FormLabel>
+                <RadioGroup
+                    row
+                    aria-labelledby="demo-row-radio-buttons-group-label"
+                    name="row-radio-buttons-group"
+                >
+                    <FormControlLabel value="1" control={<Radio name='caseRecived' />} label="Case Received" />
+                    <FormControlLabel value="2" control={<Radio name='caseSent' />} label="Case Sent" />
+                    <FormControlLabel value="3" control={<Radio name='casePending' />} label="Pending" />
+                    <FormControlLabel value="4" control={<Radio name='caseHold' />} label="Hold" />
+                </RadioGroup>
+            </FormControl>
+            </Grid>
             <Grid item xs={12} sm={12} md={4} lg={4}>
               <FormControl fullWidth>
                 <InputLabel id="bank-select-label">Bank</InputLabel>
@@ -238,7 +253,6 @@ export default function BankWiseMISReport(props) {
                   value={fromData.branch}
                   label="branch"
                   name="branch"
-                  required  
                   fullWidth
                   onChange={onChangeFields}
                 >
@@ -272,28 +286,13 @@ export default function BankWiseMISReport(props) {
                 value={fromData.to}
                 name="to" 
                 label="To"
-                required
                 type="date"
                 InputLabelProps={{
                   shrink: true,
                 }}
               />
             </Grid>
-            <Grid item xs={12} sm={12} md={12} lg={12}>
-            <FormControl>
-                <FormLabel id="demo-row-radio-buttons-group-label">Select One</FormLabel>
-                <RadioGroup
-                    row
-                    aria-labelledby="demo-row-radio-buttons-group-label"
-                    name="row-radio-buttons-group"
-                >
-                    <FormControlLabel value="1" control={<Radio name='caseRecived' />} label="Case Received" />
-                    <FormControlLabel value="2" control={<Radio name='caseSent' />} label="Case Sent" />
-                    <FormControlLabel value="3" control={<Radio name='casePending' />} label="Pending" />
-                    <FormControlLabel value="4" control={<Radio name='caseHold' />} label="Hold" />
-                </RadioGroup>
-            </FormControl>
-            </Grid>
+           
 
             
 

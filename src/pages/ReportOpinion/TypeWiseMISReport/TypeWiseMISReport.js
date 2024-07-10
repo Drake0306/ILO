@@ -36,6 +36,7 @@ export default function TypeWiseMISReport(props) {
     name: '',
     address: '',
     bankName: [],
+    reportType: 'ODV',
     path: '',
     id: '',
     status: ''
@@ -204,6 +205,19 @@ export default function TypeWiseMISReport(props) {
               </Typography>
               
             </Grid>
+                 <Grid item xs={12} sm={12} md={12} lg={12}>
+            <FormControl>
+                <FormLabel id="demo-row-radio-buttons-group-label">Select One</FormLabel>
+                <RadioGroup
+                    row
+                    aria-labelledby="demo-row-radio-buttons-group-label"
+                    name="row-radio-buttons-group"
+                >
+                    <FormControlLabel value="1" control={<Radio name='receiveDate' />} label="Receive Date" />
+                    <FormControlLabel value="2" control={<Radio name='sendOnDate' />} label="Sent on Date" />
+                </RadioGroup>
+            </FormControl>
+            </Grid>
             
             <Grid item xs={12} sm={12} md={4} lg={4}>
               <FormControl fullWidth>
@@ -283,7 +297,7 @@ export default function TypeWiseMISReport(props) {
                   fullWidth
                   onChange={onChangeFields}
                 >
-                  <MenuItem value='ODV'>ODV</MenuItem>
+                  <MenuItem value='ODV' Selected>ODV</MenuItem>
                   <MenuItem value='Vetting Report'>Vetting</MenuItem>
                   <MenuItem value='Others'>Others</MenuItem>
                   {/* <MenuItem value='Leagal Report'>Leagal Report</MenuItem>

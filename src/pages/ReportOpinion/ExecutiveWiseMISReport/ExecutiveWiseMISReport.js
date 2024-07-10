@@ -193,6 +193,19 @@ export default function ExecutiveWiseReport(props) {
               </Typography>
               
             </Grid>
+                 <Grid item xs={12} sm={12} md={12} lg={12}>
+            <FormControl>
+                <FormLabel id="demo-row-radio-buttons-group-label">Select One</FormLabel>
+                <RadioGroup
+                    row
+                    aria-labelledby="demo-row-radio-buttons-group-label"
+                    name="row-radio-buttons-group"
+                >
+                    <FormControlLabel value="1" control={<Radio name='receiveDate' />} label="Receive Date" />
+                    <FormControlLabel value="2" control={<Radio name='sendOnDate' />} label="Sent on Date" />
+                </RadioGroup>
+            </FormControl>
+            </Grid>
             <Grid item xs={12} sm={12} md={4} lg={4}>
               <TextField
                 onChange={onChangeFields}
@@ -229,7 +242,7 @@ export default function ExecutiveWiseReport(props) {
                     aria-labelledby="demo-row-radio-buttons-group-label"
                     name="row-radio-buttons-group"
                 >
-                    <FormControlLabel value="1" control={<Radio name='collectedBy' />} label="Collected By" />
+                   {/* <FormControlLabel value="1" control={<Radio name='collectedBy' />} label="Collected By" /> */}
                     {/* <FormControlLabel value="2" control={<Radio name='handledBy' />} label="Handled By" /> */}
                 </RadioGroup>
             </FormControl>
