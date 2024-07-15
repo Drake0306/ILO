@@ -94,9 +94,39 @@ export default function PDFRenderBankWiseMISReport (props) {
                 style: 'tableExample',
                 table: {
                     body: [
-                        [{text: 'Sr', style: 'tableHeaderMain'}, {text:'App no', style: 'tableHeaderMain'}, {text:'Rep No', style: 'tableHeaderMain'}, {text:'Branch', style: 'tableHeaderMain'}, {text:'Type', style: 'tableHeaderMain'}, {text:'Customer / Borrower', style: 'tableHeaderMain'}, {text:'Address', style: 'tableHeaderMain'}, {text:'DSA', style: 'tableHeaderMain'}, {text:'App Date', style: 'tableHeaderMain'}, {text:'Rep Date', style: 'tableHeaderMain'}, {text:'Sent On', style: 'tableHeaderMain'}, {text:'Prepared By', style: 'tableHeaderMain'}, {text:'Remarks', style: 'tableHeaderMain'}, {text:'User ID'} ],
+                        [{text:'Rep No', style: 'tableHeaderMain'},
+                        {text: 'Sr', style: 'tableHeaderMain'},
+                         {text:'Rep Date', style: 'tableHeaderMain'},
+                         {text:'Bank', style: 'tableHeaderMain'},
+                         {text:'Branch', style: 'tableHeaderMain'},
+                         {text:'Customer Name', style: 'tableHeaderMain'},  
+                         {text:'Aps No', style: 'tableHeaderMain'}, 
+                         {text:'Ref No', style: 'tableHeaderMain'},
+                         {text:'Seller Name', style: 'tableHeaderMain'},
+                         {text:'Phone No', style: 'tableHeaderMain'},
+                         {text:'Prepared By', style: 'tableHeaderMain'}, 
+                         {text:'Type', style: 'tableHeaderMain'}, 
+                         {text:'Address', style: 'tableHeaderMain'},
+                         {text:'Roof Right', style: 'tableHeaderMain'},
+                         {text:'Receipt Date', style: 'tableHeaderMain'}, 
+                         {text:'Sent On', style: 'tableHeaderMain'}, 
+                         {text:'Status', style: 'tableHeaderMain'}, 
+                         {text:'Remarks', style: 'tableHeaderMain'}, ],
     
-                        [{text: 'OK', style: 'tableHeader'},{text: 'OK', style: 'tableHeader'},{text: 'OK', style: 'tableHeader'},{text: 'OK', style: 'tableHeader'},{text: 'OK', style: 'tableHeader'},{text: 'OK', style: 'tableHeader'},{text: 'OK', style: 'tableHeader'},{text: 'OK', style: 'tableHeader'},{text: 'OK', style: 'tableHeader'},{text: 'OK', style: 'tableHeader'},{text: 'OK', style: 'tableHeader'},{text: 'OK', style: 'tableHeader'},{text: 'OK', style: 'tableHeader'},{text: 'OK', style: 'tableHeader'},]
+                        [{text: 'OK', style: 'tableHeader'},
+                        {text: 'OK', style: 'tableHeader'},
+                        {text: 'OK', style: 'tableHeader'},
+                        {text: 'OK', style: 'tableHeader'},
+                        {text: 'OK', style: 'tableHeader'},
+                        {text: 'OK', style: 'tableHeader'},
+                        {text: 'OK', style: 'tableHeader'},
+                        {text: 'OK', style: 'tableHeader'},
+                        {text: 'OK', style: 'tableHeader'},
+                        {text: 'OK', style: 'tableHeader'},
+                        {text: 'OK', style: 'tableHeader'},
+                        {text: 'OK', style: 'tableHeader'},
+                        {text: 'OK', style: 'tableHeader'},
+                        {text: 'OK', style: 'tableHeader'},]
                     ]
                 }
             },
@@ -156,20 +186,25 @@ export default function PDFRenderBankWiseMISReport (props) {
                     response.data.forEach((row) => {
                         fullData = [];
                         // Push to Temp
-                        fullData.push({text: row.id, style: 'tableHeader'})
-                        fullData.push({text: row.apsNo, style: 'tableHeader'})
                         fullData.push({text: row.repNo, style: 'tableHeader'})
-                        fullData.push({text: row.branchName.name, style: 'tableHeader'})
-                        fullData.push({text: 'N.A', style: 'tableHeader'})
-                        fullData.push({text: row.customerBorrower, style: 'tableHeader'})
-                        fullData.push({text: row.streetSectorLocal, style: 'tableHeader'})
-                        fullData.push({text: 'N.A', style: 'tableHeader'})
-                        fullData.push({text: row.reciptDate, style: 'tableHeader'})
+                        fullData.push({text: row.id, style: 'tableHeader'})
                         fullData.push({text: row.reportDate, style: 'tableHeader'})
-                        fullData.push({text: row.reportSentOn, style: 'tableHeader'})
+                        fullData.push({text: row.bankName.name, style: 'tableHeader'})
+                        fullData.push({text: row.branchName.name, style: 'tableHeader'})
+                        fullData.push({text: row.customerBorrower, style: 'tableHeader'})
+                        fullData.push({text: row.apsNo, style: 'tableHeader'})
+                        fullData.push({text: row.refNo, style: 'tableHeader'})
+                        fullData.push({text: row.uid, style: 'tableHeader'})
+                        fullData.push({text: row.phoneNo, style: 'tableHeader'})
+                        // fullData.push({text: row.odbdate, style: 'tableHeader'})
                         fullData.push({text: row.preparedByName.name, style: 'tableHeader'})
+                        fullData.push({text: row.type.name, style: 'tableHeader'})
+                        fullData.push({text: row.streetSectorLocal, style: 'tableHeader'})
+                        fullData.push({text: row.roofRight, style: 'tableHeader'})
+                        fullData.push({text: row.reciptDate, style: 'tableHeader'})
+                        fullData.push({text: row.reportSentOn, style: 'tableHeader'})
+                        fullData.push({text: row.status, style: 'tableHeader'})
                         fullData.push({text: row.remarks, style: 'tableHeader'})
-                        fullData.push({text: 'N.A', style: 'tableHeader'})
 
                         // Push To Main
                         pushToMain.push(fullData)

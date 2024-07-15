@@ -67,12 +67,10 @@ export default function PDFRenderBankWiseMISReport (props) {
                          {text:'Ref No', style: 'tableHeaderMain'},
                          {text:'Seller Name', style: 'tableHeaderMain'},
                          {text:'Phone No', style: 'tableHeaderMain'},
-                         {text:'Odb Date', style: 'tableHeaderMain'},
                          {text:'Prepared By', style: 'tableHeaderMain'}, 
                          {text:'Type', style: 'tableHeaderMain'}, 
                          {text:'Address', style: 'tableHeaderMain'},
-                         {text:'Roof Right', style: 'tableHeaderMain'}, 
-                         // {text:'App Date', style: 'tableHeaderMain'}, 
+                         {text:'Roof Right', style: 'tableHeaderMain'},
                          {text:'Receipt Date', style: 'tableHeaderMain'}, 
                          {text:'Sent On', style: 'tableHeaderMain'}, 
                          {text:'Status', style: 'tableHeaderMain'}, 
@@ -198,9 +196,10 @@ export default function PDFRenderBankWiseMISReport (props) {
                         fullData.push({text: row.reportDate, style: 'tableHeader'})
                         fullData.push({text: row.bankName.name, style: 'tableHeader'})
                         fullData.push({text: row.branchName.name, style: 'tableHeader'})
+                        fullData.push({text: row.customerBorrower, style: 'tableHeader'})
                         fullData.push({text: row.apsNo, style: 'tableHeader'})
                         fullData.push({text: row.refNo, style: 'tableHeader'})
-                        // fullData.push({text: row.customerBorrower, style: 'tableHeader'})
+                        fullData.push({text: row.uid, style: 'tableHeader'})
                         fullData.push({text: row.phoneNo, style: 'tableHeader'})
                         // fullData.push({text: row.odbdate, style: 'tableHeader'})
                         fullData.push({text: row.preparedByName.name, style: 'tableHeader'})
@@ -209,9 +208,9 @@ export default function PDFRenderBankWiseMISReport (props) {
                         fullData.push({text: row.roofRight, style: 'tableHeader'})
                         fullData.push({text: row.reciptDate, style: 'tableHeader'})
                         fullData.push({text: row.reportSentOn, style: 'tableHeader'})
-                        fullData.push({text: row.remarks, style: 'tableHeader'})
                         fullData.push({text: row.status, style: 'tableHeader'})
-
+                        fullData.push({text: row.remarks, style: 'tableHeader'})
+                       
                         // Push To Main
                         pushToMain.push(fullData)
                     });
