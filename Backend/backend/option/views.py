@@ -29,7 +29,7 @@ from globalMaster.serializers import branchSerializer
 from authUser.serializers import userSerializer
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+# @permission_classes([IsAuthenticated])
 def List(request):
     DataList = optionPrepareReport.objects.filter().order_by('-id')
     LIST = optionPrepareReportSerializer(DataList, many= True)

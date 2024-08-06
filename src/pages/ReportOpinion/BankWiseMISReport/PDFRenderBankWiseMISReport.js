@@ -1,3 +1,4 @@
+/* eslint-disable dot-notation */
 import React, {useState, useEffect} from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Pdf from "react-to-pdf";
@@ -57,7 +58,7 @@ export default function PDFRenderBankWiseMISReport (props) {
                 style: 'tableExample',
                 table: {
                     body: [
-                        [{text:'Rep No', style: 'tableHeaderMain'},
+                        // [{text:'Rep No', style: 'tableHeaderMain'},
                         {text: 'Sr', style: 'tableHeaderMain'},
                          {text:'Rep Date', style: 'tableHeaderMain'},
                          {text:'Bank', style: 'tableHeaderMain'},
@@ -74,26 +75,7 @@ export default function PDFRenderBankWiseMISReport (props) {
                          {text:'Receipt Date', style: 'tableHeaderMain'}, 
                          {text:'Sent On', style: 'tableHeaderMain'}, 
                          {text:'Status', style: 'tableHeaderMain'}, 
-                         {text:'Remarks', style: 'tableHeaderMain'}, ],
-    
-                        [{text: 'OK', style: 'tableHeader'},
-                        {text: 'OK', style: 'tableHeader'},
-                        {text: 'OK', style: 'tableHeader'},
-                        {text: 'OK', style: 'tableHeader'},
-                        {text: 'OK', style: 'tableHeader'},
-                        {text: 'OK', style: 'tableHeader'},
-                        {text: 'OK', style: 'tableHeader'},
-                        {text: 'OK', style: 'tableHeader'},
-                        {text: 'OK', style: 'tableHeader'},
-                        {text: 'OK', style: 'tableHeader'},
-                        {text: 'OK', style: 'tableHeader'},
-                        {text: 'OK', style: 'tableHeader'},
-                        {text: 'OK', style: 'tableHeader'},
-                        {text: 'OK', style: 'tableHeader'},
-                        {text: 'OK', style: 'tableHeader'},
-                        {text: 'OK', style: 'tableHeader'},
-                        {text: 'OK', style: 'tableHeader'},
-                        {text: 'OK', style: 'tableHeader'},]
+                         {text:'Remarks', style: 'tableHeaderMain'}, 
                     ]
                 }
             },
@@ -134,41 +116,50 @@ export default function PDFRenderBankWiseMISReport (props) {
     });
 
     const exportToExcel = async () => {
-        // const ws = XLSX.utils.json_to_sheet(resData);
-        // const wb = { Sheets: { 'data': ws }, SheetNames: ['data'] };
-        // const excelBuffer = XLSX.write(wb, { bookType : 'xlsx', type: 'array'});
-        // const data = new Blob([excelBuffer], {type: fileType});
-        // FileSaver.saveAs(data, `Export All Bank Wise Cases Received${fileExtension}`);
+        const {from, to} = paramsData;
+        const Datetitle = [{"Sr" : `FROM : ${moment(from).format('DD-MM-YYYY')} | TO : ${moment(to).format('DD-MM-YYYY')}`}];
+        const emptyRow0 = [{"Sr" : ''}]; // Empty row to skip a line
+        // Prepare the title row
+        const title = [{"Sr" : 'Export INTELLECTIVE LAW OFFICES | All Bank Wise Cases Received'}];
+        const emptyRow = [{"Sr" : ''}]; // Empty row to skip a line
 
-        // Extract keys to use as headers
-        const headers = Object.keys(resData[0]);
+        const dataXLSX = [...emptyRow0, ...title, ...Datetitle, ...emptyRow, ...resData];
 
-        // Create an array of arrays from the data object
-        const dataArray = resData.map(item => headers.map(header => item[header]));
+        // Create worksheet and workbook
+        const ws = XLSX.utils.json_to_sheet(dataXLSX, { skipHeader: true });
+        const wb = { Sheets: { 'data': ws }, SheetNames: ['data'] };
 
-        // Create worksheet
-        const worksheet = XLSX.utils.aoa_to_sheet([['All Bank Wise Cases Received'], [], headers, ...dataArray]);
+        // Set title row style to bold
+        ws['A1'].s = { font: { bold: true } };
+        ws['A2'].s = { font: { bold: true } };
+        ws['A3'].s = { font: { bold: true } };
+        
+        // Set column widths
+        const colWidths = [
+            { wch: 10 }, // Sr
+            { wch: 15 }, // Rep Date
+            { wch: 20 }, // Bank
+            { wch: 20 }, // Branch
+            { wch: 25 }, // Customer name
+            { wch: 25 }, // Aps No
+            { wch: 15 }, // Ref No
+            { wch: 25 }, // Seller Name
+            { wch: 20 }, // Phone No
+            { wch: 20 }, // Prepared By
+            { wch: 20 }, // Type
+            { wch: 30 }, // Address
+            { wch: 20 }, // Roof Right
+            { wch: 20 }, // Receipt Date
+            { wch: 15 }, // Sent On
+            { wch: 20 }, // Status
+            { wch: 25 }, // Remarks
+        ];
+        ws['!cols'] = colWidths;
 
-        // Style the header row
-        const headerStyle = {
-            font: { bold: true },
-            alignment: { horizontal: 'center' },
-            fill: { fgColor: { rgb: 'FFFFAA00' } } // Example: Yellow background
-        };
-
-        worksheet.A1.s = headerStyle; // Apply style to the custom header
-
-        headers.forEach((header, index) => {
-            const cellAddress = XLSX.utils.encode_cell({ r: 2, c: index });
-            worksheet[cellAddress].s = headerStyle; // Apply style to each header cell
-        });
-
-        // Create workbook and append worksheet
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
-
-        // Write the workbook to a file
-        XLSX.writeFile(workbook, 'Export All Bank Wise Cases Received.xlsx');
+        // Generate Excel file
+        const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+        const data = new Blob([excelBuffer], { type: fileType });
+        FileSaver.saveAs(data, `Export All Bank Wise Cases Received${fileExtension}`);
     }
 
     const exportToPdf = (value) => {
@@ -188,11 +179,11 @@ export default function PDFRenderBankWiseMISReport (props) {
             axios.post(`${JSON_CONST.DB_URL}option/bankWiseReport`, paramsData)
                 .then((response) => {
                     console.log(response);
-                    response.data.forEach((row) => {
+                    response.data.forEach((row, index) => {
                         fullData = [];
                         // Push to Temp
-                        fullData.push({text: row.repNo, style: 'tableHeader'})
-                        fullData.push({text: row.id, style: 'tableHeader'})
+                        // fullData.push({text: row.repNo, style: 'tableHeader'})
+                        fullData.push({text: index + 1, style: 'tableHeader'})
                         fullData.push({text: row.reportDate, style: 'tableHeader'})
                         fullData.push({text: row.bankName.name, style: 'tableHeader'})
                         fullData.push({text: row.branchName.name, style: 'tableHeader'})
@@ -210,7 +201,6 @@ export default function PDFRenderBankWiseMISReport (props) {
                         fullData.push({text: row.reportSentOn, style: 'tableHeader'})
                         fullData.push({text: row.status, style: 'tableHeader'})
                         fullData.push({text: row.remarks, style: 'tableHeader'})
-                       
                         // Push To Main
                         pushToMain.push(fullData)
                     });
@@ -218,12 +208,56 @@ export default function PDFRenderBankWiseMISReport (props) {
                     // assign main Value
                     fullDD.content[2].table.body = pushToMain;
                     setDD(fullDD);
-                    console.log('pushToMain', pushToMain);
-                    console.log('fullData', fullData);
-                    console.log('dd', dd);
 
-                    setResData(response.data)
-                    console.log('XLSX', response.data)
+                    const resDataConst = response.data;
+                    const setXL = [];
+
+                    const setHeders = {
+                        'Sr': 'Sr',
+                        'Rep Date': 'Rep Date',
+                        'Bank': 'Bank',
+                        'Branch': 'Branch',
+                        'Customer Name': 'Customer Name',
+                        'Aps No': 'Aps No',
+                        'Bank Ref No': 'Bank Ref No',
+                        'Seller Name': 'Seller Name',
+                        'Phone No': 'Phone No',
+                        'Prepared By': 'Prepared By',
+                        'Type': 'Type',
+                        'Address': 'Address',
+                        'Roof Right': 'Roof Right',
+                        'Receipt Date': 'Receipt Date',
+                        'Sent On': 'Sent On',
+                        'Status': 'Status',
+                        'Remarks': 'Remarks',
+                    };
+                    setXL.push(setHeders)
+
+                    resDataConst.forEach((row, index) => {
+                        const setXLSX = {
+                            'Sr': index + 1,
+                            'Rep Date': row.reportDate ? moment(row.reportDate).format('DD-MM-YYYY') : '',
+                            'Bank': row?.bankName?.name,
+                            'Branch': row?.branchName?.name,
+                            'Customer Name': row.customerBorrower,
+                            'Aps No': row.apsNo,
+                            'Ref No': row.refNo,
+                            'Seller Name': row.uid,
+                            'Phone No': row.phoneNo,
+                            'Prepared By': row?.preparedByName?.name,
+                            'Type': row?.type?.name,
+                            'Address': row.streetSectorLocal,
+                            'Roof Right': row.roofRight,
+                            'Receipt Date': row.reciptDate,
+                            'Sent On': row.reportSentOn,
+                            'Status': row.status,
+                            'Remarks': row.remarks,
+                        }
+
+                        setXL.push(setXLSX)
+                    })                    
+                    setResData(setXL)
+                    setIsLoading(false);
                     
                 }).catch((error) => {
                     console.log(error);
@@ -233,6 +267,7 @@ export default function PDFRenderBankWiseMISReport (props) {
             console.log(err)
         }
     }, [dd, dd.content, paramsData]);
+    const [isLoading, setIsLoading] = useState(true);
 
 
     return (

@@ -1,3 +1,4 @@
+/* eslint-disable dot-notation */
 import React, {useState, useEffect} from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Pdf from "react-to-pdf";
@@ -156,22 +157,24 @@ export default function PDFRenderRegistrationBank (props) {
     });
 
     const exportToExcel = async () => {
+        const {from, to} = paramsData;
+        const Datetitle = [{"S.NO" : `FROM : ${moment(from).format('DD-MM-YYYY')} | TO : ${moment(to).format('DD-MM-YYYY')}`}];
+        const emptyRow0 = [{"S.NO" : ''}]; // Empty row to skip a line
         // Prepare the title row
-        const title = [['Export INTELLECTIVE LAW OFFICES | Advicates, Legal Advisers & Consultants']];
-        const emptyRow = [['']]; // Empty row to skip a line
+        const title = [{"S.NO" : 'Export INTELLECTIVE LAW OFFICES | Advicates, Legal Advisers & Consultants'}];
+        const emptyRow = [{"S.NO" : ''}]; // Empty row to skip a line
 
-        const dataXLSX = [...title, ...emptyRow, ...resData];
 
+        const dataXLSX = [...emptyRow0, ...title, ...Datetitle, ...emptyRow, ...resData];
+        
         // Create worksheet and workbook
         const ws = XLSX.utils.json_to_sheet(dataXLSX, { skipHeader: true });
         const wb = { Sheets: { 'data': ws }, SheetNames: ['data'] };
 
-        // Merge cells for the title
-        // ws['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 20 } }];
-
         // Set title row style to bold
-        // eslint-disable-next-line dot-notation
         ws['A1'].s = { font: { bold: true } };
+        ws['A2'].s = { font: { bold: true } };
+        ws['A3'].s = { font: { bold: true } };
 
         // Set column widths
         const colWidths = [
