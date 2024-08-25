@@ -67,14 +67,10 @@ export default function PDFRenderLoanBank (props) {
                             {text:'Customer', style: 'tableHeaderMain'}, 
                             {text: 'Phone', style: 'tableHeaderMain'}, 
                             {text: 'Property details', style: 'tableHeaderMain'}, 
-                            {text:'Take Over', style: 'tableHeaderMain'}, 
+                            {text:'Take From', style: 'tableHeaderMain'}, 
                             {text:'Handled by', style: 'tableHeaderMain'}, 
-                            {text:'Transaction number', style: 'tableHeaderMain'}, 
-                            {text:'Doc Sent To Bank', style: 'tableHeaderMain'}, 
-                            {text:'Remark', style: 'tableHeaderMain'}, 
-                            {text:'Other remark', style: 'tableHeaderMain'},
-                            {text:'Next follow up date', style: 'tableHeaderMain'},
                             {text:'Status', style: 'tableHeaderMain'},
+                            {text:'Other remark', style: 'tableHeaderMain'},
                         ],
     
                         []
@@ -220,12 +216,8 @@ export default function PDFRenderLoanBank (props) {
                         fullData.push({text: row?.propertyDetails, style: 'tableHeader'})
                         fullData.push({text: row?.loanTakenFrom, style: 'tableHeader'})
                         fullData.push({text: row?.handledByName?.name, style: 'tableHeader'})
-                        fullData.push({text: row?.id && moment(row?.docSentToBankDate).format('DD-MM-YYYY'), style: 'tableHeader'})
-                        fullData.push({text: row?.docSentToBankDate && moment(row?.docSentToBankDate).format('DD-MM-YYYY'), style: 'tableHeader'})
-                        fullData.push({text: row?.remarksName?.name, style: 'tableHeader'})
-                        fullData.push({text: row?.otherRemarkIfAny, style: 'tableHeader'})
-                        fullData.push({text: row?.nextDate, style: 'tableHeader'})
                         fullData.push({text: row?.statusValue, style: 'tableHeader'})
+                        fullData.push({text: row?.otherRemarkIfAny, style: 'tableHeader'})
 
                         // Push To Main
                         pushToMain.push(fullData)
@@ -248,21 +240,21 @@ export default function PDFRenderLoanBank (props) {
                         'Customer name': 'Customer name',
                         'Phone number': 'Phone number',
                         'Property details': 'Property details',
-                        'Loan taken over': 'Loan taken over',
+                        'Loan taken over': 'Loan taken from',
                         'Handled by': 'Handled by',
-                        'Transaction number': 'Transaction number',
-                        'Document receive on': 'Document receive on',
-                        'Document sent on': 'Document sent on',
-                        'Document sent at': 'Document sent at',
-                        'Case close': 'Case close',
-                        'Case close date': 'Case close date',
-                        'Acknowledgment received': 'Acknowledgment received',
-                        'Volume number': 'Volume number',
-                        'Serial number': 'Serial number',
-                        'Remarks': 'Remarks',
+                        // 'Transaction number': 'Transaction number',
+                        // 'Document receive on': 'Document receive on',
+                        // 'Document sent on': 'Document sent on',
+                        // 'Document sent at': 'Document sent at',
+                        // 'Case close': 'Case close',
+                        // 'Case close date': 'Case close date',
+                        // 'Acknowledgment received': 'Acknowledgment received',
+                        // 'Volume number': 'Volume number',
+                        // 'Serial number': 'Serial number',
+                        // 'Remarks': 'Remarks',
+                        // 'Next follow? up date': 'Next follow up date',
+                        'Status': 'Status',
                         'Other remarks': 'Other remarks',
-                        'Next follow up date': 'Next follow up date',
-                        'Status': 'Status'
                     };
                     setXL.push(setHeders)
 
@@ -278,19 +270,19 @@ export default function PDFRenderLoanBank (props) {
                             'Property details': row.propertyDetails,
                             'Loan taken over': row.loanTakenFrom,
                             'Handled by': row?.handledByName?.name,
-                            'Transaction number': row.id,
-                            'Document receive on': row.collectionDate ? moment(row.collectionDate).format('DD-MM-YYYY') : '',
-                            'Document sent on': row.docSentToBankDate ? moment(row.docSentToBankDate).format('DD-MM-YYYY') : '',
-                            'Document sent at': row.sentAt,
-                            'Case close': row.caseCloseVal,
-                            'Case close date': row.caseClose ? moment(row.caseClose).format('DD-MM-YYYY') : '',
-                            'Acknowledgment received': row?.ackRecived,
-                            'Volume number': row.volNo,
-                            'Serial number': row.slNo,
-                            'Remarks': row?.remarksName?.name,
-                            'Other remarks': row.otherRemarkIfAny,
-                            'Next follow up date': row.nextDate ? moment(row.nextDate).format('DD-MM-YYYY') : '',
+                            // 'Transaction number': row.id,
+                            // 'Document receive on': row.collectionDate ? moment(row.collectionDate).format('DD-MM-YYYY') : '',
+                            // 'Document sent on': row.docSentToBankDate ? moment(row.docSentToBankDate).format('DD-MM-YYYY') : '',
+                            // 'Document sent at': row.sentAt,
+                            // 'Case close': row.caseCloseVal,
+                            // 'Case close date': row.caseClose ? moment(row.caseClose).format('DD-MM-YYYY') : '',
+                            // 'Acknowledgment received': row?.ackRecived,
+                            // 'Volume number': row.volNo,
+                            // 'Serial number': row.slNo,
+                            // 'Remarks': row?.remarksName?.name,
+                            // 'Next follow up date': row.nextDate ? moment(row.nextDate).format('DD-MM-YYYY') : '',
                             'Status': row.statusValue,
+                            'Other remarks': row.otherRemarkIfAny,
                         }
 
                         setXL.push(setXLSX)
@@ -310,6 +302,11 @@ export default function PDFRenderLoanBank (props) {
     }, [dd, dd.content, paramsData]);
     const [isLoading, setIsLoading] = useState(true);
 
+    const navigate = useNavigate()
+    const redirectPage = async (url) => {
+        navigate(`/app/${url}`, { replace: true });
+      };
+
     return (
         <>
             {isLoading ? (
@@ -317,8 +314,11 @@ export default function PDFRenderLoanBank (props) {
                 ) : (
                     <Box sx={{ flexGrow: 1 }}>
                         <Grid container spacing={2}>
+                        <Grid item xs={12}>
+                        <Button style={{backgroundColor: 'black', color: 'white'}} onClick={(e) => redirectPage('reportDisbursal/loanBank/0')} size="medium"> ← Back</Button>
+                        </Grid>
                             <Grid item xs={6}>
-                            <Item style={{backgroundColor: '#FFFFFF',display: 'flex', justifyContent: 'right', marginTop: '200px'}}>
+                            <Item style={{backgroundColor: '#FFFFFF',display: 'flex', justifyContent: 'right', marginTop: '150px'}}>
                                 <Card style={{backgroundColor: '#B14019'}} sx={{ minWidth: 345 }}>
                                     <CardMedia
                                         sx={{ height: 140 }}
@@ -340,7 +340,7 @@ export default function PDFRenderLoanBank (props) {
                             </Item>
                             </Grid>
                             <Grid item xs={6}>
-                            <Item style={{backgroundColor: '#FFFFFF',display: 'flex', justifyContent: 'left', marginTop: '200px'}}>
+                            <Item style={{backgroundColor: '#FFFFFF',display: 'flex', justifyContent: 'left', marginTop: '150px'}}>
                             <Card style={{backgroundColor: '#1C9F44'}} sx={{ minWidth: 345 }}>
                                     <CardMedia
                                         sx={{ height: 140 }}

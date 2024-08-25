@@ -117,11 +117,11 @@ export default function EntryFormHB(props) {
   };
 
   return (
-    <Page title="Handled By">
+    <Page title="Handled / Prepared By">
       <Container maxWidth="">
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-          Handled By
+          Handled / Prepared By
           </Typography>
           {/* <Button variant="contained" color="secondary" onClick={() => redirectPage('')} startIcon={<Iconify icon="carbon:list-boxes" />}>
             Home
@@ -143,7 +143,7 @@ export default function EntryFormHB(props) {
                 value={fromData.name}
                 required
                 name="name" 
-                label="Handled By Name"
+                label="Handled / Prepared By Name"
                 autoFocus
               />
             </Grid>

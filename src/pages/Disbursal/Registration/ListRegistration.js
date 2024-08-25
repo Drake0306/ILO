@@ -273,7 +273,7 @@ export default function ListRegistration() {
 
   const handleSearch = query => {
     const filtered = filteredUsers.filter(item => {
-      const searchString = `${item.bankName.name} ${item.branchName.name} ${item.phoneMobile} ${item.purchaser} ${item.transNo} ${item.applicationNo} ${item.statusValue}`.toLowerCase();
+      const searchString = `${item.bankName.name} ${item.id} ${item.branchName.name} ${item.phoneMobile} ${item.purchaser} ${item.transNo} ${item.applicationNo} ${item.statusValue}`.toLowerCase();
       return searchString.includes(query.toLowerCase());
     });
 

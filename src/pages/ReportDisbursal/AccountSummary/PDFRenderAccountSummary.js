@@ -168,12 +168,20 @@ export default function PDFRenderAccountSummary (props) {
             console.log(err)
         }
     }, [dd, dd.content, paramsData]);
+
+    const navigate = useNavigate()
+    const redirectPage = async (url) => {
+        navigate(`/app/${url}`, { replace: true });
+      };
     return (
         <>
             <Box sx={{ flexGrow: 1 }}>
                 <Grid container spacing={2}>
+                <Grid item xs={12}>
+                    <Button style={{backgroundColor: 'black', color: 'white'}} onClick={(e) => redirectPage('reportDisbursal/accountSummary/0')} size="medium"> ← Back</Button>
+                    </Grid>
                     <Grid item xs={6}>
-                    <Item style={{backgroundColor: '#FFFFFF',display: 'flex', justifyContent: 'right', marginTop: '200px'}}>
+                    <Item style={{backgroundColor: '#FFFFFF',display: 'flex', justifyContent: 'right', marginTop: '150px'}}>
                         <Card style={{backgroundColor: '#B14019'}} sx={{ minWidth: 345 }}>
                             <CardMedia
                                 sx={{ height: 140 }}
@@ -195,7 +203,7 @@ export default function PDFRenderAccountSummary (props) {
                     </Item>
                     </Grid>
                     <Grid item xs={6}>
-                    <Item style={{backgroundColor: '#FFFFFF',display: 'flex', justifyContent: 'left', marginTop: '200px'}}>
+                    <Item style={{backgroundColor: '#FFFFFF',display: 'flex', justifyContent: 'left', marginTop: '150px'}}>
                     <Card style={{backgroundColor: '#1C9F44'}} sx={{ minWidth: 345 }}>
                             <CardMedia
                                 sx={{ height: 140 }}

@@ -130,7 +130,7 @@ export default function ExecutiveWiseReport(props) {
       from: fromElementsData.from.value,
       to: fromElementsData.to.value,
       executive: fromElementsData.executive.value,
-      collectedBy: fromElementsData.collectedBy.checked,
+      // collectedBy: fromElementsData.collectedBy.checked,
       // collectedBy: fromElementsData.collectedBy.checked,
       // handledBy: fromElementsData.handledBy.checked,
     }

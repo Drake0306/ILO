@@ -297,7 +297,7 @@ export default function BankWiseMISReport(props) {
             
 
             <Grid item xs={12} sm={1} md={3} lg={3}>
-              <LoadingButton fullWidth size="large" type="submit" variant="outlined" color="info" loading={isSubmitting}>
+              <LoadingButton fullWidth size="large" type="submit" variant="outlined" color="info" target='_blank' loading={isSubmitting}>
                 Generate Report
               </LoadingButton>
             </Grid>

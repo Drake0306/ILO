@@ -61,25 +61,18 @@ export default function PDFRenderRegistrationBank (props) {
                     body: [
                         [
                             {text: 'Sr', style: 'tableHeaderMain'}, 
-                            
-                            // {text:'DSA', style: 'tableHeaderMain'}, 
-                            {text:'App no', style: 'tableHeaderMain'}, 
-                            {text:'Purchaser', style: 'tableHeaderMain'}, 
                             {text:'Reg Date', style: 'tableHeaderMain'}, 
-                            {text:'Reg Office', style: 'tableHeaderMain'}, 
+                            {text:'Bank', style: 'tableHeaderMain'}, 
+                            {text:'Branch', style: 'tableHeaderMain'}, 
+                            {text:'App no', style: 'tableHeaderMain'}, 
+                            {text:'Seller', style: 'tableHeaderMain'}, 
+                            {text:'Purchaser', style: 'tableHeaderMain'}, 
+                            {text:'Phone', style: 'tableHeaderMain'}, 
                             {text:'Property Details', style: 'tableHeaderMain'}, 
-                            {text:'Next Follow Up Date', style: 'tableHeaderMain'}, 
-                            {text:'R.D Sent', style: 'tableHeaderMain'}, 
-                            {text:'S.D Sent', style: 'tableHeaderMain'}, 
-                            // {text:'T.D Sent', style: 'tableHeaderMain'}, 
-                            {text: 'SL', style: 'tableHeaderMain'}, 
-                            {text: 'Vol No', style: 'tableHeaderMain'}, 
-                            // {text:'Amount', style: 'tableHeaderMain'}, 
-                            // {text:'Check Date', style: 'tableHeaderMain'}, 
-                            // {text:'Checzk Rec Date', style: 'tableHeaderMain'}, 
-                            // {text:'Check Return Date', style: 'tableHeaderMain'}, 
+                            {text:'Reg Office', style: 'tableHeaderMain'}, 
+                            {text:'Handled By', style: 'tableHeaderMain'}, 
+                            {text:'Closed or not', style: 'tableHeaderMain'}, 
                             {text:'Status', style: 'tableHeaderMain'},
-                            {text:'Ack', style: 'tableHeaderMain'},
                             {text:'Other remark', style: 'tableHeaderMain'}
                         ],
     
@@ -245,24 +238,18 @@ export default function PDFRenderRegistrationBank (props) {
 
                         // Push to Temp
                         fullData.push({text: index + 1, style: 'tableHeaderAppNo'})
-                        fullData.push({text: addLineBreaks(row?.applicationNo), style: 'tableHeaderAppNo'})
-                        fullData.push({text: row?.purchaser, style: 'tableHeaderAppNo'})
-                        // fullData.push({text: row?.branchName.name, style: 'tableHeader'})
                         fullData.push({text: moment(row?.registrationDate).format('DD-MM-YYYY'), style: 'tableHeader'})
-                        fullData.push({text: row?.registrarOffName?.name, style: 'tableHeader'})
+                        fullData.push({text: row?.bankName.name, style: 'tableHeader'})
+                        fullData.push({text: row?.branchName.name, style: 'tableHeader'})
+                        fullData.push({text: addLineBreaks(row?.applicationNo), style: 'tableHeaderAppNo'})
+                        fullData.push({text: row?.seller, style: 'tableHeaderAppNo'})
+                        fullData.push({text: row?.purchaser, style: 'tableHeaderAppNo'})
+                        fullData.push({text: row?.phone, style: 'tableHeaderAppNo'})
                         fullData.push({text: row?.propertyDetails, style: 'tableHeaderAppNo'})
-                        fullData.push({text: row?.nextDate && moment(row?.nextDate).format('DD-MM-YYYY'), style: 'tableHeader'})
-                        fullData.push({text: row?.rdSentOn && moment(row?.rdSentOn).format('DD-MM-YYYY'), style: 'tableHeader'})
-                        fullData.push({text: row?.sdSentOn && moment(row?.sdSentOn).format('DD-MM-YYYY'), style: 'tableHeader'})
-                        // fullData.push({text: row?.tdSentOn && moment(row?.tdSentOn).format('DD-MM-YYYY'), style: 'tableHeader'})
-                        fullData.push({text: row?.slNo, style: 'tableHeaderAppNo'})
-                        fullData.push({text: row?.volNo, style: 'tableHeaderAppNo'})
-                        // fullData.push({text: row?.amount, style: 'tableHeader'})
-                        // fullData.push({text: row?.checqueDate && moment(row?.checqueDate).format('DD-MM-YYYY'), style: 'tableHeader'})
-                        // fullData.push({text: row?.chequeRecivedDate && moment(row?.chequeRecivedDate).format('DD-MM-YYYY'), style: 'tableHeader'})
-                        // fullData.push({text: row?.chequeReturnDate && moment(row?.chequeReturnDate).format('DD-MM-YYYY'), style: 'tableHeader'})
+                        fullData.push({text: row?.registrarOffName?.name, style: 'tableHeader'})
+                        fullData.push({text: row?.handledByName?.name, style: 'tableHeader'})
+                        fullData.push({text: row?.caseCloseVal, style: 'tableHeader'})
                         fullData.push({text: row?.statusValue, style: 'tableHeaderAppNo'})
-                        fullData.push({text: row?.ackRecived, style: 'tableHeaderAppNo'})
                         fullData.push({text: row?.otherRemarkIfAny, style: 'tableHeaderAppNo'})
 
                         // Push To Main
@@ -328,8 +315,8 @@ export default function PDFRenderRegistrationBank (props) {
                             'CASE CLOSED DATE': row.caseClosed ? moment(row.caseClosed).format('DD-MM-YYYY') : '',
                             'ACKNOWLEDGEMENT': row.ack,
                             'REMARKS': row?.remarksName?.name,
-                            'OTHER REMARKS': row.remarks,
-                            'NEXT FOLLOW UP DATE': row.nextDate ? moment(row.nextDate).format('DD-MM-YYYY') : '',
+                            'OTHER REMARKS': row?.otherRemarkIfAny,
+                            'NEXT FOLLOW UP DATE': row.nextDate ? moment(row.nextDate).format('DD-MM-YYYY') : '',
                             'STATUS': row.statusValue,
                         }
 
@@ -349,6 +336,11 @@ export default function PDFRenderRegistrationBank (props) {
     }, [dd, dd.content, paramsData]);
     const [isLoading, setIsLoading] = useState(true);
 
+    const navigate = useNavigate()
+    const redirectPage = async (url) => {
+        navigate(`/app/${url}`, { replace: true });
+      };
+
     return (
         <>
             {isLoading ? (
@@ -356,8 +348,11 @@ export default function PDFRenderRegistrationBank (props) {
             ) : (
                 <Box sx={{ flexGrow: 1 }}>
                 <Grid container spacing={2}>
+                    <Grid item xs={12}>
+                    <Button style={{backgroundColor: 'black', color: 'white'}} onClick={(e) => redirectPage('reportDisbursal/registrationBank/0')} size="medium"> ← Back</Button>
+                    </Grid>
                     <Grid item xs={6}>
-                    <Item style={{backgroundColor: '#FFFFFF',display: 'flex', justifyContent: 'right', marginTop: '200px'}}>
+                    <Item style={{backgroundColor: '#FFFFFF',display: 'flex', justifyContent: 'right', marginTop: '150px'}}>
                         <Card style={{backgroundColor: '#B14019'}} sx={{ minWidth: 345 }}>
                             <CardMedia
                                 sx={{ height: 140 }}
@@ -379,7 +374,7 @@ export default function PDFRenderRegistrationBank (props) {
                     </Item>
                     </Grid>
                     <Grid item xs={6}>
-                    <Item style={{backgroundColor: '#FFFFFF',display: 'flex', justifyContent: 'left', marginTop: '200px'}}>
+                    <Item style={{backgroundColor: '#FFFFFF',display: 'flex', justifyContent: 'left', marginTop: '150px'}}>
                     <Card style={{backgroundColor: '#1C9F44'}} sx={{ minWidth: 345 }}>
                             <CardMedia
                                 sx={{ height: 140 }}

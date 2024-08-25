@@ -613,7 +613,7 @@ const navConfig = [
       },
       { 
         head: 'handledBy',
-        title: 'Handled By',
+        title: 'Handled / Prepared By',
         path: '/app/master/handledBy',
         icon: getIcon(''),
       },

@@ -274,7 +274,7 @@ export default function PrepareReports() {
 
   const handleSearch = query => {
     const filtered = filteredUsers.filter(item => {
-      const searchString = `${item.reciptDate} ${item.fileNo} ${item.bankName.name} ${item.branchName.name} ${item.email} ${item.phoneNo} ${item.id} ${item.customerBorrower} ${item.statusValue}`.toLowerCase();
+      const searchString = `${item.reciptDate} ${item.id} ${item.fileNo} ${item.bankName.name} ${item.branchName.name} ${item.email} ${item.phoneNo} ${item.id} ${item.customerBorrower} ${item.statusValue}`.toLowerCase();
       return searchString.includes(query.toLowerCase());
     });
 

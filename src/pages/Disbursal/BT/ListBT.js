@@ -268,7 +268,7 @@ export default function ListBT() {
 
   const handleSearch = query => {
     const filtered = filteredUsers.filter(item => {
-      const searchString = `${item.bankName.name} ${item.branchName.name} ${item.phoneNo} ${item.applicationNo} ${item.customerName} ${item.statusValue} ${item.id}`.toLowerCase();
+      const searchString = `${item.bankName.name} ${item.id} ${item.branchName.name} ${item.phoneNo} ${item.applicationNo} ${item.customerName} ${item.statusValue} ${item.id}`.toLowerCase();
       return searchString.includes(query.toLowerCase());
     });
 

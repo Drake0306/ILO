@@ -3,7 +3,7 @@
 # dependencies
 /node_modules
 /Backend/env
-/Backend/venv
+/Backend/envMac
 /.pnp
 .pnp.js
 

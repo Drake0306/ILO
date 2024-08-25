@@ -37,7 +37,7 @@ import USERLISTDATA from '../../../_mock/user';
 
 const TABLE_HEAD = [
   { id: 'id', label: 'ID', alignRight: false },
-  { id: 'name', label: 'Handled By Name', alignRight: false },
+  { id: 'name', label: 'Handled / Prepared By Name', alignRight: false },
   { id: 'status', label: 'Active Status', alignRight: false },
   { id: 'action', label: 'Action', alignRight: false },
 
@@ -167,14 +167,14 @@ export default function HandledBy() {
  }, [])
 
   return (
-    <Page title="Handled By">
+    <Page title="Handled / Prepared By">
       {isLoading ? (
         <Loader />
       ) : (
       <Container maxWidth="">
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            Handled By
+            Handled / Prepared By
           </Typography>
           <Button variant="contained" onClick={() => redirectPage('newEntry/0')} startIcon={<Iconify icon="eva:plus-fill" />}>
             New Entry

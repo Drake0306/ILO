@@ -11,9 +11,9 @@ django-crispy-forms==1.14.0
 djangorestframework==3.14.0
 idna==3.4
 oauthlib==3.2.1
-Pillow==9.2.0
+Pillow
 pycparser==2.21
-PyJWT==2.5.0
+PyJWT
 python3-openid==3.2.0
 pytz==2022.4
 requests==2.28.1
@@ -24,5 +24,5 @@ types-cryptography==3.3.23
 typing_extensions==4.4.0
 tzdata==2022.4
 urllib3==1.26.12
-PyJWT==v1.7.1
+PyJWT
 
