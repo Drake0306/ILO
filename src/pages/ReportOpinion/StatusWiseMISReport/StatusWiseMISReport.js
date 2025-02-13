@@ -119,16 +119,11 @@ export default function StatusWiseMISReport(props) {
 
   }
 
-  const arrageList = (response) => {
-    const list = []
-    response.data.forEach((row) => {
-      if(row.status === 'true') {
-        list.push(row)
-      }
-    })
-
-    return list
-  }
+    const arrageList = (response) => {
+  const list = response.data.filter(row => row.status === 'true');
+  // Sort alphabetically by name
+  return list.sort((a, b) => a.name.localeCompare(b.name));
+};
   
 
   const onSubmit = async (event) => {
